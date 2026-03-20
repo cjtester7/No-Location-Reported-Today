@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v3</title>
+<title>No Location Reported · v5</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -264,6 +264,9 @@
   .tag-status { background: rgba(240,165,0,0.12); color: var(--accent); }
   .tag-days { background: rgba(224,92,42,0.14); color: var(--accent2); }
   .tag-days-ok { background: rgba(46,207,122,0.12); color: var(--green); }
+  .tag-in-progress { background: rgba(74,158,255,0.14); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
+  .tag-completed { background: rgba(46,207,122,0.14); color: var(--green); border: 1px solid rgba(46,207,122,0.3); }
+  .tag-no-status { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 
   .card-chevron {
     color: var(--text-muted); font-size: 12px;
@@ -456,6 +459,30 @@
   }
   .btn-edit:active { background: var(--border); }
 
+  /* Task status toggle */
+  .status-toggle {
+    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .status-btn {
+    flex: 1; padding: 8px 10px; border-radius: 7px;
+    font-family: var(--font-sans); font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface); color: var(--text-dim);
+    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.2px;
+  }
+  .status-btn:active { transform: scale(0.97); }
+  .status-btn.active-inprogress {
+    background: rgba(74,158,255,0.14); border-color: rgba(74,158,255,0.45);
+    color: var(--blue);
+  }
+  .status-btn.active-completed {
+    background: rgba(46,207,122,0.14); border-color: rgba(46,207,122,0.45);
+    color: var(--green);
+  }
+  .status-btn.saving { opacity: 0.6; pointer-events: none; }
+
   /* ══════════════════════════════════════
      STATES & MODAL
   ══════════════════════════════════════ */
@@ -591,6 +618,7 @@
     <div class="sort-pill" id="pill-Zone Description" onclick="sortBy('Zone Description')">Zone <span class="sort-arrow">↕</span></div>
     <div class="sort-pill" id="pill-Days in Color Zone" onclick="sortBy('Days in Color Zone')">Days <span class="sort-arrow">↕</span></div>
     <div class="sort-pill" id="pill-Product Status" onclick="sortBy('Product Status')">Status <span class="sort-arrow">↕</span></div>
+    <div class="sort-pill" id="pill-Task Status" onclick="sortBy('Task Status')">Task Status <span class="sort-arrow">↕</span></div>
   </div>
 </div>
 
@@ -619,6 +647,7 @@ let editingStock  = null;
 let currentView   = "card";
 let sortCol       = null;
 let sortDir       = "asc"; // "asc" | "desc"
+const TASK_STATUSES = ["", "In Progress", "Completed"];
 
 // ══════════════════════════════════════════
 // INIT
@@ -787,11 +816,14 @@ function buildCard(row) {
   const status    = row["Product Status"] || "";
   const daysStatus= row["Days In Status"] || "";
   const comment   = row["Comments"] || "";
+  const taskStatus= row["Task Status"] || "";
 
   const isExpanded = expandedStock === sn;
   const hasComment = comment.trim() !== "";
   const daysNum    = parseInt(daysColor) || 0;
   const dayClass   = daysNum >= 3 ? "tag-days" : "tag-days-ok";
+  const tsCls      = taskStatus === "Completed" ? "tag-completed" : taskStatus === "In Progress" ? "tag-in-progress" : "tag-no-status";
+  const tsLabel    = taskStatus || "No Status";
 
   return '<div class="card' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="card-' + sn + '">' +
     '<div class="card-header" onclick="toggleCard(\'' + sn + '\')">' +
@@ -802,6 +834,7 @@ function buildCard(row) {
     '<span class="tag tag-zone">' + (zone || scanLoc) + '</span>' +
     '<span class="tag tag-status">' + status + '</span>' +
     '<span class="tag ' + dayClass + '">' + daysColor + ' day' + (daysNum !== 1 ? 's' : '') + '</span>' +
+    '<span class="tag ' + tsCls + '">' + tsLabel + '</span>' +
     '</div></div>' +
     '<span class="card-chevron">▾</span></div>' +
     '<div class="card-detail">' +
@@ -812,7 +845,7 @@ function buildCard(row) {
     '<div class="detail-item"><div class="detail-label">Color Zone Days</div><div class="detail-value">' + daysColor + '</div></div>' +
     '<div class="detail-item full"><div class="detail-label">VIN</div><div class="detail-value">' + vin + '</div></div>' +
     '</div></div>' +
-    buildCommentSection(sn, comment, hasComment) +
+    buildCommentSection(sn, comment, hasComment, taskStatus) +
     '</div>';
 }
 
@@ -820,14 +853,15 @@ function buildCard(row) {
 // TABLE VIEW RENDER
 // ══════════════════════════════════════════
 const TABLE_COLS = [
-  { key: "Stock Num",          label: "Stock #",   cls: "accent" },
-  { key: "Year",               label: "Year",      cls: "mono" },
-  { key: "Vehicle Description",label: "Vehicle",   cls: "" },
-  { key: "Last Scan Date",     label: "Scan Date", cls: "mono" },
-  { key: "Zone Description",   label: "Zone",      cls: "" },
-  { key: "Days in Color Zone", label: "Days",      cls: "mono" },
-  { key: "Product Status",     label: "Status",    cls: "" },
-  { key: "Comments",           label: "Notes",     cls: "" },
+  { key: "Stock Num",          label: "Stock #",     cls: "accent" },
+  { key: "Year",               label: "Year",        cls: "mono" },
+  { key: "Vehicle Description",label: "Vehicle",     cls: "" },
+  { key: "Last Scan Date",     label: "Scan Date",   cls: "mono" },
+  { key: "Zone Description",   label: "Zone",        cls: "" },
+  { key: "Days in Color Zone", label: "Days",        cls: "mono" },
+  { key: "Product Status",     label: "Status",      cls: "" },
+  { key: "Task Status",        label: "Task Status", cls: "" },
+  { key: "Comments",           label: "Notes",       cls: "" },
 ];
 
 function renderTable(data) {
@@ -865,6 +899,10 @@ function renderTable(data) {
         cellHtml = '<span class="td-tag ' + cls + '">' + val + '</span>';
       } else if (col.key === "Product Status") {
         cellHtml = '<span class="td-tag tag-status">' + val + '</span>';
+      } else if (col.key === "Task Status") {
+        const tsCls = val === "Completed" ? "tag-completed" : val === "In Progress" ? "tag-in-progress" : "tag-no-status";
+        const tsLabel = val || "—";
+        cellHtml = '<span class="td-tag ' + tsCls + '">' + tsLabel + '</span>';
       } else if (col.key === "Comments") {
         cellHtml = val
           ? '<span style="font-size:11px;color:var(--accent);">✎</span> ' + truncate(val, 24)
@@ -887,7 +925,7 @@ function renderTable(data) {
       '<div><div class="detail-label">Scan Location</div><div class="detail-value">' + (row["Last Scan Location"] || "—") + '</div></div>' +
       '<div><div class="detail-label">Days In Status</div><div class="detail-value">' + (row["Days In Status"] || "—") + '</div></div>' +
       '</div>' +
-      buildCommentSection(sn, row["Comments"] || "", hasComment) +
+      buildCommentSection(sn, row["Comments"] || "", hasComment, row["Task Status"] || "") +
       '</div></td></tr>';
   });
 
@@ -902,9 +940,18 @@ function truncate(str, n) {
 // ══════════════════════════════════════════
 // COMMENT SECTION (shared HTML builder)
 // ══════════════════════════════════════════
-function buildCommentSection(sn, comment, hasComment) {
+function buildCommentSection(sn, comment, hasComment, taskStatus) {
+  const ts = taskStatus || "";
+  const ipCls = ts === "In Progress" ? " active-inprogress" : "";
+  const cpCls = ts === "Completed"   ? " active-completed"  : "";
+
   return '<div class="comment-section">' +
-    '<div class="detail-label">Comments</div>' +
+    '<div class="detail-label" style="margin-bottom:6px;">Task Status</div>' +
+    '<div class="status-toggle">' +
+    '<button class="status-btn' + ipCls + '" id="sbip-' + sn + '" onclick="setTaskStatus(\'' + sn + '\',\'In Progress\')">⏳ In Progress</button>' +
+    '<button class="status-btn' + cpCls + '" id="sbcp-' + sn + '" onclick="setTaskStatus(\'' + sn + '\',\'Completed\')">✓ Completed</button>' +
+    '</div>' +
+    '<div class="detail-label" style="margin-top:12px;margin-bottom:6px;">Comments</div>' +
     '<div class="comment-row">' +
     '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' +
     (hasComment ? comment : 'No comment yet') + '</div>' +
@@ -998,6 +1045,45 @@ async function saveComment(sn) {
     toast("Save failed: " + err.message, true);
     btn.disabled = false;
     btn.innerHTML = "Save";
+  }
+}
+
+// ══════════════════════════════════════════
+// TASK STATUS
+// ══════════════════════════════════════════
+async function setTaskStatus(sn, newStatus) {
+  event.stopPropagation();
+  const url = localStorage.getItem(STORAGE_KEY);
+  if (!url) { toast("No URL configured", true); return; }
+
+  const row = allData.find(r => String(r["Stock Num"]) === String(sn));
+  if (!row) return;
+
+  // Toggle off if already active
+  const finalStatus = row["Task Status"] === newStatus ? "" : newStatus;
+
+  // Update button states immediately (optimistic UI)
+  const ipBtn = document.getElementById("sbip-" + sn);
+  const cpBtn = document.getElementById("sbcp-" + sn);
+  if (ipBtn) { ipBtn.classList.toggle("active-inprogress", finalStatus === "In Progress"); ipBtn.classList.add("saving"); }
+  if (cpBtn) { cpBtn.classList.toggle("active-completed",  finalStatus === "Completed");   cpBtn.classList.add("saving"); }
+
+  try {
+    await fetch(url + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
+      "&taskStatus=" + encodeURIComponent(finalStatus), { mode: "no-cors" });
+    row["Task Status"] = finalStatus;
+    toast(finalStatus ? finalStatus + " ✓" : "Status cleared");
+    // Re-render to update card tag
+    applyFilters();
+    if (currentView === "card") { expandedStock = sn; applyFilters(); }
+    else {
+      const detailTr = document.getElementById("trow-" + sn);
+      if (detailTr) detailTr.classList.add("open");
+    }
+  } catch (err) {
+    toast("Save failed: " + err.message, true);
+    if (ipBtn) ipBtn.classList.remove("saving");
+    if (cpBtn) cpBtn.classList.remove("saving");
   }
 }
 
