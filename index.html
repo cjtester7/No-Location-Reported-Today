@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v9</title>
+<title>No Location Reported · v10</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -202,6 +202,14 @@
   .btn-icon:active { background: var(--border); transform: scale(0.95); }
   .btn-icon.loading { opacity: 0.5; pointer-events: none; }
   .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #000; }
+
+  .user-label {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    color: var(--text-dim); background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 6px;
+    padding: 4px 10px; white-space: nowrap; letter-spacing: 0.3px;
+    text-transform: uppercase; flex-shrink: 0;
+  }
 
   .report-meta { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .badge { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -547,10 +555,11 @@
 <div class="modal-overlay" id="configModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">App Info</div>
-    <label class="modal-label">Apps Script URL (hardcoded)</label>
-    <input class="modal-input" id="urlInput" type="url" readonly style="opacity:0.6;cursor:default;" />
-    <button class="btn-modal-save" onclick="saveConfig()">Close</button>
+    <div class="modal-title">Admin Settings</div>
+    <label class="modal-label">Apps Script Web App URL</label>
+    <input class="modal-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/..." />
+    <button class="btn-modal-save" onclick="saveConfig()">Save &amp; Refresh</button>
+    <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
   </div>
 </div>
 
@@ -568,6 +577,7 @@
       </div>
     </div>
     <div class="header-actions">
+      <span class="user-label" id="userLabel" style="display:none;"></span>
       <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">
         <span class="toggle-emoji">🌙</span>
         <div class="toggle-track"><div class="toggle-knob"></div></div>
@@ -584,7 +594,6 @@
     <span class="badge badge-count" id="vehicleCount"></span>
     <span class="badge badge-loc">Loc 4070</span>
     <span class="badge badge-view" id="viewBadge">Card View</span>
-    <span class="badge" style="background:rgba(116,116,180,0.12);color:var(--text-dim);border:1px solid rgba(116,116,180,0.2);" id="userBadge"></span>
   </div>
 </div>
 
@@ -705,15 +714,18 @@ function showApp() {
   document.getElementById("loginScreen").classList.remove("visible");
   document.getElementById("appShell").style.display = "block";
 
+  const isAdmin = USERS[currentUser] && USERS[currentUser].role === "admin";
+
   // Show/hide admin-only settings button
   const settingsBtn = document.getElementById("settingsBtn");
-  if (settingsBtn) {
-    settingsBtn.style.display = USERS[currentUser] && USERS[currentUser].role === "admin" ? "flex" : "none";
-  }
+  if (settingsBtn) settingsBtn.style.display = isAdmin ? "flex" : "none";
 
-  // Show logged-in user badge
-  const userBadge = document.getElementById("userBadge");
-  if (userBadge) userBadge.textContent = currentUser;
+  // Show logged-in user label top-right
+  const userLabel = document.getElementById("userLabel");
+  if (userLabel) {
+    userLabel.textContent = currentUser;
+    userLabel.style.display = "inline-flex";
+  }
 
   updateViewUI();
   loadData();
@@ -768,7 +780,7 @@ function showSetup() {
 }
 
 async function loadData() {
-  const url = SCRIPT_URL;
+  const url = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
   if (!url || url.includes("YOUR_SCRIPT_ID_HERE")) { showSetup(); return; }
   document.getElementById("refreshBtn").classList.add("loading");
   document.getElementById("main").innerHTML =
@@ -1144,7 +1156,7 @@ function cancelEdit(sn) {
 
 async function saveComment(sn) {
   event.stopPropagation();
-  const url = SCRIPT_URL;
+  const url = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
 
   const ta      = document.getElementById("cinput-" + sn);
   const btn     = document.getElementById("csave-" + sn);
@@ -1181,7 +1193,7 @@ async function saveComment(sn) {
 // ══════════════════════════════════════════
 async function setTaskStatus(sn) {
   event.stopPropagation();
-  const url = SCRIPT_URL;
+  const url = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
 
   const row = allData.find(r => String(r["Stock Num"]) === String(sn));
   if (!row) return;
@@ -1231,13 +1243,18 @@ function updateMeta(data) {
 // MODAL (admin info only)
 // ══════════════════════════════════════════
 function openModal() {
-  document.getElementById("urlInput").value = SCRIPT_URL;
+  const current = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
+  document.getElementById("urlInput").value = current;
   document.getElementById("configModal").classList.add("open");
 }
 function closeModal() { document.getElementById("configModal").classList.remove("open"); }
 function saveConfig() {
+  const url = document.getElementById("urlInput").value.trim();
+  if (!url) { toast("Please enter a URL", true); return; }
+  localStorage.setItem("nlr_script_url", url);
   closeModal();
-  toast("URL is hardcoded in index.html");
+  toast("URL saved");
+  loadData();
 }
 document.getElementById("configModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
