@@ -3,1043 +3,858 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v15</title>
+<title>No Location Reported</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
-/* ── Variables ── */
-:root, [data-theme="dark"] {
-  --bg:#0d0d14; --surface:#15151f; --surface2:#1c1c2a; --border:#2a2a3d;
-  --accent:#f0a500; --accent2:#e05c2a; --text:#e8e8f0; --text-dim:#7a7a96;
-  --text-muted:#454560; --green:#2ecf7a; --blue:#4a9eff; --shadow:rgba(0,0,0,0.4);
-  --tbl-hdr:#1c1c2a; --tbl-hover:#1a1a28; --tbl-alt:#131320;
+:root,[data-theme="dark"]{
+  --bg:#0d0d14;--surface:#15151f;--surface2:#1c1c2a;--border:#2a2a3d;
+  --accent:#f0a500;--accent2:#e05c2a;--text:#e8e8f0;--text-dim:#7a7a96;
+  --text-muted:#454560;--green:#2ecf7a;--blue:#4a9eff;--shadow:rgba(0,0,0,.4);
+  --tbl-hdr:#1c1c2a;--tbl-hover:#1a1a28;--tbl-alt:#131320;
 }
-[data-theme="light"] {
-  --bg:#f4f4f8; --surface:#fff; --surface2:#ededf3; --border:#dcdce8;
-  --accent:#c47f00; --accent2:#c0440f; --text:#1a1a2e; --text-dim:#555570;
-  --text-muted:#aaaabc; --green:#1a9e57; --blue:#2270cc; --shadow:rgba(0,0,0,0.07);
-  --tbl-hdr:#ededf3; --tbl-hover:#f0f0f6; --tbl-alt:#f9f9fc;
+[data-theme="light"]{
+  --bg:#f4f4f8;--surface:#fff;--surface2:#ededf3;--border:#dcdce8;
+  --accent:#c47f00;--accent2:#c0440f;--text:#1a1a2e;--text-dim:#555570;
+  --text-muted:#aaaabc;--green:#1a9e57;--blue:#2270cc;--shadow:rgba(0,0,0,.07);
+  --tbl-hdr:#ededf3;--tbl-hover:#f0f0f6;--tbl-alt:#f9f9fc;
 }
+*{box-sizing:border-box;margin:0;padding:0;
+  --fm:'IBM Plex Mono',monospace;--fs:'IBM Plex Sans',sans-serif;}
+body{background:var(--bg);color:var(--text);font-family:var(--fs);
+     min-height:100vh;font-size:14px;transition:background .25s,color .25s;}
 
-* { box-sizing:border-box; margin:0; padding:0;
-    --fm:'IBM Plex Mono',monospace; --fs:'IBM Plex Sans',sans-serif; }
+/* LOGIN */
+.lw{display:none;min-height:100vh;align-items:center;justify-content:center;
+    padding:24px 20px;background:var(--bg);}
+.lw.show{display:flex;}
+.lc{background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:32px 28px;width:100%;max-width:360px;box-shadow:0 8px 32px var(--shadow);}
+.l-logo{width:56px;height:56px;background:var(--accent);border-radius:12px;
+        display:flex;align-items:center;justify-content:center;
+        font-family:var(--fm);font-weight:600;font-size:17px;color:#000;margin:0 auto 20px;}
+.l-title{text-align:center;font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.l-sub{text-align:center;font-size:12px;color:var(--text-dim);font-family:var(--fm);
+       text-transform:uppercase;letter-spacing:1px;margin-bottom:28px;}
+.l-lbl{display:block;font-family:var(--fm);font-size:11px;color:var(--text-muted);
+       text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.l-inp{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+       font-family:var(--fs);font-size:17px;padding:13px 14px;border-radius:9px;
+       outline:none;-webkit-appearance:none;transition:border-color .15s;}
+.l-inp:focus{border-color:var(--accent);}
+.l-field{margin-bottom:14px;}
+.l-err{background:rgba(224,92,42,.12);border:1px solid rgba(224,92,42,.3);
+       color:var(--accent2);border-radius:8px;padding:10px 13px;
+       font-size:14px;margin-bottom:14px;display:none;text-align:center;}
+.l-err.show{display:block;}
+.l-btn{width:100%;background:var(--accent);color:#000;font-family:var(--fs);
+       font-size:16px;font-weight:600;padding:14px;border-radius:9px;border:none;
+       cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;}
+.l-btn:active{opacity:.85;}
+.l-theme{display:flex;justify-content:center;margin-top:20px;gap:6px;
+         align-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 
-body { background:var(--bg); color:var(--text); font-family:var(--fs);
-       min-height:100vh; font-size:14px; transition:background .25s,color .25s; }
+/* HEADER */
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);
+     padding:13px 16px 11px;position:sticky;top:0;z-index:50;
+     box-shadow:0 2px 8px var(--shadow);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.b-ico{width:34px;height:34px;background:var(--accent);border-radius:8px;
+       display:flex;align-items:center;justify-content:center;
+       font-family:var(--fm);font-weight:600;font-size:13px;color:#000;flex-shrink:0;}
+.b-txt{line-height:1.15;}
+.b-ttl{font-size:13px;font-weight:600;color:var(--text);}
+.b-sub{font-size:10px;color:var(--text-dim);font-family:var(--fm);
+       text-transform:uppercase;letter-spacing:1px;}
+.hdr-act{display:flex;gap:6px;align-items:center;flex-shrink:0;}
+.u-lbl{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--text-dim);
+       background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+       padding:4px 10px;white-space:nowrap;text-transform:uppercase;}
+.tt{display:flex;align-items:center;gap:5px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;padding:3px;}
+.tt-tr{width:36px;height:20px;background:var(--surface2);border:1px solid var(--border);
+       border-radius:10px;position:relative;flex-shrink:0;}
+.tt-kn{width:14px;height:14px;background:var(--accent);border-radius:50%;
+       position:absolute;top:2px;left:2px;
+       transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+[data-theme="light"] .tt-kn{transform:translateX(16px);}
+.tt-ic{font-size:12px;line-height:1;user-select:none;}
+.bi{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);
+    width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;font-size:15px;
+    transition:all .15s;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.bi:active{background:var(--border);transform:scale(.95);}
+.bi.loading{opacity:.5;pointer-events:none;}
+.bi.active{background:var(--accent);border-color:var(--accent);color:#000;}
+.rmt{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.bdg{font-family:var(--fm);font-size:10px;padding:3px 8px;border-radius:4px;
+     letter-spacing:.5px;text-transform:uppercase;}
+.bd{background:rgba(240,165,0,.12);color:var(--accent);border:1px solid rgba(240,165,0,.25);}
+.bc{background:rgba(46,207,122,.1);color:var(--green);border:1px solid rgba(46,207,122,.2);}
+.bl{background:rgba(74,158,255,.1);color:var(--blue);border:1px solid rgba(74,158,255,.2);}
+.bv{background:rgba(240,165,0,.1);color:var(--accent);border:1px solid rgba(240,165,0,.2);font-size:9px;}
 
-/* ── LOGIN ── */
-.login-wrap { display:none; min-height:100vh; align-items:center;
-              justify-content:center; padding:24px 20px; background:var(--bg); }
-.login-wrap.show { display:flex; }
-.login-card { background:var(--surface); border:1px solid var(--border);
-              border-radius:16px; padding:32px 28px; width:100%; max-width:360px;
-              box-shadow:0 8px 32px var(--shadow); }
-.login-logo { width:56px; height:56px; background:var(--accent); border-radius:12px;
-              display:flex; align-items:center; justify-content:center;
-              font-family:var(--fm); font-weight:600; font-size:17px; color:#000;
-              margin:0 auto 20px; letter-spacing:-0.5px; }
-.login-title { text-align:center; font-size:20px; font-weight:600;
-               color:var(--text); margin-bottom:4px; }
-.login-sub { text-align:center; font-size:12px; color:var(--text-dim);
-             font-family:var(--fm); text-transform:uppercase; letter-spacing:1px;
-             margin-bottom:28px; }
-.login-lbl { display:block; font-family:var(--fm); font-size:11px;
-             color:var(--text-muted); text-transform:uppercase;
-             letter-spacing:.8px; margin-bottom:6px; }
-.login-inp { width:100%; background:var(--bg); border:1px solid var(--border);
-             color:var(--text); font-family:var(--fs); font-size:17px;
-             padding:13px 14px; border-radius:9px; outline:none;
-             -webkit-appearance:none; transition:border-color .15s; }
-.login-inp:focus { border-color:var(--accent); }
-.login-field { margin-bottom:14px; }
-.login-err { background:rgba(224,92,42,.12); border:1px solid rgba(224,92,42,.3);
-             color:var(--accent2); border-radius:8px; padding:10px 13px;
-             font-size:14px; margin-bottom:14px; display:none; text-align:center; }
-.login-err.show { display:block; }
-.login-btn { width:100%; background:var(--accent); color:#000; font-family:var(--fs);
-             font-size:16px; font-weight:600; padding:14px; border-radius:9px;
-             border:none; cursor:pointer; -webkit-tap-highlight-color:transparent;
-             transition:opacity .15s; margin-top:4px; }
-.login-btn:active { opacity:.85; }
-.login-theme { display:flex; justify-content:center; margin-top:20px; gap:6px;
-               align-items:center; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+/* TOOLBAR */
+.tb{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
+.sw{position:relative;}
+.si{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+    font-family:var(--fs);font-size:16px;padding:10px 12px 10px 38px;
+    border-radius:8px;outline:none;transition:border-color .15s;}
+.si:focus{border-color:var(--accent);}
+.si::placeholder{color:var(--text-muted);}
+.sico{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:var(--text-muted);font-size:15px;pointer-events:none;}
+.sbar{display:none;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.sbar.show{display:flex;}
+.spill{display:flex;align-items:center;gap:4px;font-family:var(--fm);font-size:10px;
+       padding:5px 10px;border-radius:5px;border:1px solid var(--border);
+       background:var(--surface2);color:var(--text-dim);cursor:pointer;
+       -webkit-tap-highlight-color:transparent;transition:all .15s;
+       white-space:nowrap;text-transform:uppercase;}
+.spill:active{transform:scale(.96);}
+.spill.asc{background:rgba(240,165,0,.12);border-color:rgba(240,165,0,.4);color:var(--accent);}
+.spill.desc{background:rgba(74,158,255,.1);border-color:rgba(74,158,255,.3);color:var(--blue);}
+.sarr{font-size:9px;}
 
-/* ── HEADER ── */
-.header { background:var(--surface); border-bottom:1px solid var(--border);
-          padding:13px 16px 11px; position:sticky; top:0; z-index:100;
-          box-shadow:0 2px 8px var(--shadow); transition:background .25s,border-color .25s; }
-.hdr-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.brand { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-.brand-icon { width:34px; height:34px; background:var(--accent); border-radius:8px;
-              display:flex; align-items:center; justify-content:center;
-              font-family:var(--fm); font-weight:600; font-size:13px; color:#000;
-              flex-shrink:0; transition:background .25s; }
-.brand-text { line-height:1.15; }
-.brand-title { font-size:13px; font-weight:600; color:var(--text); }
-.brand-sub { font-size:10px; color:var(--text-dim); font-family:var(--fm);
-             text-transform:uppercase; letter-spacing:1px; }
-.hdr-actions { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+/* MAIN */
+.main{padding:12px 16px 80px;}
 
-.user-lbl { font-family:var(--fm); font-size:11px; font-weight:600;
-            color:var(--text-dim); background:var(--surface2); border:1px solid var(--border);
-            border-radius:6px; padding:4px 10px; white-space:nowrap; text-transform:uppercase; }
+/* TAGS */
+.tag{font-family:var(--fm);font-size:10px;padding:3px 7px;border-radius:3px;
+     text-transform:uppercase;letter-spacing:.4px;}
+.tz{background:rgba(74,158,255,.12);color:var(--blue);}
+.ts{background:rgba(240,165,0,.12);color:var(--accent);}
+.td{background:rgba(224,92,42,.14);color:var(--accent2);}
+.tok{background:rgba(46,207,122,.12);color:var(--green);}
+.tip{background:rgba(74,158,255,.14);color:var(--blue);border:1px solid rgba(74,158,255,.3);}
+.tcp{background:rgba(46,207,122,.14);color:var(--green);border:1px solid rgba(46,207,122,.3);}
+.tn{background:var(--surface2);color:var(--text-muted);border:1px solid var(--border);}
 
-.tt { display:flex; align-items:center; gap:5px; cursor:pointer;
-      -webkit-tap-highlight-color:transparent; padding:3px; }
-.tt-track { width:36px; height:20px; background:var(--surface2); border:1px solid var(--border);
-            border-radius:10px; position:relative; transition:background .25s; flex-shrink:0; }
-.tt-knob { width:14px; height:14px; background:var(--accent); border-radius:50%;
-           position:absolute; top:2px; left:2px;
-           transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
-[data-theme="light"] .tt-knob { transform:translateX(16px); }
-.tt-ico { font-size:12px; line-height:1; user-select:none; }
+/* CARD VIEW */
+.cg{display:grid;grid-template-columns:1fr;gap:10px;}
+@media(min-width:640px){.cg{grid-template-columns:1fr 1fr;}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+      box-shadow:0 1px 4px var(--shadow);transition:border-color .15s;}
+.card.hn{border-color:rgba(240,165,0,.4);}
+.card.open{border-color:var(--accent);}
+.ch{padding:13px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    display:flex;gap:12px;align-items:flex-start;transition:background .15s;border-radius:10px;}
+.card.open .ch{border-radius:10px 10px 0 0;}
+.ch:active{background:var(--surface2);}
+.sp{background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+    padding:4px 9px;font-family:var(--fm);font-size:12px;color:var(--accent);
+    white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.cb{flex:1;min-width:0;}
+.vn{font-size:14px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;}
+.vy{color:var(--accent);margin-right:4px;}
+.ct{display:flex;gap:5px;flex-wrap:wrap;}
+.cc{color:var(--text-muted);font-size:12px;flex-shrink:0;margin-top:3px;transition:transform .2s;}
+.card.open .cc{transform:rotate(180deg);}
+.cd{display:none;border-top:1px solid var(--border);padding:13px 14px;
+    background:var(--bg);border-radius:0 0 10px 10px;}
+.card.open .cd{display:block;}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.di.full{grid-column:1/-1;}
+.dl{font-family:var(--fm);font-size:10px;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px;}
+.dv{font-size:13px;color:var(--text);font-family:var(--fm);word-break:break-all;}
 
-.btn-icon { background:var(--surface2); border:1px solid var(--border); color:var(--text-dim);
-            width:34px; height:34px; border-radius:8px; cursor:pointer; display:flex;
-            align-items:center; justify-content:center; font-size:15px;
-            transition:all .15s; -webkit-tap-highlight-color:transparent; flex-shrink:0; }
-.btn-icon:active { background:var(--border); transform:scale(.95); }
-.btn-icon.loading { opacity:.5; pointer-events:none; }
-.btn-icon.active { background:var(--accent); border-color:var(--accent); color:#000; }
+/* MOBILE LIST */
+.ml{display:flex;flex-direction:column;gap:1px;background:var(--border);
+    border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+.mr{background:var(--surface);padding:14px 16px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .1s;
+    display:flex;align-items:center;gap:12px;}
+.mr:active{background:var(--surface2);}
+.mr.hn{border-left:3px solid var(--accent);}
+.mrl{flex:1;min-width:0;}
+.mrs{font-family:var(--fm);font-size:13px;font-weight:600;color:var(--accent);margin-bottom:4px;}
+.mrv{font-size:16px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:6px;}
+.mry{color:var(--accent);margin-right:4px;}
+.mrm{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.mrr{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.mtb{font-family:var(--fm);font-size:11px;font-weight:600;padding:4px 10px;
+     border-radius:5px;text-transform:uppercase;white-space:nowrap;}
+.mtb.ip{background:rgba(74,158,255,.14);color:var(--blue);border:1px solid rgba(74,158,255,.3);}
+.mtb.cp{background:rgba(46,207,122,.14);color:var(--green);border:1px solid rgba(46,207,122,.3);}
+.mch{color:var(--text-muted);font-size:18px;}
 
-.rpt-meta { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-.badge { font-family:var(--fm); font-size:10px; padding:3px 8px; border-radius:4px;
-         letter-spacing:.5px; text-transform:uppercase; }
-.b-date { background:rgba(240,165,0,.12); color:var(--accent); border:1px solid rgba(240,165,0,.25); }
-.b-cnt  { background:rgba(46,207,122,.1); color:var(--green); border:1px solid rgba(46,207,122,.2); }
-.b-loc  { background:rgba(74,158,255,.1); color:var(--blue); border:1px solid rgba(74,158,255,.2); }
-.b-view { background:rgba(240,165,0,.1); color:var(--accent); border:1px solid rgba(240,165,0,.2); font-size:9px; }
+/* FULL-SCREEN DETAIL */
+.ds{display:none;position:fixed;inset:0;z-index:200;
+    background:var(--bg);flex-direction:column;overflow:hidden;}
+.ds.show{display:flex;}
+.dsh{background:var(--surface);border-bottom:1px solid var(--border);
+     padding:13px 16px;display:flex;align-items:center;gap:12px;
+     flex-shrink:0;box-shadow:0 2px 8px var(--shadow);}
+.dsbk{background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);
+      height:38px;padding:0 16px;border-radius:8px;cursor:pointer;
+      display:flex;align-items:center;gap:6px;font-family:var(--fs);
+      font-size:14px;font-weight:600;-webkit-tap-highlight-color:transparent;
+      transition:all .15s;flex-shrink:0;white-space:nowrap;}
+.dsbk:active{background:var(--border);transform:scale(.97);}
+.dshi{flex:1;min-width:0;}
+.dshs{font-family:var(--fm);font-size:12px;color:var(--accent);font-weight:600;margin-bottom:2px;}
+.dshv{font-size:15px;font-weight:600;color:var(--text);line-height:1.2;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;}
+.dsec{background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:16px;margin-bottom:12px;}
+.dsec-t{font-family:var(--fm);font-size:10px;color:var(--text-muted);
+        text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;}
+.dff{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.df{} .df.full{grid-column:1/-1;}
+.dfl{font-family:var(--fm);font-size:11px;color:var(--text-muted);
+     text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
+.dfv{font-size:16px;color:var(--text);font-family:var(--fm);
+     word-break:break-all;line-height:1.3;}
+.dsb{width:100%;padding:13px 14px;border-radius:9px;font-family:var(--fs);
+     font-size:16px;font-weight:600;cursor:pointer;border:1px solid var(--border);
+     background:var(--surface2);color:var(--text-dim);transition:all .2s;
+     -webkit-tap-highlight-color:transparent;display:flex;align-items:center;
+     justify-content:center;gap:8px;}
+.dsb:active{transform:scale(.98);}
+.dsb.ip{background:rgba(74,158,255,.14);border-color:rgba(74,158,255,.45);color:var(--blue);}
+.dsb.cp{background:rgba(46,207,122,.14);border-color:rgba(46,207,122,.45);color:var(--green);}
+.dsb.saving{opacity:.6;pointer-events:none;}
+.dct{font-size:16px;color:var(--text);line-height:1.6;margin-bottom:8px;min-height:20px;}
+.dct.empty{color:var(--text-muted);font-style:italic;}
+.dcr{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.dca{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+     font-family:var(--fs);font-size:16px;padding:12px 13px;border-radius:9px;
+     outline:none;resize:none;min-height:90px;line-height:1.5;display:none;
+     margin-top:8px;transition:border-color .15s;-webkit-appearance:none;}
+.dca:focus{border-color:var(--accent);}
+.dacts{display:none;gap:8px;margin-top:10px;}
+.deb{font-size:14px;padding:8px 14px;background:var(--surface2);
+     border:1px solid var(--border);color:var(--text-dim);border-radius:7px;
+     cursor:pointer;font-family:var(--fs);font-weight:600;
+     -webkit-tap-highlight-color:transparent;white-space:nowrap;flex-shrink:0;}
+.deb:active{background:var(--border);}
 
-/* ── TOOLBAR ── */
-.toolbar { padding:10px 16px; background:var(--surface); border-bottom:1px solid var(--border);
-           transition:background .25s,border-color .25s; }
-.srch-wrap { position:relative; }
-.srch-inp { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
-            font-family:var(--fs); font-size:16px; padding:10px 12px 10px 38px;
-            border-radius:8px; outline:none; transition:border-color .15s; }
-.srch-inp:focus { border-color:var(--accent); }
-.srch-inp::placeholder { color:var(--text-muted); }
-.srch-ico { position:absolute; left:12px; top:50%; transform:translateY(-50%);
-            color:var(--text-muted); font-size:15px; pointer-events:none; }
+/* SHARED BTNS */
+.btn{font-family:var(--fs);font-size:15px;font-weight:600;padding:12px 16px;
+     border-radius:8px;cursor:pointer;border:none;transition:all .15s;
+     -webkit-tap-highlight-color:transparent;}
+.btn:active{transform:scale(.97);}
+.bsv{background:var(--accent);color:#000;flex:1;}
+.bsv:disabled{opacity:.5;pointer-events:none;}
+.bcn{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);}
+.btn-edit{font-size:12px;padding:6px 11px;background:var(--surface);
+          border:1px solid var(--border);color:var(--text-dim);border-radius:5px;
+          cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:var(--fs);
+          font-weight:600;white-space:nowrap;flex-shrink:0;}
+.btn-edit:active{background:var(--border);}
 
-.sort-bar { display:none; gap:6px; flex-wrap:wrap; margin-top:8px; }
-.sort-bar.show { display:flex; }
-.sort-pill { display:flex; align-items:center; gap:4px; font-family:var(--fm); font-size:10px;
-             padding:5px 10px; border-radius:5px; border:1px solid var(--border);
-             background:var(--surface2); color:var(--text-dim); cursor:pointer;
-             -webkit-tap-highlight-color:transparent; transition:all .15s;
-             white-space:nowrap; text-transform:uppercase; }
-.sort-pill:active { transform:scale(.96); }
-.sort-pill.asc { background:rgba(240,165,0,.12); border-color:rgba(240,165,0,.4); color:var(--accent); }
-.sort-pill.desc { background:rgba(74,158,255,.1); border-color:rgba(74,158,255,.3); color:var(--blue); }
-.s-arr { font-size:9px; }
+/* DESKTOP COMMENT+STATUS */
+.cs{border-top:1px solid var(--border);padding:13px 14px;background:var(--surface2);}
+.cr{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.ctxt{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:7px;min-height:18px;}
+.ctxt.empty{color:var(--text-muted);font-style:italic;}
+.ca{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+    font-family:var(--fs);font-size:13px;padding:10px 12px;border-radius:7px;
+    outline:none;resize:none;min-height:68px;line-height:1.5;display:none;}
+.ca:focus{border-color:var(--accent);}
+.cacts{display:flex;gap:7px;margin-top:8px;display:none;}
+.sw2{margin-top:11px;padding-top:11px;border-top:1px solid var(--border);}
+.stb{width:100%;padding:10px 14px;border-radius:7px;font-family:var(--fs);
+     font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);
+     background:var(--surface2);color:var(--text-dim);transition:all .2s;
+     -webkit-tap-highlight-color:transparent;display:flex;align-items:center;
+     justify-content:center;gap:6px;}
+.stb:active{transform:scale(.98);}
+.stb.ip{background:rgba(74,158,255,.14);border-color:rgba(74,158,255,.45);color:var(--blue);}
+.stb.cp{background:rgba(46,207,122,.14);border-color:rgba(46,207,122,.45);color:var(--green);}
+.stb.saving{opacity:.6;pointer-events:none;}
 
-/* ── MAIN ── */
-.main { padding:12px 16px 80px; }
+/* DESKTOP TABLE */
+.tw{display:block;overflow-x:auto;border-radius:10px;
+    border:1px solid var(--border);box-shadow:0 1px 4px var(--shadow);}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:760px;}
+thead tr{background:var(--tbl-hdr);border-bottom:2px solid var(--border);}
+th{padding:0;text-align:left;border-right:1px solid var(--border);white-space:nowrap;}
+th:last-child{border-right:none;}
+.thb{display:flex;align-items:center;gap:5px;width:100%;padding:10px 11px;
+     font-family:var(--fm);font-size:9px;font-weight:600;color:var(--text-dim);
+     text-transform:uppercase;letter-spacing:.7px;cursor:pointer;
+     background:none;border:none;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.thb:active{background:var(--surface2);}
+.thb.asc{color:var(--accent);}.thb.desc{color:var(--blue);}
+.tic{font-size:10px;opacity:.3;transition:opacity .15s,transform .2s;flex-shrink:0;}
+.thb.asc .tic,.thb.desc .tic{opacity:1;}
+.thb.desc .tic{transform:rotate(180deg);}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:var(--tbl-alt);}
+tbody tr:hover{background:var(--tbl-hover);}
+tbody tr.hn td:first-child{border-left:3px solid var(--accent);}
+tbody tr.ro{background:var(--tbl-hover);}
+td{padding:9px 11px;color:var(--text);border-right:1px solid var(--border);vertical-align:top;}
+td:last-child{border-right:none;}
+td.mo{font-family:var(--fm);font-size:11px;}
+td.ac{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--accent);}
+.tt2{display:inline-block;font-family:var(--fm);font-size:9px;padding:2px 6px;
+     border-radius:3px;text-transform:uppercase;letter-spacing:.4px;}
+.dtr{display:none;}.dtr.open{display:table-row;}
+.dtc{padding:0!important;border-right:none!important;background:var(--bg)!important;}
+.din{padding:12px 14px;border-top:1px solid var(--border);border-left:3px solid var(--accent);}
+.drg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;margin-bottom:12px;}
 
-/* ── TAGS (shared) ── */
-.tag { font-family:var(--fm); font-size:10px; padding:3px 7px; border-radius:3px;
-       text-transform:uppercase; letter-spacing:.4px; }
-.tag-zone   { background:rgba(74,158,255,.12); color:var(--blue); }
-.tag-status { background:rgba(240,165,0,.12);  color:var(--accent); }
-.tag-days   { background:rgba(224,92,42,.14);  color:var(--accent2); }
-.tag-ok     { background:rgba(46,207,122,.12); color:var(--green); }
-.tag-ip     { background:rgba(74,158,255,.14); color:var(--blue);   border:1px solid rgba(74,158,255,.3); }
-.tag-cp     { background:rgba(46,207,122,.14); color:var(--green);  border:1px solid rgba(46,207,122,.3); }
-.tag-none   { background:var(--surface2); color:var(--text-muted);  border:1px solid var(--border); }
+/* ADMIN MODAL */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;align-items:flex-end;}
+.mov.open{display:flex;}
+.mo{background:var(--surface);border:1px solid var(--border);border-radius:18px 18px 0 0;
+    padding:20px 16px 32px;width:100%;animation:sUp .25s ease-out;}
+@keyframes sUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.moh{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.mot{font-size:15px;font-weight:600;margin-bottom:16px;text-align:center;}
+.mol{font-family:var(--fm);font-size:9px;color:var(--text-muted);text-transform:uppercase;
+     letter-spacing:.8px;margin-bottom:5px;display:block;}
+.moi{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+     font-family:var(--fm);font-size:12px;padding:10px 12px;border-radius:8px;
+     outline:none;margin-bottom:14px;transition:border-color .15s;}
+.moi:focus{border-color:var(--accent);}
+.mos{width:100%;background:var(--accent);color:#000;font-family:var(--fs);
+     font-size:14px;font-weight:600;padding:12px;border-radius:9px;border:none;
+     cursor:pointer;margin-bottom:8px;}
+.moc{width:100%;background:transparent;border:1px solid var(--border);color:var(--text-dim);
+     font-family:var(--fs);font-size:13px;padding:11px;border-radius:9px;cursor:pointer;}
 
-/* ── CARD VIEW ── */
-.cards-grid { display:grid; grid-template-columns:1fr; gap:10px; }
-@media(min-width:640px){ .cards-grid { grid-template-columns:1fr 1fr; } }
-
-.card { background:var(--surface); border:1px solid var(--border); border-radius:10px;
-        box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
-.card.has-note { border-color:rgba(240,165,0,.4); }
-.card.open     { border-color:var(--accent); }
-
-.card-hdr { padding:13px 14px; cursor:pointer; -webkit-tap-highlight-color:transparent;
-            display:flex; gap:12px; align-items:flex-start; transition:background .15s;
-            border-radius:10px; }
-.card.open .card-hdr { border-radius:10px 10px 0 0; }
-.card-hdr:active { background:var(--surface2); }
-
-.stk-pill { background:var(--surface2); border:1px solid var(--border); border-radius:6px;
-            padding:4px 9px; font-family:var(--fm); font-size:12px; color:var(--accent);
-            white-space:nowrap; flex-shrink:0; margin-top:2px; }
-.card-body { flex:1; min-width:0; }
-.veh-name { font-size:14px; font-weight:600; color:var(--text); line-height:1.3; margin-bottom:6px; }
-.veh-year { color:var(--accent); margin-right:4px; }
-.card-tags { display:flex; gap:5px; flex-wrap:wrap; }
-.card-chev { color:var(--text-muted); font-size:12px; flex-shrink:0; margin-top:3px;
-             transition:transform .2s; }
-.card.open .card-chev { transform:rotate(180deg); }
-
-.card-detail { display:none; border-top:1px solid var(--border); padding:13px 14px;
-               background:var(--bg); border-radius:0 0 10px 10px; }
-.card.open .card-detail { display:block; }
-.det-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:0; }
-.det-item.full { grid-column:1/-1; }
-.det-lbl { font-family:var(--fm); font-size:10px; color:var(--text-muted);
-           text-transform:uppercase; letter-spacing:.7px; margin-bottom:2px; }
-.det-val { font-size:13px; color:var(--text); font-family:var(--fm); word-break:break-all; }
-
-/* ── STACKED LIST (mobile list view) ── */
-.stk-list { display:flex; flex-direction:column; gap:10px; }
-
-.srow { background:var(--surface); border:1px solid var(--border); border-radius:12px;
-        box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
-.srow.has-note { border-color:rgba(240,165,0,.4); }
-.srow.open     { border-color:var(--accent); }
-
-.srow-hdr { padding:14px 15px; cursor:pointer; -webkit-tap-highlight-color:transparent;
-            transition:background .15s; border-radius:12px; }
-.srow.open .srow-hdr { border-radius:12px 12px 0 0; }
-.srow-hdr:active { background:var(--surface2); }
-
-.srow-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
-.srow-stk { font-family:var(--fm); font-size:14px; font-weight:600; color:var(--accent); }
-.srow-tsbadge { font-family:var(--fm); font-size:12px; font-weight:600; padding:4px 11px;
-                border-radius:5px; text-transform:uppercase; letter-spacing:.4px; }
-.srow-tsbadge.ip { background:rgba(74,158,255,.14); color:var(--blue);  border:1px solid rgba(74,158,255,.3); }
-.srow-tsbadge.cp { background:rgba(46,207,122,.14); color:var(--green); border:1px solid rgba(46,207,122,.3); }
-
-.srow-veh { font-size:17px; font-weight:600; color:var(--text); line-height:1.3; margin-bottom:11px; }
-.srow-yr  { color:var(--accent); margin-right:4px; }
-
-.srow-fields { display:grid; grid-template-columns:1fr 1fr; gap:9px 14px; margin-bottom:11px; }
-.srow-flbl { font-family:var(--fm); font-size:11px; color:var(--text-muted);
-             text-transform:uppercase; letter-spacing:.6px; margin-bottom:3px; }
-.srow-fval { font-size:15px; color:var(--text); font-family:var(--fm);
-             white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-.srow-foot { display:flex; align-items:center; gap:8px; }
-.srow-prod { font-family:var(--fm); font-size:11px; padding:3px 8px; border-radius:4px;
-             text-transform:uppercase; flex-shrink:0; }
-.srow-prev { flex:1; font-size:13px; color:var(--text-muted); white-space:nowrap;
-             overflow:hidden; text-overflow:ellipsis; font-style:italic; }
-.srow-prev.has { color:var(--text-dim); font-style:normal; }
-.srow-chev { color:var(--text-muted); font-size:14px; flex-shrink:0; margin-left:auto;
-             transition:transform .2s; }
-.srow.open .srow-chev { transform:rotate(180deg); }
-
-.srow-det { display:none; border-top:1px solid var(--border); padding:14px 15px;
-            background:var(--bg); border-radius:0 0 12px 12px; }
-.srow.open .srow-det { display:block; }
-.srow-det-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
-.srow-det-item.full { grid-column:1/-1; }
-
-/* ── TABLE (desktop list view) ── */
-.tbl-wrap { display:block; overflow-x:auto; border-radius:10px;
-            border:1px solid var(--border); box-shadow:0 1px 4px var(--shadow); }
-table { width:100%; border-collapse:collapse; font-size:12px; min-width:760px; }
-thead tr { background:var(--tbl-hdr); border-bottom:2px solid var(--border); }
-th { padding:0; text-align:left; border-right:1px solid var(--border); white-space:nowrap; }
-th:last-child { border-right:none; }
-.th-btn { display:flex; align-items:center; gap:5px; width:100%; padding:10px 11px;
-          font-family:var(--fm); font-size:9px; font-weight:600; color:var(--text-dim);
-          text-transform:uppercase; letter-spacing:.7px; cursor:pointer; background:none;
-          border:none; -webkit-tap-highlight-color:transparent; white-space:nowrap; }
-.th-btn:active { background:var(--surface2); }
-.th-btn.asc { color:var(--accent); }
-.th-btn.desc { color:var(--blue); }
-.th-ico { font-size:10px; opacity:.3; transition:opacity .15s,transform .2s; flex-shrink:0; }
-.th-btn.asc .th-ico, .th-btn.desc .th-ico { opacity:1; }
-.th-btn.desc .th-ico { transform:rotate(180deg); }
-tbody tr { border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:nth-child(even) { background:var(--tbl-alt); }
-tbody tr:hover { background:var(--tbl-hover); }
-tbody tr.has-note td:first-child { border-left:3px solid var(--accent); }
-tbody tr.row-open { background:var(--tbl-hover); }
-td { padding:9px 11px; color:var(--text); border-right:1px solid var(--border);
-     vertical-align:top; }
-td:last-child { border-right:none; }
-td.mono  { font-family:var(--fm); font-size:11px; }
-td.acct  { font-family:var(--fm); font-size:11px; font-weight:600; color:var(--accent); }
-.td-tag { display:inline-block; font-family:var(--fm); font-size:9px; padding:2px 6px;
-          border-radius:3px; text-transform:uppercase; letter-spacing:.4px; }
-.det-tr { display:none; }
-.det-tr.open { display:table-row; }
-.det-tc { padding:0 !important; border-right:none !important; background:var(--bg) !important; }
-.det-inner { padding:12px 14px; border-top:1px solid var(--border); border-left:3px solid var(--accent); }
-.det-row-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px 16px; margin-bottom:12px; }
-
-/* ── COMMENT + STATUS (shared) ── */
-.cmt-sec { border-top:1px solid var(--border); padding:13px 14px; background:var(--surface2); }
-.cmt-row { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
-.cmt-txt { font-size:14px; color:var(--text); line-height:1.5; margin-bottom:7px; min-height:18px; }
-.cmt-txt.empty { color:var(--text-muted); font-style:italic; }
-.cmt-area { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
-            font-family:var(--fs); font-size:15px; padding:10px 12px; border-radius:7px;
-            outline:none; resize:none; min-height:72px; line-height:1.5; display:none;
-            transition:border-color .15s; }
-.cmt-area:focus { border-color:var(--accent); }
-.cmt-acts { display:flex; gap:7px; margin-top:8px; display:none; }
-
-.btn { font-family:var(--fs); font-size:14px; font-weight:600; padding:10px 16px;
-       border-radius:7px; cursor:pointer; border:none; transition:all .15s;
-       -webkit-tap-highlight-color:transparent; }
-.btn:active { transform:scale(.97); }
-.btn-save { background:var(--accent); color:#000; flex:1; }
-.btn-save:disabled { opacity:.5; pointer-events:none; }
-.btn-cancel { background:var(--surface); border:1px solid var(--border); color:var(--text-dim); }
-.btn-edit { font-size:13px; padding:6px 12px; background:var(--surface);
-            border:1px solid var(--border); color:var(--text-dim); border-radius:5px;
-            cursor:pointer; -webkit-tap-highlight-color:transparent; font-family:var(--fs);
-            white-space:nowrap; flex-shrink:0; }
-.btn-edit:active { background:var(--border); }
-
-.sts-wrap { margin-top:11px; padding-top:11px; border-top:1px solid var(--border); }
-.sts-btn { width:100%; padding:11px 14px; border-radius:7px; font-family:var(--fs);
-           font-size:15px; font-weight:600; cursor:pointer; border:1px solid var(--border);
-           background:var(--surface2); color:var(--text-dim); transition:all .2s;
-           -webkit-tap-highlight-color:transparent; display:flex; align-items:center;
-           justify-content:center; gap:6px; }
-.sts-btn:active { transform:scale(.98); }
-.sts-btn.ip { background:rgba(74,158,255,.14); border-color:rgba(74,158,255,.45); color:var(--blue); }
-.sts-btn.cp { background:rgba(46,207,122,.14); border-color:rgba(46,207,122,.45); color:var(--green); }
-.sts-btn.saving { opacity:.6; pointer-events:none; }
-
-/* ── MODAL ── */
-.modal-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
-            z-index:200; align-items:flex-end; }
-.modal-ov.open { display:flex; }
-.modal { background:var(--surface); border:1px solid var(--border); border-radius:18px 18px 0 0;
-         padding:20px 16px 32px; width:100%; animation:slideUp .25s ease-out; }
-@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-.modal-hnd { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 16px; }
-.modal-ttl { font-size:15px; font-weight:600; margin-bottom:16px; text-align:center; }
-.modal-lbl { font-family:var(--fm); font-size:9px; color:var(--text-muted); text-transform:uppercase;
-             letter-spacing:.8px; margin-bottom:5px; display:block; }
-.modal-inp { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
-             font-family:var(--fm); font-size:12px; padding:10px 12px; border-radius:8px;
-             outline:none; margin-bottom:14px; transition:border-color .15s; }
-.modal-inp:focus { border-color:var(--accent); }
-.btn-modal { width:100%; background:var(--accent); color:#000; font-family:var(--fs);
-             font-size:14px; font-weight:600; padding:12px; border-radius:9px;
-             border:none; cursor:pointer; }
-
-/* ── STATES ── */
-.state-msg { text-align:center; padding:48px 24px; color:var(--text-muted); }
-.state-msg .ico { font-size:36px; margin-bottom:12px; }
-.state-msg p { font-size:14px; line-height:1.7; }
-.loading-st { text-align:center; padding:48px 16px; }
-.loading-st p { color:var(--text-muted); font-size:13px; font-family:var(--fm); margin-top:10px; }
-
-/* ── TOAST ── */
-.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
-         background:var(--green); color:#fff; font-family:var(--fm); font-size:13px;
-         font-weight:600; padding:11px 22px; border-radius:8px; z-index:999;
-         transition:transform .3s cubic-bezier(.34,1.56,.64,1); white-space:nowrap; }
-.toast.show { transform:translateX(-50%) translateY(0); }
-.toast.err { background:var(--accent2); }
-
-/* ── SPINNERS ── */
-@keyframes spin { to{transform:rotate(360deg)} }
-.spin { display:block; width:28px; height:28px; border:3px solid var(--border);
-        border-top-color:var(--accent); border-radius:50%; animation:spin .6s linear infinite;
-        margin:0 auto 10px; }
-.spin-sm { display:inline-block; width:14px; height:14px; border:2px solid var(--border);
-           border-top-color:var(--accent); border-radius:50%; animation:spin .6s linear infinite;
-           vertical-align:middle; }
+/* STATES / TOAST / SPINNER */
+.sm{text-align:center;padding:48px 24px;color:var(--text-muted);}
+.sm .ic{font-size:36px;margin-bottom:12px;}
+.sm p{font-size:14px;line-height:1.7;}
+.lst{text-align:center;padding:48px 16px;}
+.lst p{color:var(--text-muted);font-size:13px;font-family:var(--fm);margin-top:10px;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+       background:var(--green);color:#fff;font-family:var(--fm);font-size:13px;
+       font-weight:600;padding:11px 22px;border-radius:8px;z-index:999;
+       transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.err{background:var(--accent2);}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:block;width:28px;height:28px;border:3px solid var(--border);
+      border-top-color:var(--accent);border-radius:50%;
+      animation:spin .6s linear infinite;margin:0 auto 10px;}
+.ssm{display:inline-block;width:14px;height:14px;border:2px solid var(--border);
+     border-top-color:var(--accent);border-radius:50%;
+     animation:spin .6s linear infinite;vertical-align:middle;}
 </style>
 </head>
 <body>
 
-<!-- ═══ LOGIN ═══ -->
-<div class="login-wrap show" id="loginWrap">
-  <div class="login-card">
-    <div class="login-logo">NLR</div>
-    <div class="login-title">No Location Reported</div>
-    <div class="login-sub">CarMax &middot; Location 4070</div>
-    <div class="login-err" id="loginErr">Incorrect username or password</div>
-    <div class="login-field">
-      <label class="login-lbl">Username</label>
-      <input class="login-inp" id="loginUser" type="text" autocomplete="username"
+<!-- LOGIN -->
+<div class="lw show" id="loginWrap">
+  <div class="lc">
+    <div class="l-logo">NLR</div>
+    <div class="l-title">No Location Reported</div>
+    <div class="l-sub">CarMax &middot; Location 4070</div>
+    <div class="l-err" id="loginErr">Incorrect username or password</div>
+    <div class="l-field">
+      <label class="l-lbl">Username</label>
+      <input class="l-inp" id="loginUser" type="text" autocomplete="username"
         autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Enter username"
         onkeydown="if(event.key==='Enter')doLogin()" />
     </div>
-    <div class="login-field">
-      <label class="login-lbl">Password</label>
-      <input class="login-inp" id="loginPass" type="password" autocomplete="current-password"
+    <div class="l-field">
+      <label class="l-lbl">Password</label>
+      <input class="l-inp" id="loginPass" type="password" autocomplete="current-password"
         placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
     </div>
-    <button class="login-btn" onclick="doLogin()">Sign In</button>
-    <div class="login-theme" onclick="toggleTheme()">
-      <span class="tt-ico">&#127769;</span>
-      <div class="tt-track"><div class="tt-knob"></div></div>
-      <span class="tt-ico">&#9728;&#65039;</span>
+    <button class="l-btn" onclick="doLogin()">Sign In</button>
+    <div class="l-theme" onclick="toggleTheme()">
+      <span class="tt-ic">&#127769;</span>
+      <div class="tt-tr"><div class="tt-kn"></div></div>
+      <span class="tt-ic">&#9728;&#65039;</span>
     </div>
   </div>
 </div>
 
-<!-- ═══ APP (hidden until login) ═══ -->
+<!-- APP -->
 <div id="appWrap" style="display:none;">
 
   <!-- Admin modal -->
-  <div class="modal-ov" id="adminModal">
-    <div class="modal">
-      <div class="modal-hnd"></div>
-      <div class="modal-ttl">Admin Settings</div>
-      <label class="modal-lbl">Apps Script Web App URL</label>
-      <input class="modal-inp" id="adminUrl" type="url"
-        placeholder="https://script.google.com/macros/s/..." />
-      <button class="btn-modal" onclick="saveAdminUrl()" style="margin-bottom:8px;">Save &amp; Refresh</button>
-      <button class="btn-modal" onclick="closeModal()"
-        style="background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);">Cancel</button>
+  <div class="mov" id="adminModal">
+    <div class="mo">
+      <div class="moh"></div>
+      <div class="mot">Admin Settings</div>
+      <label class="mol">Apps Script Web App URL</label>
+      <input class="moi" id="adminUrl" type="url" placeholder="https://script.google.com/macros/s/..." />
+      <button class="mos" onclick="saveAdminUrl()">Save &amp; Refresh</button>
+      <button class="moc" onclick="closeModal()">Cancel</button>
     </div>
   </div>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="hdr-top">
-      <div class="brand">
-        <div class="brand-icon">NLR</div>
-        <div class="brand-text">
-          <div class="brand-title">No Location Reported</div>
-          <div class="brand-sub">CarMax &middot; Location 4070</div>
-        </div>
-      </div>
-      <div class="hdr-actions">
-        <span class="user-lbl" id="userLbl"></span>
-        <div class="tt" onclick="toggleTheme()">
-          <span class="tt-ico">&#127769;</span>
-          <div class="tt-track"><div class="tt-knob"></div></div>
-          <span class="tt-ico">&#9728;&#65039;</span>
-        </div>
-        <button class="btn-icon" id="viewBtn" onclick="toggleView()" title="Switch view">&#9776;</button>
-        <button class="btn-icon loading" id="refreshBtn" onclick="loadData()" title="Refresh">&#8635;</button>
-        <button class="btn-icon" id="adminBtn" onclick="openModal()" title="Admin" style="display:none;">&#9881;&#65039;</button>
-        <button class="btn-icon" onclick="doLogout()" title="Sign out" style="font-size:13px;">&#9167;</button>
+  <!-- Full-screen detail (mobile) -->
+  <div class="ds" id="detailScreen">
+    <div class="dsh">
+      <button class="dsbk" onclick="closeDetail()">&#8592; Back</button>
+      <div class="dshi">
+        <div class="dshs" id="dHdrStk"></div>
+        <div class="dshv" id="dHdrVeh"></div>
       </div>
     </div>
-    <div class="rpt-meta" id="rptMeta" style="display:none;">
-      <span class="badge b-date" id="rptDate"></span>
-      <span class="badge b-cnt"  id="rptCnt"></span>
-      <span class="badge b-loc">Loc 4070</span>
-      <span class="badge b-view" id="rptView">Card View</span>
+    <div class="dbody" id="dBody"></div>
+  </div>
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="brand">
+        <div class="b-ico">NLR</div>
+        <div class="b-txt">
+          <div class="b-ttl">No Location Reported</div>
+          <div class="b-sub">CarMax &middot; Location 4070</div>
+        </div>
+      </div>
+      <div class="hdr-act">
+        <span class="u-lbl" id="userLbl" style="display:none;"></span>
+        <div class="tt" onclick="toggleTheme()">
+          <span class="tt-ic">&#127769;</span>
+          <div class="tt-tr"><div class="tt-kn"></div></div>
+          <span class="tt-ic">&#9728;&#65039;</span>
+        </div>
+        <button class="bi" id="viewBtn" onclick="toggleView()" title="Switch view">&#9776;</button>
+        <button class="bi loading" id="refreshBtn" onclick="loadData()" title="Refresh">&#8635;</button>
+        <button class="bi" id="adminBtn" onclick="openModal()" title="Admin" style="display:none;">&#9881;</button>
+        <button class="bi" onclick="doLogout()" title="Sign out" style="font-size:13px;">&#9167;</button>
+      </div>
+    </div>
+    <div class="rmt" id="rptMeta" style="display:none;">
+      <span class="bdg bd" id="rptDate"></span>
+      <span class="bdg bc" id="rptCnt"></span>
+      <span class="bdg bl">Loc 4070</span>
+      <span class="bdg bv" id="rptView">Card View</span>
     </div>
   </div>
 
   <!-- Toolbar -->
-  <div class="toolbar">
-    <div class="srch-wrap">
-      <span class="srch-ico">&#8853;</span>
-      <input class="srch-inp" id="srchInp" type="text"
+  <div class="tb">
+    <div class="sw">
+      <span class="sico">&#8853;</span>
+      <input class="si" id="srchInp" type="text"
         placeholder="Search stock #, VIN, vehicle..." oninput="applyFilters()" />
     </div>
-    <div class="sort-bar" id="sortBar">
+    <div class="sbar" id="sortBar">
       <span style="font-family:var(--fm);font-size:9px;color:var(--text-muted);align-self:center;text-transform:uppercase;letter-spacing:.5px;">Sort:</span>
-      <div class="sort-pill" id="pill-Stock Num"          onclick="sortBy('Stock Num')">Stock # <span class="s-arr">&#8597;</span></div>
-      <div class="sort-pill" id="pill-Year"               onclick="sortBy('Year')">Year <span class="s-arr">&#8597;</span></div>
-      <div class="sort-pill" id="pill-Vehicle Description" onclick="sortBy('Vehicle Description')">Vehicle <span class="s-arr">&#8597;</span></div>
-      <div class="sort-pill" id="pill-Zone Description"   onclick="sortBy('Zone Description')">Zone <span class="s-arr">&#8597;</span></div>
-      <div class="sort-pill" id="pill-Days in Color Zone" onclick="sortBy('Days in Color Zone')">Days <span class="s-arr">&#8597;</span></div>
-      <div class="sort-pill" id="pill-Product Status"     onclick="sortBy('Product Status')">Status <span class="s-arr">&#8597;</span></div>
-      <div class="sort-pill" id="pill-Task Status"        onclick="sortBy('Task Status')">Task <span class="s-arr">&#8597;</span></div>
+      <div class="spill" id="pill-Stock Num"           onclick="sortBy('Stock Num')">Stock # <span class="sarr">&#8597;</span></div>
+      <div class="spill" id="pill-Year"                onclick="sortBy('Year')">Year <span class="sarr">&#8597;</span></div>
+      <div class="spill" id="pill-Vehicle Description"  onclick="sortBy('Vehicle Description')">Vehicle <span class="sarr">&#8597;</span></div>
+      <div class="spill" id="pill-Zone Description"    onclick="sortBy('Zone Description')">Zone <span class="sarr">&#8597;</span></div>
+      <div class="spill" id="pill-Days in Color Zone"  onclick="sortBy('Days in Color Zone')">Days <span class="sarr">&#8597;</span></div>
+      <div class="spill" id="pill-Product Status"      onclick="sortBy('Product Status')">Status <span class="sarr">&#8597;</span></div>
+      <div class="spill" id="pill-Task Status"         onclick="sortBy('Task Status')">Task <span class="sarr">&#8597;</span></div>
     </div>
   </div>
 
-  <!-- Main content -->
+  <!-- Content -->
   <div class="main" id="main">
-    <div class="loading-st"><div class="spin"></div><p>Loading...</p></div>
+    <div class="lst"><div class="spin"></div><p>Loading...</p></div>
   </div>
 
-</div><!-- end appWrap -->
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-// CONFIGURATION — only edit this section
-// ═══════════════════════════════════════════════
-var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5OFLb3zGsAyBNnsvgORmY0OwESWMJPXMrjaiFIrk6xb2waMHv4iyZV7CoXbcDVGv3/exec";
+// CONFIG
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbz5OFLb3zGsAyBNnsvgORmY0OwESWMJPXMrjaiFIrk6xb2waMHv4iyZV7CoXbcDVGv3/exec";
+var USERS={"admin":{pw:"1234",role:"admin"},"user1":{pw:"user1",role:"user"}};
 
-var USERS = {
-  "admin": { pw:"1234",  role:"admin" },
-  "user1": { pw:"user1", role:"user"  }
-};
-// ═══════════════════════════════════════════════
+var SESSION_KEY="nlr_u",THEME_KEY="nlr_t";
+var currentUser=null,allData=[],expandedSn=null,currentView="card",sortCol=null,sortDir="asc",detailSn=null;
 
-var SESSION_KEY = "nlr_u";
-var THEME_KEY   = "nlr_t";
+function isMobile(){return window.matchMedia("(max-width:639px)").matches;}
+function au(){return window._scriptUrl||SCRIPT_URL;}
 
-var currentUser   = null;
-var allData       = [];
-var expandedSn    = null;
-var currentView   = "card";
-var sortCol       = null;
-var sortDir       = "asc";
-
-function isMobile() {
-  return window.matchMedia("(max-width:639px)").matches;
-}
-
-// ── BOOT ──────────────────────────────────────
-window.addEventListener("DOMContentLoaded", function() {
-  // Apply saved theme (no flash)
-  var t = localStorage.getItem(THEME_KEY);
-  if (t) applyTheme(t);
-
-  // Load any admin URL override saved previously
-  var savedUrl = localStorage.getItem("nlr_url_override");
-  if (savedUrl) window._scriptUrl = savedUrl;
-
-  // Restore session
-  var saved = localStorage.getItem(SESSION_KEY);
-  if (saved && USERS[saved]) {
-    currentUser = saved;
-    startApp();
-  }
-  // If no session: login screen already visible (has class "show")
+// BOOT
+window.addEventListener("DOMContentLoaded",function(){
+  var t=localStorage.getItem(THEME_KEY);if(t)applyTheme(t);
+  var ov=localStorage.getItem("nlr_url_override");if(ov)window._scriptUrl=ov;
+  var s=localStorage.getItem(SESSION_KEY);
+  if(s&&USERS[s]){currentUser=s;startApp();}
 });
 
-// ── THEME ─────────────────────────────────────
-function applyTheme(t) {
-  document.documentElement.setAttribute("data-theme", t);
-  localStorage.setItem(THEME_KEY, t);
-}
-function toggleTheme() {
-  applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
-}
+// THEME
+function applyTheme(t){document.documentElement.setAttribute("data-theme",t);localStorage.setItem(THEME_KEY,t);}
+function toggleTheme(){applyTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");}
 
-// ── LOGIN ─────────────────────────────────────
-function doLogin() {
-  var u = (document.getElementById("loginUser").value || "").trim().toLowerCase();
-  var p = document.getElementById("loginPass").value || "";
-  var errEl = document.getElementById("loginErr");
-
-  if (USERS[u] && USERS[u].pw === p) {
-    currentUser = u;
-    localStorage.setItem(SESSION_KEY, u);
-    errEl.classList.remove("show");
-    document.getElementById("loginPass").value = "";
+// LOGIN
+function doLogin(){
+  var u=(document.getElementById("loginUser").value||"").trim().toLowerCase();
+  var p=document.getElementById("loginPass").value||"";
+  var e=document.getElementById("loginErr");
+  if(USERS[u]&&USERS[u].pw===p){
+    currentUser=u;localStorage.setItem(SESSION_KEY,u);
+    e.classList.remove("show");
+    document.getElementById("loginPass").value="";
     document.getElementById("loginWrap").classList.remove("show");
     startApp();
-  } else {
-    errEl.classList.add("show");
-    document.getElementById("loginPass").value = "";
+  }else{
+    e.classList.add("show");
+    document.getElementById("loginPass").value="";
     document.getElementById("loginPass").focus();
   }
 }
-
-// ── START APP (called after login or session restore) ──
-function startApp() {
-  // Set view based on device — mobile gets stacked list, desktop gets cards
-  currentView = isMobile() ? "table" : "card";
-
-  // Show app
-  document.getElementById("appWrap").style.display = "block";
-
-  // Admin button
-  var adminBtn = document.getElementById("adminBtn");
-  if (adminBtn) adminBtn.style.display = (USERS[currentUser].role === "admin") ? "flex" : "none";
-
-  // User label
-  var lbl = document.getElementById("userLbl");
-  if (lbl) { lbl.textContent = currentUser; lbl.style.display = "inline-block"; }
-
-  updateViewUI();
-  loadData();
+function startApp(){
+  currentView=isMobile()?"table":"card";
+  document.getElementById("appWrap").style.display="block";
+  var isA=USERS[currentUser].role==="admin";
+  var ab=document.getElementById("adminBtn");if(ab)ab.style.display=isA?"flex":"none";
+  var ul=document.getElementById("userLbl");if(ul){ul.textContent=currentUser;ul.style.display="inline-block";}
+  updateViewUI();loadData();
 }
-
-// ── LOGOUT ────────────────────────────────────
-function doLogout() {
+function doLogout(){
   localStorage.removeItem(SESSION_KEY);
-  currentUser = null;
-  allData = [];
-  expandedSn = null;
-  document.getElementById("appWrap").style.display = "none";
+  currentUser=null;allData=[];expandedSn=null;detailSn=null;
+  closeDetail();
+  document.getElementById("appWrap").style.display="none";
   document.getElementById("loginWrap").classList.add("show");
-  document.getElementById("loginUser").value = "";
-  document.getElementById("loginPass").value = "";
+  document.getElementById("loginUser").value="";
+  document.getElementById("loginPass").value="";
   document.getElementById("loginErr").classList.remove("show");
-  document.getElementById("rptMeta").style.display = "none";
+  document.getElementById("rptMeta").style.display="none";
 }
 
-// ── VIEW TOGGLE ───────────────────────────────
-function toggleView() {
-  currentView = currentView === "card" ? "table" : "card";
-  updateViewUI();
-  applyFilters();
-}
-
-function updateViewUI() {
-  var btn  = document.getElementById("viewBtn");
-  var lbl  = document.getElementById("rptView");
-  var sbar = document.getElementById("sortBar");
-  if (currentView === "card") {
-    btn.innerHTML = "&#9776;"; btn.title = "Switch to List View";
-    btn.classList.remove("active");
-    if (lbl) lbl.textContent = "Card View";
-    sbar.classList.remove("show");
-  } else {
-    btn.innerHTML = "&#8862;"; btn.title = "Switch to Card View";
-    btn.classList.add("active");
-    if (lbl) lbl.textContent = "List View";
-    sbar.classList.add("show");
+// VIEW
+function toggleView(){currentView=currentView==="card"?"table":"card";updateViewUI();applyFilters();}
+function updateViewUI(){
+  var btn=document.getElementById("viewBtn"),lbl=document.getElementById("rptView"),sb=document.getElementById("sortBar");
+  if(currentView==="card"){
+    btn.innerHTML="&#9776;";btn.title="Switch to List View";btn.classList.remove("active");
+    if(lbl)lbl.textContent="Card View";sb.classList.remove("show");
+  }else{
+    btn.innerHTML="&#8862;";btn.title="Switch to Card View";btn.classList.add("active");
+    if(lbl)lbl.textContent="List View";sb.classList.add("show");
   }
 }
 
-// ── DATA ──────────────────────────────────────
-async function loadData() {
-  var url = window._scriptUrl || SCRIPT_URL;
-  var rb = document.getElementById("refreshBtn");
-  rb.classList.add("loading");
-  document.getElementById("main").innerHTML =
-    '<div class="loading-st"><div class="spin"></div><p>Loading vehicles...</p></div>';
-  document.getElementById("rptMeta").style.display = "none";
-
-  try {
-    var res  = await fetch(url + "?action=read");
-    var json = await res.json();
-    if (json.status !== "ok") throw new Error(json.message || "Error reading sheet");
-    allData = json.data;
-    applyFilters();
-    updateMeta(allData);
-  } catch(e) {
-    document.getElementById("main").innerHTML =
-      '<div class="state-msg"><div class="ico">&#9888;&#65039;</div>' +
-      '<p>Could not load data.<br><small>' + e.message + '</small></p></div>';
+// DATA
+async function loadData(){
+  var rb=document.getElementById("refreshBtn");rb.classList.add("loading");
+  document.getElementById("main").innerHTML='<div class="lst"><div class="spin"></div><p>Loading vehicles...</p></div>';
+  document.getElementById("rptMeta").style.display="none";
+  try{
+    var res=await fetch(au()+"?action=read");
+    var json=await res.json();
+    if(json.status!=="ok")throw new Error(json.message||"Error");
+    allData=json.data;applyFilters();updateMeta(allData);
+  }catch(e){
+    document.getElementById("main").innerHTML='<div class="sm"><div class="ic">&#9888;&#65039;</div><p>Could not load data.<br><small>'+e.message+'</small></p></div>';
   }
   rb.classList.remove("loading");
 }
 
-// ── FILTER + SORT ─────────────────────────────
-function applyFilters() {
-  var q = (document.getElementById("srchInp").value || "").toLowerCase();
-  var data = q ? allData.filter(function(r) {
-    return ["Stock Num","Vehicle Description","VIN","Zone Description",
-            "Product Status","Last Scan Location","Task Status"].some(function(k) {
-      return String(r[k] || "").toLowerCase().indexOf(q) !== -1;
-    });
-  }) : allData.slice();
-
-  if (sortCol) {
-    data.sort(function(a, b) {
-      var va = String(a[sortCol] || "").toLowerCase();
-      var vb = String(b[sortCol] || "").toLowerCase();
-      var na = parseFloat(va), nb = parseFloat(vb);
-      if (!isNaN(na) && !isNaN(nb)) { va = na; vb = nb; }
-      if (va < vb) return sortDir === "asc" ? -1 : 1;
-      if (va > vb) return sortDir === "asc" ?  1 : -1;
+// FILTER + SORT
+function applyFilters(){
+  var q=(document.getElementById("srchInp").value||"").toLowerCase();
+  var data=q?allData.filter(function(r){
+    return["Stock Num","Vehicle Description","VIN","Zone Description","Product Status","Last Scan Location","Task Status"].some(function(k){return String(r[k]||"").toLowerCase().indexOf(q)!==-1;});
+  }):allData.slice();
+  if(sortCol){
+    data.sort(function(a,b){
+      var va=String(a[sortCol]||"").toLowerCase(),vb=String(b[sortCol]||"").toLowerCase();
+      var na=parseFloat(va),nb=parseFloat(vb);
+      if(!isNaN(na)&&!isNaN(nb)){va=na;vb=nb;}
+      if(va<vb)return sortDir==="asc"?-1:1;
+      if(va>vb)return sortDir==="asc"?1:-1;
       return 0;
     });
   }
-
-  if (currentView === "card") renderCards(data);
-  else if (isMobile())        renderStacked(data);
-  else                        renderTable(data);
+  if(currentView==="card")renderCards(data);
+  else if(isMobile())renderMobList(data);
+  else renderTable(data);
+}
+function sortBy(col){
+  if(sortCol===col)sortDir=sortDir==="asc"?"desc":"asc";
+  else{sortCol=col;sortDir="asc";}
+  updatePills();applyFilters();
+}
+function updatePills(){
+  document.querySelectorAll(".spill").forEach(function(p){
+    p.classList.remove("asc","desc");var a=p.querySelector(".sarr");if(a)a.innerHTML="&#8597;";
+  });
+  if(!sortCol)return;
+  var pill=document.getElementById("pill-"+sortCol);
+  if(pill){pill.classList.add(sortDir);var a=pill.querySelector(".sarr");if(a)a.innerHTML=sortDir==="asc"?"&#8593;":"&#8595;";}
 }
 
-function sortBy(col) {
-  if (sortCol === col) sortDir = sortDir === "asc" ? "desc" : "asc";
-  else { sortCol = col; sortDir = "asc"; }
-  updatePills();
+// CARD VIEW
+function renderCards(data){
+  var m=document.getElementById("main");
+  if(!data.length){m.innerHTML=emptyMsg();return;}
+  m.innerHTML='<div class="cg">'+data.map(buildCard).join("")+'</div>';
+  if(expandedSn){var el=document.getElementById("card-"+expandedSn);if(el)el.classList.add("open");}
+}
+function buildCard(r){
+  var sn=r["Stock Num"]||"",yr=r["Year"]||"",desc=r["Vehicle Description"]||"";
+  var sd=r["Last Scan Date"]||"",sl=r["Last Scan Location"]||"";
+  var zn=r["Zone Description"]||"",dc=r["Days in Color Zone"]||"0";
+  var vin=r["VIN"]||"",ps=r["Product Status"]||"",ds=r["Days In Status"]||"";
+  var cmt=r["Comments"]||"",ts=r["Task Status"]||"";
+  var isO=expandedSn===sn,hc=cmt.trim()!=="",dn=parseInt(dc)||0;
+  var dc2=dn>=3?"td":"tok",tc=ts==="Completed"?"tcp":ts==="In Progress"?"tip":"tn",tl=ts||"No Status";
+  return '<div class="card'+(hc?" hn":"")+(isO?" open":"")+'\" id=\"card-'+sn+'">' +
+    '<div class="ch" onclick="toggleCard(\''+sn+'\')">' +
+    '<div class="sp">#'+sn+'</div>' +
+    '<div class="cb"><div class="vn"><span class="vy">'+yr+'</span>'+desc+'</div>' +
+    '<div class="ct"><span class="tag tz">'+(zn||sl)+'</span><span class="tag ts">'+ps+'</span><span class="tag '+dc2+'">'+dc+' day'+(dn!==1?'s':'')+'</span><span class="tag '+tc+'">'+tl+'</span></div></div>' +
+    '<span class="cc">&#9660;</span></div>' +
+    '<div class="cd"><div class="dg">' +
+    '<div class="di"><div class="dl">Scan Date</div><div class="dv">'+sd+'</div></div>' +
+    '<div class="di"><div class="dl">Location</div><div class="dv">'+sl+'</div></div>' +
+    '<div class="di"><div class="dl">Days In Status</div><div class="dv">'+ds+'</div></div>' +
+    '<div class="di"><div class="dl">Color Zone Days</div><div class="dv">'+dc+'</div></div>' +
+    '<div class="di full"><div class="dl">VIN</div><div class="dv">'+vin+'</div></div>' +
+    '</div></div>'+buildCmtSec(sn,cmt,hc,ts)+'</div>';
+}
+function toggleCard(sn){
+  if(expandedSn&&expandedSn!==sn){var p=document.getElementById("card-"+expandedSn);if(p)p.classList.remove("open");}
+  expandedSn=expandedSn===sn?null:sn;
+  var el=document.getElementById("card-"+sn);if(el)el.classList.toggle("open",expandedSn===sn);
+}
+
+// MOBILE LIST
+function renderMobList(data){
+  var m=document.getElementById("main");
+  if(!data.length){m.innerHTML=emptyMsg();return;}
+  m.innerHTML='<div class="ml">'+data.map(buildMobRow).join("")+'</div>';
+}
+function buildMobRow(r){
+  var sn=r["Stock Num"]||"",yr=r["Year"]||"",desc=r["Vehicle Description"]||"";
+  var zn=r["Zone Description"]||"",sl=r["Last Scan Location"]||"";
+  var dc=r["Days in Color Zone"]||"0",ps=r["Product Status"]||"";
+  var cmt=r["Comments"]||"",ts=r["Task Status"]||"";
+  var hc=cmt.trim()!=="",dn=parseInt(dc)||0;
+  var dayTag=dn>=3?"td":"tok";
+  var tbC=ts==="Completed"?"cp":"ip",tbL=ts==="Completed"?"Completed":"In Progress";
+  return '<div class="mr'+(hc?" hn":"")+'\" onclick=\"openDetail(\''+sn+'\')">' +
+    '<div class="mrl">' +
+    '<div class="mrs">#'+sn+'</div>' +
+    '<div class="mrv"><span class="mry">'+yr+'</span>'+desc+'</div>' +
+    '<div class="mrm"><span class="tag tz">'+(zn||sl||"—")+'</span><span class="tag ts">'+ps+'</span><span class="tag '+dayTag+'">'+dc+' day'+(dn!==1?'s':'')+'</span></div>' +
+    '</div>' +
+    '<div class="mrr"><span class="mtb '+tbC+'">'+tbL+'</span><span class="mch">&#8250;</span></div>' +
+    '</div>';
+}
+
+// FULL-SCREEN DETAIL
+function openDetail(sn){
+  var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});
+  if(!r)return;
+  detailSn=sn;
+  var yr=r["Year"]||"",desc=r["Vehicle Description"]||"";
+  var sd=r["Last Scan Date"]||"—",sl=r["Last Scan Location"]||"—";
+  var zn=r["Zone Description"]||"—",dc=r["Days in Color Zone"]||"0";
+  var vin=r["VIN"]||"—",ps=r["Product Status"]||"—",ds=r["Days In Status"]||"—";
+  var cmt=r["Comments"]||"",ts=r["Task Status"]||"";
+  var hc=cmt.trim()!=="",isCP=ts==="Completed";
+  document.getElementById("dHdrStk").textContent="#"+sn;
+  document.getElementById("dHdrVeh").textContent=yr+" "+desc;
+  var body=
+    '<div class="dsec"><div class="dsec-t">Vehicle Details</div><div class="dff">' +
+    '<div class="df"><div class="dfl">Stock #</div><div class="dfv">'+sn+'</div></div>' +
+    '<div class="df"><div class="dfl">Year</div><div class="dfv">'+yr+'</div></div>' +
+    '<div class="df full"><div class="dfl">Vehicle</div><div class="dfv">'+desc+'</div></div>' +
+    '<div class="df full"><div class="dfl">VIN</div><div class="dfv">'+vin+'</div></div>' +
+    '</div></div>' +
+    '<div class="dsec"><div class="dsec-t">Location &amp; Status</div><div class="dff">' +
+    '<div class="df"><div class="dfl">Last Scan Date</div><div class="dfv">'+sd+'</div></div>' +
+    '<div class="df"><div class="dfl">Scan Location</div><div class="dfv">'+sl+'</div></div>' +
+    '<div class="df"><div class="dfl">Zone</div><div class="dfv">'+zn+'</div></div>' +
+    '<div class="df"><div class="dfl">Days in Zone</div><div class="dfv">'+dc+'</div></div>' +
+    '<div class="df"><div class="dfl">Days In Status</div><div class="dfv">'+ds+'</div></div>' +
+    '<div class="df"><div class="dfl">Product Status</div><div class="dfv">'+ps+'</div></div>' +
+    '</div></div>' +
+    '<div class="dsec"><div class="dsec-t">Task Status</div>' +
+    '<button class="dsb '+(isCP?"cp":"ip")+'" id="dstb-'+sn+'" onclick="detSetTs(\''+sn+'\')">'+
+    (isCP?"&#10003; Completed":"&#9203; In Progress")+'</button></div>' +
+    '<div class="dsec"><div class="dsec-t">Comments</div>' +
+    '<div class="dcr"><div class="dct'+(hc?"":" empty")+'" id="dctxt-'+sn+'">'+
+    (hc?cmt:"No comment yet")+'</div>' +
+    '<button class="deb" onclick="detStartEdit(\''+sn+'\')">'+( hc?"Edit":"+ Add")+'</button></div>' +
+    '<textarea class="dca" id="dcinp-'+sn+'" placeholder="Add notes...">'+cmt+'</textarea>' +
+    '<div class="dacts" id="dcact-'+sn+'">' +
+    '<button class="btn bcn" onclick="detCancelEdit(\''+sn+'\')">Cancel</button>' +
+    '<button class="btn bsv" id="dcsav-'+sn+'" onclick="detSaveComment(\''+sn+'\')">Save</button>' +
+    '</div></div>' +
+    '<div style="height:32px;"></div>';
+  document.getElementById("dBody").innerHTML=body;
+  document.getElementById("dBody").scrollTop=0;
+  document.getElementById("detailScreen").classList.add("show");
+}
+function closeDetail(){
+  detailSn=null;
+  document.getElementById("detailScreen").classList.remove("show");
   applyFilters();
 }
-function updatePills() {
-  document.querySelectorAll(".sort-pill").forEach(function(p) {
-    p.classList.remove("asc","desc");
-    var a = p.querySelector(".s-arr"); if (a) a.innerHTML = "&#8597;";
-  });
-  if (!sortCol) return;
-  var pill = document.getElementById("pill-" + sortCol);
-  if (pill) {
-    pill.classList.add(sortDir);
-    var a = pill.querySelector(".s-arr");
-    if (a) a.innerHTML = sortDir === "asc" ? "&#8593;" : "&#8595;";
-  }
+
+// DETAIL — TASK STATUS
+async function detSetTs(sn){
+  var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});if(!r)return;
+  var cur=r["Task Status"]||"In Progress",nxt=cur==="Completed"?"In Progress":"Completed";
+  var btn=document.getElementById("dstb-"+sn);
+  if(btn){btn.classList.remove("ip","cp");btn.classList.add("saving");btn.classList.add(nxt==="Completed"?"cp":"ip");btn.innerHTML=nxt==="Completed"?"&#10003; Completed":"&#9203; In Progress";}
+  try{
+    await fetch(au()+"?action=updateTaskStatus&stockNum="+encodeURIComponent(sn)+"&taskStatus="+encodeURIComponent(nxt),{mode:"no-cors"});
+    r["Task Status"]=nxt;toast(nxt==="Completed"?"Marked Completed":"Marked In Progress");
+    if(btn)btn.classList.remove("saving");
+  }catch(e){toast("Save failed: "+e.message,true);if(btn)btn.classList.remove("saving");}
 }
 
-// ── CARD VIEW ─────────────────────────────────
-function renderCards(data) {
-  var m = document.getElementById("main");
-  if (!data.length) { m.innerHTML = emptyMsg(); return; }
-  m.innerHTML = '<div class="cards-grid">' + data.map(buildCard).join("") + '</div>';
-  // Restore open state
-  if (expandedSn) {
-    var el = document.getElementById("card-" + expandedSn);
-    if (el) el.classList.add("open");
-  }
+// DETAIL — COMMENT
+function detStartEdit(sn){
+  var ta=document.getElementById("dcinp-"+sn),ac=document.getElementById("dcact-"+sn);
+  if(ta){ta.style.display="block";ac.style.display="flex";ta.focus();}
 }
-function buildCard(r) {
-  var sn = r["Stock Num"]||"", yr = r["Year"]||"", desc = r["Vehicle Description"]||"";
-  var sd = r["Last Scan Date"]||"", sl = r["Last Scan Location"]||"";
-  var zn = r["Zone Description"]||"", dc = r["Days in Color Zone"]||"0";
-  var vin= r["VIN"]||"", ps = r["Product Status"]||"", ds = r["Days In Status"]||"";
-  var cmt= r["Comments"]||"", ts = r["Task Status"]||"";
-  var isOpen = expandedSn === sn;
-  var hasCmt = cmt.trim() !== "";
-  var dn  = parseInt(dc)||0;
-  var dc2 = dn >= 3 ? "tag-days" : "tag-ok";
-  var tc  = ts === "Completed" ? "tag-cp" : ts === "In Progress" ? "tag-ip" : "tag-none";
-  var tl  = ts || "No Status";
-  return '<div class="card'+(hasCmt?" has-note":"")+(isOpen?" open":"")+'\" id=\"card-'+sn+'">' +
-    '<div class="card-hdr" onclick="toggleCard(\''+sn+'\')">' +
-    '<div class="stk-pill">#'+sn+'</div>' +
-    '<div class="card-body">' +
-    '<div class="veh-name"><span class="veh-year">'+yr+'</span>'+desc+'</div>' +
-    '<div class="card-tags">' +
-    '<span class="tag tag-zone">'+(zn||sl)+'</span>' +
-    '<span class="tag tag-status">'+ps+'</span>' +
-    '<span class="tag '+dc2+'">'+dc+' day'+(dn!==1?'s':'')+'</span>' +
-    '<span class="tag '+tc+'">'+tl+'</span>' +
-    '</div></div>' +
-    '<span class="card-chev">&#9660;</span></div>' +
-    '<div class="card-detail">' +
-    '<div class="det-grid">' +
-    '<div class="det-item"><div class="det-lbl">Scan Date</div><div class="det-val">'+sd+'</div></div>' +
-    '<div class="det-item"><div class="det-lbl">Location</div><div class="det-val">'+sl+'</div></div>' +
-    '<div class="det-item"><div class="det-lbl">Days In Status</div><div class="det-val">'+ds+'</div></div>' +
-    '<div class="det-item"><div class="det-lbl">Color Zone Days</div><div class="det-val">'+dc+'</div></div>' +
-    '<div class="det-item full"><div class="det-lbl">VIN</div><div class="det-val">'+vin+'</div></div>' +
-    '</div></div>' +
-    buildCmtSection(sn, cmt, hasCmt, ts) + '</div>';
+function detCancelEdit(sn){
+  var ta=document.getElementById("dcinp-"+sn),ac=document.getElementById("dcact-"+sn);
+  var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});
+  if(ta&&r)ta.value=r["Comments"]||"";if(ta)ta.style.display="none";if(ac)ac.style.display="none";
+}
+async function detSaveComment(sn){
+  var ta=document.getElementById("dcinp-"+sn),btn=document.getElementById("dcsav-"+sn);
+  var cmt=ta?ta.value.trim():"";
+  btn.disabled=true;btn.innerHTML='<span class="ssm"></span>';
+  try{
+    await fetch(au()+"?action=updateComment&stockNum="+encodeURIComponent(sn)+"&comment="+encodeURIComponent(cmt),{mode:"no-cors"});
+    var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});if(r)r["Comments"]=cmt;
+    var ct=document.getElementById("dctxt-"+sn);
+    if(ct){ct.textContent=cmt||"No comment yet";ct.className="dct"+(cmt?"":" empty");}
+    if(ta)ta.style.display="none";var ac=document.getElementById("dcact-"+sn);if(ac)ac.style.display="none";
+    btn.disabled=false;btn.innerHTML="Save";
+    toast(cmt?"Comment saved":"Comment cleared");
+  }catch(e){toast("Save failed: "+e.message,true);btn.disabled=false;btn.innerHTML="Save";}
 }
 
-// ── STACKED LIST (mobile) ─────────────────────
-function renderStacked(data) {
-  var m = document.getElementById("main");
-  if (!data.length) { m.innerHTML = emptyMsg(); return; }
-  m.innerHTML = '<div class="stk-list">' + data.map(buildSrow).join("") + '</div>';
-  // Restore open state after DOM rebuild
-  if (expandedSn) {
-    var el = document.getElementById("srow-" + expandedSn);
-    if (el) el.classList.add("open");
-  }
-}
-function buildSrow(r) {
-  var sn = r["Stock Num"]||"", yr = r["Year"]||"", desc = r["Vehicle Description"]||"";
-  var sd = r["Last Scan Date"]||"", sl = r["Last Scan Location"]||"";
-  var zn = r["Zone Description"]||"", dc = r["Days in Color Zone"]||"0";
-  var vin= r["VIN"]||"", ps = r["Product Status"]||"", ds = r["Days In Status"]||"";
-  var cmt= r["Comments"]||"", ts = r["Task Status"]||"";
-  var isOpen = expandedSn === sn;
-  var hasCmt = cmt.trim() !== "";
-  var tbCls  = ts === "Completed" ? "cp" : "ip";
-  var tbLbl  = ts === "Completed" ? "Completed" : "In Progress";
-  return '<div class="srow'+(hasCmt?" has-note":"")+(isOpen?" open":"")+'\" id=\"srow-'+sn+'">' +
-    '<div class="srow-hdr" onclick="toggleSrow(\''+sn+'\')">' +
-    '<div class="srow-top">' +
-    '<span class="srow-stk">#'+sn+'</span>' +
-    '<span class="srow-tsbadge '+tbCls+'">'+tbLbl+'</span>' +
-    '</div>' +
-    '<div class="srow-veh"><span class="srow-yr">'+yr+'</span>'+desc+'</div>' +
-    '<div class="srow-fields">' +
-    '<div><div class="srow-flbl">Zone</div><div class="srow-fval">'+(zn||sl||"—")+'</div></div>' +
-    '<div><div class="srow-flbl">Scan Date</div><div class="srow-fval">'+(sd||"—")+'</div></div>' +
-    '<div><div class="srow-flbl">Days</div><div class="srow-fval">'+dc+'</div></div>' +
-    '<div><div class="srow-flbl">Days In Status</div><div class="srow-fval">'+(ds||"—")+'</div></div>' +
-    '</div>' +
-    '<div class="srow-foot">' +
-    '<span class="srow-prod tag-status td-tag">'+ps+'</span>' +
-    '<span class="srow-prev'+(hasCmt?" has":"")+'">'+( hasCmt ? trunc(cmt,32) : "No comment")+'</span>' +
-    '<span class="srow-chev">&#9660;</span>' +
-    '</div></div>' +
-    '<div class="srow-det">' +
-    '<div class="srow-det-grid">' +
-    '<div class="srow-det-item"><div class="det-lbl">Scan Location</div><div class="det-val">'+(sl||"—")+'</div></div>' +
-    '<div class="srow-det-item"><div class="det-lbl">VIN</div><div class="det-val">'+(vin||"—")+'</div></div>' +
-    '</div>' +
-    buildCmtSection(sn, cmt, hasCmt, ts) + '</div></div>';
-}
-
-// ── TABLE (desktop list view) ─────────────────
-var TCOLS = [
-  {k:"Stock Num",          l:"Stock #",   c:"acct"},
-  {k:"Year",               l:"Year",      c:"mono"},
-  {k:"Vehicle Description",l:"Vehicle",   c:""},
-  {k:"Last Scan Date",     l:"Scan Date", c:"mono"},
-  {k:"Zone Description",   l:"Zone",      c:""},
-  {k:"Days in Color Zone", l:"Days",      c:"mono"},
-  {k:"Product Status",     l:"Prod Status",c:""},
-  {k:"Task Status",        l:"Task",      c:""},
-  {k:"Comments",           l:"Notes",     c:""}
+// DESKTOP TABLE
+var TCOLS=[
+  {k:"Stock Num",l:"Stock #",c:"ac"},{k:"Year",l:"Year",c:"mo"},
+  {k:"Vehicle Description",l:"Vehicle",c:""},{k:"Last Scan Date",l:"Scan Date",c:"mo"},
+  {k:"Zone Description",l:"Zone",c:""},{k:"Days in Color Zone",l:"Days",c:"mo"},
+  {k:"Product Status",l:"Prod Status",c:""},{k:"Task Status",l:"Task",c:""},{k:"Comments",l:"Notes",c:""}
 ];
-function renderTable(data) {
-  var m = document.getElementById("main");
-  if (!data.length) { m.innerHTML = emptyMsg(); return; }
-  var h = '<div class="tbl-wrap"><table><thead><tr>';
-  TCOLS.forEach(function(col) {
-    var act = sortCol === col.k;
-    var bc  = act ? (sortDir === "asc" ? "asc" : "desc") : "";
-    var arr = act ? (sortDir === "asc" ? "&#8593;" : "&#8595;") : "&#8597;";
-    h += '<th><button class="th-btn '+bc+'" onclick="sortBy(\''+col.k+'\')">'+
-         col.l+' <span class="th-ico">'+arr+'</span></button></th>';
+function renderTable(data){
+  var m=document.getElementById("main");
+  if(!data.length){m.innerHTML=emptyMsg();return;}
+  var h='<div class="tw"><table><thead><tr>';
+  TCOLS.forEach(function(col){
+    var act=sortCol===col.k,bc=act?(sortDir==="asc"?"asc":"desc"):"",arr=act?(sortDir==="asc"?"&#8593;":"&#8595;"):"&#8597;";
+    h+='<th><button class="thb '+bc+'" onclick="sortBy(\''+col.k+'\')">'+col.l+' <span class="tic">'+arr+'</span></button></th>';
   });
-  h += '</tr></thead><tbody>';
-  data.forEach(function(r) {
-    var sn  = r["Stock Num"]||"";
-    var hasCmt = (r["Comments"]||"").trim() !== "";
-    var isOpen = expandedSn === sn;
-    var dn  = parseInt(r["Days in Color Zone"])||0;
-    var ts  = r["Task Status"]||"";
-    h += '<tr class="'+(hasCmt?"has-note ":"")+(isOpen?"row-open":"")+
-         '" onclick="toggleTrow(\''+sn+'\')">';
-    TCOLS.forEach(function(col) {
-      var v = r[col.k]||"";
-      var cell = "";
-      if (col.k === "Days in Color Zone") {
-        cell = '<span class="td-tag '+(dn>=3?"tag-days":"tag-ok")+'">'+v+'</span>';
-      } else if (col.k === "Product Status") {
-        cell = '<span class="td-tag tag-status">'+v+'</span>';
-      } else if (col.k === "Task Status") {
-        var tc = v==="Completed"?"tag-cp":v==="In Progress"?"tag-ip":"tag-none";
-        cell = '<span class="td-tag '+tc+'">'+(v||"—")+'</span>';
-      } else if (col.k === "Comments") {
-        cell = v ? '<span style="font-size:11px;color:var(--accent);">&#9998;</span> '+trunc(v,22)
-                 : '<span style="color:var(--text-muted);font-style:italic;font-size:11px;">—</span>';
-      } else { cell = v; }
-      h += '<td class="'+col.c+'">'+cell+'</td>';
+  h+='</tr></thead><tbody>';
+  data.forEach(function(r){
+    var sn=r["Stock Num"]||"",hc=(r["Comments"]||"").trim()!=="",isO=expandedSn===sn;
+    var dn=parseInt(r["Days in Color Zone"])||0,ts=r["Task Status"]||"";
+    h+='<tr class="'+(hc?"hn ":"")+(isO?"ro":"")+'" onclick="toggleTrow(\''+sn+'\')">';
+    TCOLS.forEach(function(col){
+      var v=r[col.k]||"",cell="";
+      if(col.k==="Days in Color Zone"){cell='<span class="tt2 '+(dn>=3?"td":"tok")+'">'+v+'</span>';}
+      else if(col.k==="Product Status"){cell='<span class="tt2 ts">'+v+'</span>';}
+      else if(col.k==="Task Status"){var tc=v==="Completed"?"tcp":v==="In Progress"?"tip":"tn";cell='<span class="tt2 '+tc+'">'+(v||"—")+'</span>';}
+      else if(col.k==="Comments"){cell=v?'<span style="font-size:11px;color:var(--accent);">&#9998;</span> '+trunc(v,22):'<span style="color:var(--text-muted);font-style:italic;font-size:11px;">—</span>';}
+      else{cell=v;}
+      h+='<td class="'+col.c+'">'+cell+'</td>';
     });
-    h += '</tr>';
-    h += '<tr class="det-tr'+(isOpen?" open":"")+'\" id=\"trow-'+sn+'">' +
-         '<td class="det-tc" colspan="'+TCOLS.length+'">' +
-         '<div class="det-inner">' +
-         '<div class="det-row-grid">' +
-         '<div><div class="det-lbl">VIN</div><div class="det-val">'+(r["VIN"]||"—")+'</div></div>' +
-         '<div><div class="det-lbl">Scan Location</div><div class="det-val">'+(r["Last Scan Location"]||"—")+'</div></div>' +
-         '<div><div class="det-lbl">Days In Status</div><div class="det-val">'+(r["Days In Status"]||"—")+'</div></div>' +
-         '</div>' +
-         buildCmtSection(sn, r["Comments"]||"", hasCmt, ts) +
-         '</div></td></tr>';
+    h+='</tr><tr class="dtr'+(isO?" open":"")+'\" id=\"trow-'+sn+'">' +
+       '<td class="dtc" colspan="'+TCOLS.length+'"><div class="din">' +
+       '<div class="drg">' +
+       '<div><div class="dl">VIN</div><div class="dv">'+(r["VIN"]||"—")+'</div></div>' +
+       '<div><div class="dl">Scan Location</div><div class="dv">'+(r["Last Scan Location"]||"—")+'</div></div>' +
+       '<div><div class="dl">Days In Status</div><div class="dv">'+(r["Days In Status"]||"—")+'</div></div>' +
+       '</div>'+buildCmtSec(sn,r["Comments"]||"",hc,ts)+
+       '</div></td></tr>';
   });
-  h += '</tbody></table></div>';
-  m.innerHTML = h;
-  // Restore open state
-  if (expandedSn) {
-    var dt = document.getElementById("trow-" + expandedSn);
-    if (dt) {
-      dt.classList.add("open");
-      var tr = dt.previousElementSibling;
-      if (tr) tr.classList.add("row-open");
-    }
-  }
+  h+='</tbody></table></div>';
+  m.innerHTML=h;
+  if(expandedSn){var dt=document.getElementById("trow-"+expandedSn);if(dt){dt.classList.add("open");var tr=dt.previousElementSibling;if(tr)tr.classList.add("ro");}}
+}
+function toggleTrow(sn){
+  if(expandedSn&&expandedSn!==sn){var pd=document.getElementById("trow-"+expandedSn);if(pd){pd.classList.remove("open");var pt=pd.previousElementSibling;if(pt)pt.classList.remove("ro");}}
+  expandedSn=expandedSn===sn?null:sn;
+  var dt=document.getElementById("trow-"+sn);
+  if(dt){dt.classList.toggle("open",expandedSn===sn);var tr=dt.previousElementSibling;if(tr)tr.classList.toggle("ro",expandedSn===sn);}
 }
 
-// ── COMMENT + STATUS SECTION ──────────────────
-function buildCmtSection(sn, cmt, hasCmt, ts) {
-  var eff = ts || "In Progress";
-  var isCP = eff === "Completed";
-  var bCls = isCP ? " cp" : " ip";
-  var bLbl = isCP ? "&#10003; Completed" : "&#9203; In Progress";
-  return '<div class="cmt-sec">' +
-    '<div class="det-lbl" style="margin-bottom:7px;">Task Status</div>' +
-    '<div class="sts-wrap">' +
-    '<button class="sts-btn'+bCls+'" id="sbbtn-'+sn+'" onclick="setTaskStatus(\''+sn+'\')">'+bLbl+'</button>' +
-    '</div>' +
-    '<div class="det-lbl" style="margin-top:13px;margin-bottom:7px;">Comments</div>' +
-    '<div class="cmt-row">' +
-    '<div class="cmt-txt'+(hasCmt?"":" empty")+'" id="ctxt-'+sn+'">'+
-    (hasCmt?cmt:"No comment yet")+'</div>' +
-    '<button class="btn-edit" onclick="startEdit(\''+sn+'\')">'+( hasCmt?"Edit":"+ Add")+'</button>' +
-    '</div>' +
-    '<textarea class="cmt-area" id="cinp-'+sn+'" placeholder="Add notes...">'+cmt+'</textarea>' +
-    '<div class="cmt-acts" id="cact-'+sn+'">' +
-    '<button class="btn btn-cancel" onclick="cancelEdit(\''+sn+'\')">Cancel</button>' +
-    '<button class="btn btn-save" id="csav-'+sn+'" onclick="saveComment(\''+sn+'\')">Save</button>' +
+// COMMENT + STATUS (card/desktop)
+function buildCmtSec(sn,cmt,hc,ts){
+  var eff=ts||"In Progress",isCP=eff==="Completed";
+  var bC=isCP?" cp":" ip",bL=isCP?"&#10003; Completed":"&#9203; In Progress";
+  return '<div class="cs"><div class="dl" style="margin-bottom:7px;">Task Status</div>' +
+    '<div class="sw2"><button class="stb'+bC+'" id="stb-'+sn+'" onclick="setTs(\''+sn+'\')">'+bL+'</button></div>' +
+    '<div class="dl" style="margin-top:13px;margin-bottom:7px;">Comments</div>' +
+    '<div class="cr"><div class="ctxt'+(hc?"":" empty")+'" id="ctxt-'+sn+'">'+( hc?cmt:"No comment yet")+'</div>' +
+    '<button class="btn-edit" onclick="startEdit(\''+sn+'\')">'+( hc?"Edit":"+ Add")+'</button></div>' +
+    '<textarea class="ca" id="cinp-'+sn+'" placeholder="Add notes...">'+cmt+'</textarea>' +
+    '<div class="cacts" id="cact-'+sn+'">' +
+    '<button class="btn bcn" onclick="cancelEdit(\''+sn+'\')">Cancel</button>' +
+    '<button class="btn bsv" id="csav-'+sn+'" onclick="saveComment(\''+sn+'\')">Save</button>' +
     '</div></div>';
 }
-
-// ── TOGGLE HANDLERS ───────────────────────────
-function toggleCard(sn) {
-  // Close previously open card
-  if (expandedSn && expandedSn !== sn) {
-    var prev = document.getElementById("card-" + expandedSn);
-    if (prev) prev.classList.remove("open");
-  }
-  expandedSn = expandedSn === sn ? null : sn;
-  var el = document.getElementById("card-" + sn);
-  if (el) el.classList.toggle("open", expandedSn === sn);
-}
-function toggleSrow(sn) {
-  // Close previously open row
-  if (expandedSn && expandedSn !== sn) {
-    var prev = document.getElementById("srow-" + expandedSn);
-    if (prev) prev.classList.remove("open");
-  }
-  expandedSn = expandedSn === sn ? null : sn;
-  var el = document.getElementById("srow-" + sn);
-  if (el) el.classList.toggle("open", expandedSn === sn);
-}
-function toggleTrow(sn) {
-  // Close previously open row
-  if (expandedSn && expandedSn !== sn) {
-    var prevDt = document.getElementById("trow-" + expandedSn);
-    if (prevDt) {
-      prevDt.classList.remove("open");
-      var prevTr = prevDt.previousElementSibling;
-      if (prevTr) prevTr.classList.remove("row-open");
-    }
-  }
-  expandedSn = expandedSn === sn ? null : sn;
-  var dt = document.getElementById("trow-" + sn);
-  if (dt) {
-    dt.classList.toggle("open", expandedSn === sn);
-    var tr = dt.previousElementSibling;
-    if (tr) tr.classList.toggle("row-open", expandedSn === sn);
-  }
-}
-
-// ── EDIT COMMENT ──────────────────────────────
-function startEdit(sn) {
+async function setTs(sn){
   event.stopPropagation();
-  // Expand the row using CSS class (no inline styles)
-  if (currentView === "card") {
-    if (expandedSn && expandedSn !== sn) {
-      var prev = document.getElementById("card-" + expandedSn);
-      if (prev) prev.classList.remove("open");
-    }
-    expandedSn = sn;
-    var el = document.getElementById("card-" + sn);
-    if (el) el.classList.add("open");
-  } else if (isMobile()) {
-    if (expandedSn && expandedSn !== sn) {
-      var prev = document.getElementById("srow-" + expandedSn);
-      if (prev) prev.classList.remove("open");
-    }
-    expandedSn = sn;
-    var el = document.getElementById("srow-" + sn);
-    if (el) el.classList.add("open");
-  } else {
-    if (expandedSn && expandedSn !== sn) {
-      var prevDt = document.getElementById("trow-" + expandedSn);
-      if (prevDt) {
-        prevDt.classList.remove("open");
-        var pt = prevDt.previousElementSibling; if (pt) pt.classList.remove("row-open");
-      }
-    }
-    expandedSn = sn;
-    var dt = document.getElementById("trow-" + sn);
-    if (dt) {
-      dt.classList.add("open");
-      var tr = dt.previousElementSibling; if (tr) tr.classList.add("row-open");
-    }
-  }
-  setTimeout(function() {
-    var ta = document.getElementById("cinp-" + sn);
-    var ac = document.getElementById("cact-" + sn);
-    if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); }
-  }, 60);
+  var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});if(!r)return;
+  var cur=r["Task Status"]||"In Progress",nxt=cur==="Completed"?"In Progress":"Completed";
+  var btn=document.getElementById("stb-"+sn);
+  if(btn){btn.classList.remove("ip","cp");btn.classList.add("saving");btn.classList.add(nxt==="Completed"?"cp":"ip");btn.innerHTML=nxt==="Completed"?"&#10003; Completed":"&#9203; In Progress";}
+  try{
+    await fetch(au()+"?action=updateTaskStatus&stockNum="+encodeURIComponent(sn)+"&taskStatus="+encodeURIComponent(nxt),{mode:"no-cors"});
+    r["Task Status"]=nxt;toast(nxt==="Completed"?"Marked Completed":"Marked In Progress");if(btn)btn.classList.remove("saving");
+  }catch(e){toast("Save failed: "+e.message,true);if(btn)btn.classList.remove("saving");}
 }
-function cancelEdit(sn) {
+function startEdit(sn){
   event.stopPropagation();
-  var ta = document.getElementById("cinp-" + sn);
-  var ac = document.getElementById("cact-" + sn);
-  var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
-  if (ta && row) ta.value = row["Comments"] || "";
-  if (ta) ta.style.display = "none";
-  if (ac) ac.style.display = "none";
+  if(expandedSn&&expandedSn!==sn){var p=document.getElementById("card-"+expandedSn);if(p)p.classList.remove("open");}
+  expandedSn=sn;var el=document.getElementById("card-"+sn);if(el)el.classList.add("open");
+  setTimeout(function(){var ta=document.getElementById("cinp-"+sn),ac=document.getElementById("cact-"+sn);if(ta){ta.style.display="block";ac.style.display="flex";ta.focus();}},60);
 }
-async function saveComment(sn) {
+function cancelEdit(sn){
   event.stopPropagation();
-  var ta  = document.getElementById("cinp-" + sn);
-  var btn = document.getElementById("csav-" + sn);
-  var cmt = ta ? ta.value.trim() : "";
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spin-sm"></span>';
-  try {
-    var _u = window._scriptUrl || SCRIPT_URL; await fetch(_u + "?action=updateComment&stockNum=" + encodeURIComponent(sn) +
-      "&comment=" + encodeURIComponent(cmt), { mode:"no-cors" });
-    var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
-    if (row) row["Comments"] = cmt;
-    toast(cmt ? "Comment saved" : "Comment cleared");
-    expandedSn = sn;
-    applyFilters();
-  } catch(e) {
-    toast("Save failed: "+e.message, true);
-    btn.disabled = false; btn.innerHTML = "Save";
-  }
+  var ta=document.getElementById("cinp-"+sn),ac=document.getElementById("cact-"+sn);
+  var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});
+  if(ta&&r)ta.value=r["Comments"]||"";if(ta)ta.style.display="none";if(ac)ac.style.display="none";
 }
-
-// ── TASK STATUS ───────────────────────────────
-async function setTaskStatus(sn) {
+async function saveComment(sn){
   event.stopPropagation();
-  var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
-  if (!row) return;
-  var cur = row["Task Status"] || "In Progress";
-  var nxt = cur === "Completed" ? "In Progress" : "Completed";
-  // Optimistic UI
-  var btn = document.getElementById("sbbtn-" + sn);
-  if (btn) {
-    btn.classList.remove("ip","cp"); btn.classList.add("saving");
-    btn.classList.add(nxt === "Completed" ? "cp" : "ip");
-    btn.innerHTML = nxt === "Completed" ? "&#10003; Completed" : "&#9203; In Progress";
-  }
-  // Update badge in stacked row header
-  var badge = document.querySelector("#srow-"+sn+" .srow-tsbadge");
-  if (badge) {
-    badge.className = "srow-tsbadge " + (nxt === "Completed" ? "cp" : "ip");
-    badge.textContent = nxt === "Completed" ? "Completed" : "In Progress";
-  }
-  try {
-    var _u = window._scriptUrl || SCRIPT_URL; await fetch(_u + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
-      "&taskStatus=" + encodeURIComponent(nxt), { mode:"no-cors" });
-    row["Task Status"] = nxt;
-    toast(nxt === "Completed" ? "Marked Completed" : "Marked In Progress");
-    if (btn) btn.classList.remove("saving");
-  } catch(e) {
-    toast("Save failed: "+e.message, true);
-    if (btn) btn.classList.remove("saving");
-  }
+  var ta=document.getElementById("cinp-"+sn),btn=document.getElementById("csav-"+sn);
+  var cmt=ta?ta.value.trim():"";
+  btn.disabled=true;btn.innerHTML='<span class="ssm"></span>';
+  try{
+    await fetch(au()+"?action=updateComment&stockNum="+encodeURIComponent(sn)+"&comment="+encodeURIComponent(cmt),{mode:"no-cors"});
+    var r=allData.find(function(x){return String(x["Stock Num"])===String(sn);});if(r)r["Comments"]=cmt;
+    toast(cmt?"Comment saved":"Comment cleared");expandedSn=sn;applyFilters();
+  }catch(e){toast("Save failed: "+e.message,true);btn.disabled=false;btn.innerHTML="Save";}
 }
 
-// ── META ──────────────────────────────────────
-function updateMeta(data) {
-  document.getElementById("rptMeta").style.display = "flex";
-  document.getElementById("rptDate").textContent =
-    new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"2-digit"});
-  document.getElementById("rptCnt").textContent =
-    data.length + " vehicle" + (data.length !== 1 ? "s" : "");
+// META
+function updateMeta(d){
+  document.getElementById("rptMeta").style.display="flex";
+  document.getElementById("rptDate").textContent=new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"2-digit"});
+  document.getElementById("rptCnt").textContent=d.length+" vehicle"+(d.length!==1?"s":"");
 }
 
-// ── ADMIN MODAL ───────────────────────────────
-function openModal() {
-  // Show current active URL (runtime override or hardcoded default)
-  document.getElementById("adminUrl").value = window._scriptUrl || SCRIPT_URL;
-  document.getElementById("adminModal").classList.add("open");
+// ADMIN MODAL
+function openModal(){document.getElementById("adminUrl").value=window._scriptUrl||SCRIPT_URL;document.getElementById("adminModal").classList.add("open");}
+function closeModal(){document.getElementById("adminModal").classList.remove("open");}
+function saveAdminUrl(){
+  var url=document.getElementById("adminUrl").value.trim();
+  if(!url||!url.startsWith("https://")){toast("Please enter a valid https:// URL",true);return;}
+  window._scriptUrl=url;localStorage.setItem("nlr_url_override",url);
+  closeModal();toast("URL updated — reloading data");loadData();
 }
-function closeModal() { document.getElementById("adminModal").classList.remove("open"); }
-function saveAdminUrl() {
-  var url = document.getElementById("adminUrl").value.trim();
-  if (!url || !url.startsWith("https://")) {
-    toast("Please enter a valid https:// URL", true); return;
-  }
-  // Override at runtime — survives the session without editing the file
-  window._scriptUrl = url;
-  localStorage.setItem("nlr_url_override", url);
-  closeModal();
-  toast("URL updated — reloading data");
-  loadData();
-}
-document.getElementById("adminModal").addEventListener("click", function(e) {
-  if (e.target === this) closeModal();
-});
+document.getElementById("adminModal").addEventListener("click",function(e){if(e.target===this)closeModal();});
 
-// ── TOAST ─────────────────────────────────────
-function toast(msg, isErr) {
-  var el = document.getElementById("toast");
-  el.textContent = msg;
-  el.className = "toast show" + (isErr ? " err" : "");
-  clearTimeout(window._tt);
-  window._tt = setTimeout(function() { el.className = "toast"; }, 2500);
+// TOAST / HELPERS
+function toast(msg,isErr){
+  var el=document.getElementById("toast");
+  el.textContent=msg;el.className="toast show"+(isErr?" err":"");
+  clearTimeout(window._tt);window._tt=setTimeout(function(){el.className="toast";},2500);
 }
+function trunc(s,n){return s.length>n?s.substring(0,n)+"...":s;}
+function emptyMsg(){return '<div class="sm"><div class="ic">&#10003;</div><p>No vehicles to display.</p></div>';}
 
-// ── HELPERS ───────────────────────────────────
-function trunc(s, n) { return s.length > n ? s.substring(0,n)+"..." : s; }
-function emptyMsg() {
-  return '<div class="state-msg"><div class="ico">&#10003;</div><p>No vehicles to display.</p></div>';
-}
-
-// Re-render list view on resize (handles rotation)
 var _rt;
-window.addEventListener("resize", function() {
-  clearTimeout(_rt);
-  _rt = setTimeout(function() {
-    if (currentView === "table") applyFilters();
-  }, 200);
-});
+window.addEventListener("resize",function(){clearTimeout(_rt);_rt=setTimeout(function(){applyFilters();},200);});
 </script>
 </body>
 </html>
