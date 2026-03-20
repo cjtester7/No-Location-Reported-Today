@@ -1,7 +1,11 @@
 // ============================================================
-// No Location Reported - Google Apps Script Backend
+// No Location Reported - Google Apps Script Backend v2
 // Paste this in Google Apps Script and deploy as Web App
 // (Execute as: Me, Access: Anyone)
+//
+// CHANGES FROM v1:
+// - Added updateTaskStatus action (supports v5 app Task Status toggle)
+// - Added "Task Status" column to setupSheet headers and seed data
 // ============================================================
 
 const SHEET_NAME = "No Location Reported";
@@ -13,6 +17,8 @@ function doGet(e) {
     return readData();
   } else if (action === "updateComment") {
     return updateComment(e.parameter.stockNum, e.parameter.comment);
+  } else if (action === "updateTaskStatus") {
+    return updateTaskStatus(e.parameter.stockNum, e.parameter.taskStatus);
   } else if (action === "addRow") {
     return addRow(e);
   } else if (action === "clearAndReload") {
@@ -60,6 +66,34 @@ function updateComment(stockNum, comment) {
     if (String(data[i][stockCol]) === String(stockNum)) {
       sheet.getRange(i + 1, commentCol + 1).setValue(comment);
       return jsonResponse({ status: "ok", message: "Comment updated" });
+    }
+  }
+
+  return jsonResponse({ status: "error", message: "Stock number not found" });
+}
+
+// NEW in v2 - saves the Task Status value for a given stock number
+function updateTaskStatus(stockNum, taskStatus) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) return jsonResponse({ status: "error", message: "Sheet not found" });
+
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0];
+  var stockCol = headers.indexOf("Stock Num");
+  var tsCol = headers.indexOf("Task Status");
+
+  if (stockCol === -1) {
+    return jsonResponse({ status: "error", message: "Stock Num column not found" });
+  }
+  if (tsCol === -1) {
+    return jsonResponse({ status: "error", message: "Task Status column not found - please add it to the sheet manually" });
+  }
+
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][stockCol]) === String(stockNum)) {
+      sheet.getRange(i + 1, tsCol + 1).setValue(taskStatus);
+      return jsonResponse({ status: "ok", message: "Task status updated" });
     }
   }
 
@@ -128,6 +162,7 @@ function jsonResponse(obj) {
 // ============================================================
 // ONE-TIME SETUP: Run this function manually to create the
 // sheet with headers and seed data from the 3/12/26 report
+// NOTE: Now includes Task Status column (added in v2)
 // ============================================================
 function setupSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -142,16 +177,16 @@ function setupSheet() {
   var headers = [
     "Stock Num", "Year", "Vehicle Description", "Last Scan Date",
     "Last Scan Location", "Zone Description", "Days in Color Zone",
-    "VIN", "Product Status", "Days In Status", "Comments"
+    "VIN", "Product Status", "Days In Status", "Comments", "Task Status"
   ];
 
   sheet.appendRow(headers);
 
   // Seed data from the 03/12/26 report image
   var seedData = [
-    ["28375174", "2015", "FORD ESCAPE 4D SPORT UTILIT SE", "3/11/26", "WZA52", "WHOLESALE ZONE A", "1", "1FMCU9GX4FUC90572", "WHOLESALE RESERV", "1", ""],
-    ["28442662", "2016", "SUBARU OUTBACK 4D WAGON 3.6R LIMITED", "3/11/26", "WZE61", "WHOLESALE ZONE E", "2", "4S4BSENC4G3239770", "VALUMAX RECON", "1", ""],
-    ["28554432", "2017", "AUDI Q3 4D SPORT UTILIT PREMIUM", "3/11/26", "WZE64", "WHOLESALE ZONE E", "3", "WA1ECCFS9HR017310", "WHOLESALE RESERV", "1", ""]
+    ["28375174", "2015", "FORD ESCAPE 4D SPORT UTILIT SE", "3/11/26", "WZA52", "WHOLESALE ZONE A", "1", "1FMCU9GX4FUC90572", "WHOLESALE RESERV", "1", "", ""],
+    ["28442662", "2016", "SUBARU OUTBACK 4D WAGON 3.6R LIMITED", "3/11/26", "WZE61", "WHOLESALE ZONE E", "2", "4S4BSENC4G3239770", "VALUMAX RECON", "1", "", ""],
+    ["28554432", "2017", "AUDI Q3 4D SPORT UTILIT PREMIUM", "3/11/26", "WZE64", "WHOLESALE ZONE E", "3", "WA1ECCFS9HR017310", "WHOLESALE RESERV", "1", "", ""]
   ];
 
   for (var i = 0; i < seedData.length; i++) {
