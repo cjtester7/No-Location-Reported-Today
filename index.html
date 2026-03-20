@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported</title>
+<title>No Location Reported · v3</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
-  /* ── Dark Theme (default) ── */
+  /* ── Dark Theme ── */
   :root, [data-theme="dark"] {
     --bg: #0d0d14;
     --surface: #15151f;
@@ -22,6 +22,9 @@
     --red: #e05c2a;
     --blue: #4a9eff;
     --shadow: rgba(0,0,0,0.4);
+    --table-header-bg: #1c1c2a;
+    --table-row-hover: #1a1a28;
+    --table-row-alt: #131320;
   }
 
   /* ── Light Theme ── */
@@ -39,9 +42,14 @@
     --red: #c0440f;
     --blue: #2270cc;
     --shadow: rgba(0,0,0,0.07);
+    --table-header-bg: #ededf3;
+    --table-row-hover: #f0f0f6;
+    --table-row-alt: #f9f9fc;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; --font-mono: 'IBM Plex Mono', monospace; --font-sans: 'IBM Plex Sans', sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --font-sans: 'IBM Plex Sans', sans-serif; }
 
   body {
     background: var(--bg);
@@ -52,47 +60,13 @@
     transition: background 0.25s, color 0.25s;
   }
 
-  /* ── Theme Toggle ── */
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    padding: 4px;
-  }
-
-  .toggle-track {
-    width: 38px;
-    height: 21px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 11px;
-    position: relative;
-    transition: background 0.25s, border-color 0.25s;
-    flex-shrink: 0;
-  }
-
-  .toggle-knob {
-    width: 15px;
-    height: 15px;
-    background: var(--accent);
-    border-radius: 50%;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), background 0.25s;
-  }
-
-  [data-theme="light"] .toggle-knob { transform: translateX(17px); }
-
-  .toggle-emoji { font-size: 13px; line-height: 1; user-select: none; }
-
-  /* ── Header ── */
+  /* ══════════════════════════════════════
+     HEADER
+  ══════════════════════════════════════ */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 14px 16px 12px;
+    padding: 13px 16px 11px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -110,80 +84,71 @@
   .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
   .brand-icon {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     background: var(--accent);
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-family: var(--font-mono);
-    font-weight: 600;
-    font-size: 13px;
-    color: #000;
-    letter-spacing: -0.5px;
-    transition: background 0.25s;
+    font-weight: 600; font-size: 13px;
+    color: #000; letter-spacing: -0.5px;
     flex-shrink: 0;
+    transition: background 0.25s;
   }
 
   .brand-text { line-height: 1.15; }
+  .brand-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
+  .brand-sub { font-size: 10px; color: var(--text-dim); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 1px; }
 
-  .brand-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: 0.3px;
-    transition: color 0.25s;
+  .header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+  /* Theme toggle */
+  .theme-toggle {
+    display: flex; align-items: center; gap: 5px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent; padding: 3px;
   }
-
-  .brand-sub {
-    font-size: 10px;
-    color: var(--text-dim);
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: color 0.25s;
+  .toggle-track {
+    width: 36px; height: 20px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; position: relative;
+    transition: background 0.25s, border-color 0.25s; flex-shrink: 0;
   }
+  .toggle-knob {
+    width: 14px; height: 14px; background: var(--accent);
+    border-radius: 50%; position: absolute; top: 2px; left: 2px;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  [data-theme="light"] .toggle-knob { transform: translateX(16px); }
+  .toggle-emoji { font-size: 12px; line-height: 1; user-select: none; }
 
-  .header-actions { display: flex; gap: 6px; align-items: center; }
-
+  /* View toggle button */
   .btn-icon {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
-    flex-shrink: 0;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); width: 34px; height: 34px;
+    border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent; flex-shrink: 0;
   }
-
   .btn-icon:active { background: var(--border); transform: scale(0.95); }
   .btn-icon.loading { opacity: 0.5; pointer-events: none; }
+  .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #000; }
 
   .report-meta { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
   .badge {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    font-family: var(--font-mono); font-size: 10px;
+    padding: 3px 8px; border-radius: 4px;
+    letter-spacing: 0.5px; text-transform: uppercase;
   }
-
   .badge-date { background: rgba(240,165,0,0.12); color: var(--accent); border: 1px solid rgba(240,165,0,0.25); }
   .badge-count { background: rgba(46,207,122,0.1); color: var(--green); border: 1px solid rgba(46,207,122,0.2); }
   .badge-loc { background: rgba(74,158,255,0.1); color: var(--blue); border: 1px solid rgba(74,158,255,0.2); }
+  .badge-view { background: rgba(240,165,0,0.1); color: var(--accent); border: 1px solid rgba(240,165,0,0.2); font-size: 9px; }
 
-  /* ── Search ── */
-  .search-bar {
+  /* ══════════════════════════════════════
+     TOOLBAR (search + sort bar)
+  ══════════════════════════════════════ */
+  .toolbar {
     padding: 10px 16px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -193,151 +158,255 @@
   .search-wrap { position: relative; }
 
   .search-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--font-sans);
-    font-size: 14px;
-    padding: 9px 12px 9px 36px;
-    border-radius: 8px;
-    outline: none;
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); color: var(--text);
+    font-family: var(--font-sans); font-size: 14px;
+    padding: 9px 12px 9px 36px; border-radius: 8px; outline: none;
     transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
-
   .search-input:focus { border-color: var(--accent); }
   .search-input::placeholder { color: var(--text-muted); }
 
   .search-icon {
-    position: absolute;
-    left: 11px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    font-size: 15px;
-    pointer-events: none;
+    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: 15px; pointer-events: none;
   }
 
-  /* ── Main ── */
+  /* Sort pills (shown below search in list/table mode) */
+  .sort-bar {
+    display: none;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .sort-bar.visible { display: flex; }
+
+  .sort-pill {
+    display: flex; align-items: center; gap: 4px;
+    font-family: var(--font-mono); font-size: 10px;
+    padding: 4px 9px; border-radius: 5px;
+    border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text-dim);
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s; white-space: nowrap; letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .sort-pill:active { transform: scale(0.96); }
+  .sort-pill.asc { background: rgba(240,165,0,0.12); border-color: rgba(240,165,0,0.4); color: var(--accent); }
+  .sort-pill.desc { background: rgba(74,158,255,0.1); border-color: rgba(74,158,255,0.3); color: var(--blue); }
+
+  .sort-arrow { font-size: 9px; }
+
+  /* ══════════════════════════════════════
+     MAIN CONTENT AREA
+  ══════════════════════════════════════ */
   .main {
     padding: 12px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
     padding-bottom: 80px;
   }
 
-  /* ── Cards ── */
+  /* ══════════════════════════════════════
+     CARD VIEW
+  ══════════════════════════════════════ */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* 2-column on wider phones / tablets */
+  @media (min-width: 600px) {
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+  }
+
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
+    border-radius: 10px; overflow: hidden;
     transition: border-color 0.15s, background 0.25s, box-shadow 0.25s;
     box-shadow: 0 1px 4px var(--shadow);
   }
-
   .card.has-comment { border-color: rgba(240,165,0,0.4); }
   .card.expanded { border-color: var(--accent); }
 
   .card-header {
-    padding: 12px 14px;
-    cursor: pointer;
+    padding: 12px 14px; cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     transition: background 0.15s;
   }
-
   .card-header:active { background: var(--surface2); }
 
   .stock-pill {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--accent);
-    white-space: nowrap;
-    flex-shrink: 0;
-    margin-top: 1px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 8px;
+    font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+    white-space: nowrap; flex-shrink: 0; margin-top: 1px;
     transition: background 0.25s, border-color 0.25s, color 0.25s;
   }
 
   .card-main { flex: 1; min-width: 0; }
 
   .vehicle-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.3;
-    margin-bottom: 5px;
-    transition: color 0.25s;
+    font-size: 13px; font-weight: 600; color: var(--text);
+    line-height: 1.3; margin-bottom: 5px;
   }
-
-  .vehicle-year { color: var(--accent); margin-right: 4px; transition: color 0.25s; }
+  .vehicle-year { color: var(--accent); margin-right: 4px; }
 
   .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
 
   .tag {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-family: var(--font-mono); font-size: 9px;
+    padding: 2px 6px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.5px;
   }
-
   .tag-zone { background: rgba(74,158,255,0.12); color: var(--blue); }
   .tag-status { background: rgba(240,165,0,0.12); color: var(--accent); }
   .tag-days { background: rgba(224,92,42,0.14); color: var(--accent2); }
   .tag-days-ok { background: rgba(46,207,122,0.12); color: var(--green); }
 
   .card-chevron {
-    color: var(--text-muted);
-    font-size: 12px;
-    flex-shrink: 0;
-    margin-top: 3px;
+    color: var(--text-muted); font-size: 12px;
+    flex-shrink: 0; margin-top: 3px;
     transition: transform 0.2s, color 0.25s;
   }
-
   .card.expanded .card-chevron { transform: rotate(180deg); }
 
   .card-detail {
-    display: none;
-    border-top: 1px solid var(--border);
-    padding: 12px 14px;
-    background: var(--bg);
+    display: none; border-top: 1px solid var(--border);
+    padding: 12px 14px; background: var(--bg);
     transition: background 0.25s, border-color 0.25s;
   }
-
   .card.expanded .card-detail { display: block; }
 
-  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-
-  .detail-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 2px;
-    transition: color 0.25s;
-  }
-
-  .detail-value {
-    font-size: 12px;
-    color: var(--text);
-    font-family: var(--font-mono);
-    word-break: break-all;
-    transition: color 0.25s;
-  }
-
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0; }
   .detail-item.full { grid-column: 1 / -1; }
 
-  /* ── Comment ── */
+  .detail-label {
+    font-family: var(--font-mono); font-size: 9px;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.8px; margin-bottom: 2px;
+  }
+  .detail-value {
+    font-size: 12px; color: var(--text);
+    font-family: var(--font-mono); word-break: break-all;
+  }
+
+  /* ══════════════════════════════════════
+     TABLE VIEW
+  ══════════════════════════════════════ */
+  .table-wrap {
+    display: none;
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 4px var(--shadow);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 680px;
+  }
+
+  thead tr {
+    background: var(--table-header-bg);
+    border-bottom: 2px solid var(--border);
+  }
+
+  th {
+    padding: 0;
+    text-align: left;
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  th:last-child { border-right: none; }
+
+  .th-btn {
+    display: flex; align-items: center; gap: 5px;
+    width: 100%; padding: 10px 11px;
+    font-family: var(--font-mono); font-size: 9px;
+    font-weight: 600; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.7px;
+    cursor: pointer; background: none; border: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .th-btn:active { background: var(--surface2); }
+  .th-btn.sort-asc { color: var(--accent); }
+  .th-btn.sort-desc { color: var(--blue); }
+
+  .th-sort-icon {
+    font-size: 10px; opacity: 0.35;
+    transition: opacity 0.15s, transform 0.2s;
+    flex-shrink: 0;
+  }
+  .th-btn.sort-asc .th-sort-icon,
+  .th-btn.sort-desc .th-sort-icon { opacity: 1; }
+  .th-btn.sort-desc .th-sort-icon { transform: rotate(180deg); }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+    cursor: pointer;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) { background: var(--table-row-alt); }
+  tbody tr:hover { background: var(--table-row-hover); }
+  tbody tr.has-comment td:first-child { border-left: 3px solid var(--accent); }
+  tbody tr.row-expanded { background: var(--table-row-hover); }
+
+  td {
+    padding: 9px 11px; color: var(--text);
+    border-right: 1px solid var(--border);
+    vertical-align: top; font-family: var(--font-sans);
+    transition: color 0.25s;
+  }
+  td:last-child { border-right: none; }
+
+  td.mono { font-family: var(--font-mono); font-size: 11px; }
+  td.accent { color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+
+  .td-tag {
+    display: inline-block;
+    font-family: var(--font-mono); font-size: 9px;
+    padding: 2px 6px; border-radius: 3px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+
+  /* Expandable row detail in table */
+  .row-detail-tr { display: none; }
+  .row-detail-tr.open { display: table-row; }
+
+  .row-detail-cell {
+    padding: 0 !important;
+    border-right: none !important;
+    background: var(--bg) !important;
+  }
+
+  .row-detail-inner {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+  }
+
+  .row-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 16px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .row-detail-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ══════════════════════════════════════
+     COMMENT SECTION (shared)
+  ══════════════════════════════════════ */
   .comment-section {
     border-top: 1px solid var(--border);
     padding: 12px 14px;
@@ -348,191 +417,119 @@
   .comment-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 
   .comment-text {
-    font-size: 12px;
-    color: var(--text);
-    line-height: 1.5;
-    margin-bottom: 8px;
-    min-height: 16px;
-    transition: color 0.25s;
+    font-size: 12px; color: var(--text); line-height: 1.5;
+    margin-bottom: 6px; min-height: 16px;
   }
-
   .comment-text.empty { color: var(--text-muted); font-style: italic; }
 
   .comment-textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--font-sans);
-    font-size: 13px;
-    padding: 9px 11px;
-    border-radius: 7px;
-    outline: none;
-    resize: none;
-    min-height: 70px;
-    line-height: 1.5;
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); color: var(--text);
+    font-family: var(--font-sans); font-size: 13px;
+    padding: 9px 11px; border-radius: 7px; outline: none;
+    resize: none; min-height: 68px; line-height: 1.5;
     display: none;
     transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
-
   .comment-textarea:focus { border-color: var(--accent); }
 
   .comment-actions { display: flex; gap: 7px; margin-top: 7px; display: none; }
 
   .btn {
-    font-family: var(--font-sans);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 7px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent;
+    font-family: var(--font-sans); font-size: 12px; font-weight: 600;
+    padding: 8px 14px; border-radius: 7px; cursor: pointer; border: none;
+    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
   }
-
   .btn:active { transform: scale(0.97); }
   .btn-save { background: var(--accent); color: #000; flex: 1; }
   .btn-save:disabled { opacity: 0.5; pointer-events: none; }
   .btn-cancel { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); }
 
   .btn-edit {
-    font-size: 11px;
-    padding: 5px 10px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    border-radius: 5px;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    font-family: var(--font-sans);
-    white-space: nowrap;
+    font-size: 11px; padding: 5px 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-dim); border-radius: 5px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    font-family: var(--font-sans); white-space: nowrap;
     transition: background 0.15s, border-color 0.25s;
+    flex-shrink: 0;
   }
-
   .btn-edit:active { background: var(--border); }
 
-  /* ── Toast ── */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--green);
-    color: #fff;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 8px;
-    z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    white-space: nowrap;
-  }
-
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: var(--accent2); }
-
-  /* ── States ── */
+  /* ══════════════════════════════════════
+     STATES & MODAL
+  ══════════════════════════════════════ */
   .state-msg { text-align: center; padding: 48px 24px; color: var(--text-muted); }
   .state-msg .icon { font-size: 36px; margin-bottom: 12px; }
   .state-msg p { font-size: 13px; line-height: 1.6; }
 
-  /* ── Modal ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 200;
-    align-items: flex-end;
-  }
+  .loading-state { text-align: center; padding: 48px 16px; }
+  .loading-state p { color: var(--text-muted); font-size: 13px; font-family: var(--font-mono); margin-top: 10px; }
 
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 200; align-items: flex-end;
+  }
   .modal-overlay.open { display: flex; }
 
   .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 18px 18px 0 0;
-    padding: 20px 16px 32px;
-    width: 100%;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 18px 18px 0 0; padding: 20px 16px 32px; width: 100%;
     animation: slideUp 0.25s ease-out;
     transition: background 0.25s, border-color 0.25s;
   }
-
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
   .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
   .modal-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; text-align: center; }
-
-  .modal-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 5px;
-    display: block;
-  }
+  .modal-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; display: block; }
 
   .modal-input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    padding: 10px 12px;
-    border-radius: 8px;
-    outline: none;
-    margin-bottom: 14px;
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-mono); font-size: 12px;
+    padding: 10px 12px; border-radius: 8px; outline: none; margin-bottom: 14px;
     transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
-
   .modal-input:focus { border-color: var(--accent); }
 
   .btn-modal-save {
-    width: 100%;
-    background: var(--accent);
-    color: #000;
-    font-family: var(--font-sans);
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px;
-    border-radius: 9px;
-    border: none;
-    cursor: pointer;
-    margin-bottom: 8px;
+    width: 100%; background: var(--accent); color: #000;
+    font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+    padding: 12px; border-radius: 9px; border: none; cursor: pointer; margin-bottom: 8px;
   }
-
   .btn-modal-cancel {
-    width: 100%;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    font-family: var(--font-sans);
-    font-size: 13px;
-    padding: 11px;
-    border-radius: 9px;
-    cursor: pointer;
+    width: 100%; background: transparent; border: 1px solid var(--border);
+    color: var(--text-dim); font-family: var(--font-sans); font-size: 13px;
+    padding: 11px; border-radius: 9px; cursor: pointer;
   }
 
-  /* ── Spinner ── */
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--green); color: #fff;
+    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
+    padding: 10px 20px; border-radius: 8px; z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { background: var(--accent2); }
 
+  /* Spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
   .spinner {
-    display: inline-block;
-    width: 16px; height: 16px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
+    display: block; width: 28px; height: 28px;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.6s linear infinite;
+    margin: 0 auto 10px;
+  }
+  .spinner-sm {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.6s linear infinite;
     vertical-align: middle;
   }
-
-  .loading-state { text-align: center; padding: 48px 16px; }
-  .loading-state .spinner { width: 28px; height: 28px; border-width: 3px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
-  .loading-state p { color: var(--text-muted); font-size: 13px; font-family: var(--font-mono); }
 </style>
 </head>
 <body>
@@ -562,11 +559,10 @@
     <div class="header-actions">
       <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">
         <span class="toggle-emoji">🌙</span>
-        <div class="toggle-track">
-          <div class="toggle-knob"></div>
-        </div>
+        <div class="toggle-track"><div class="toggle-knob"></div></div>
         <span class="toggle-emoji">☀️</span>
       </div>
+      <button class="btn-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch view">⊞</button>
       <button class="btn-icon" id="refreshBtn" onclick="loadData()" title="Refresh">↻</button>
       <button class="btn-icon" onclick="openModal()" title="Settings">⚙</button>
     </div>
@@ -575,14 +571,26 @@
     <span class="badge badge-date" id="reportDate"></span>
     <span class="badge badge-count" id="vehicleCount"></span>
     <span class="badge badge-loc">Loc 4070</span>
+    <span class="badge badge-view" id="viewBadge">Card View</span>
   </div>
 </div>
 
-<!-- Search -->
-<div class="search-bar">
+<!-- Toolbar -->
+<div class="toolbar">
   <div class="search-wrap">
     <span class="search-icon">⊕</span>
-    <input class="search-input" id="searchInput" type="text" placeholder="Search stock #, VIN, vehicle..." oninput="filterCards()" />
+    <input class="search-input" id="searchInput" type="text"
+      placeholder="Search stock #, VIN, vehicle..." oninput="applyFilters()" />
+  </div>
+  <!-- Sort pills (table/list view) -->
+  <div class="sort-bar" id="sortBar">
+    <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);align-self:center;text-transform:uppercase;letter-spacing:0.5px;">Sort:</span>
+    <div class="sort-pill" id="pill-Stock Num" onclick="sortBy('Stock Num')">Stock # <span class="sort-arrow">↕</span></div>
+    <div class="sort-pill" id="pill-Year" onclick="sortBy('Year')">Year <span class="sort-arrow">↕</span></div>
+    <div class="sort-pill" id="pill-Vehicle Description" onclick="sortBy('Vehicle Description')">Vehicle <span class="sort-arrow">↕</span></div>
+    <div class="sort-pill" id="pill-Zone Description" onclick="sortBy('Zone Description')">Zone <span class="sort-arrow">↕</span></div>
+    <div class="sort-pill" id="pill-Days in Color Zone" onclick="sortBy('Days in Color Zone')">Days <span class="sort-arrow">↕</span></div>
+    <div class="sort-pill" id="pill-Product Status" onclick="sortBy('Product Status')">Status <span class="sort-arrow">↕</span></div>
   </div>
 </div>
 
@@ -598,37 +606,81 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
 const STORAGE_KEY = "nlr_script_url";
-const THEME_KEY = "nlr_theme";
-let allData = [];
+const THEME_KEY   = "nlr_theme";
+const VIEW_KEY    = "nlr_view";   // "card" | "table"
+
+let allData      = [];
 let expandedStock = null;
-let editingStock = null;
+let editingStock  = null;
+let currentView   = "card";
+let sortCol       = null;
+let sortDir       = "asc"; // "asc" | "desc"
 
-// ── Theme ─────────────────────────────────────────────
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem(THEME_KEY, theme);
-}
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute("data-theme");
-  applyTheme(current === "dark" ? "light" : "dark");
-}
-
-// ── Init ──────────────────────────────────────────────
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
 window.addEventListener("DOMContentLoaded", () => {
   applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+  currentView = localStorage.getItem(VIEW_KEY) || "card";
+  updateViewUI();
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { showSetup(); } else { loadData(); }
 });
 
+// ══════════════════════════════════════════
+// THEME
+// ══════════════════════════════════════════
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem(THEME_KEY, theme);
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+}
+
+// ══════════════════════════════════════════
+// VIEW TOGGLE
+// ══════════════════════════════════════════
+function toggleView() {
+  currentView = currentView === "card" ? "table" : "card";
+  localStorage.setItem(VIEW_KEY, currentView);
+  updateViewUI();
+  applyFilters();
+}
+
+function updateViewUI() {
+  const btn = document.getElementById("viewToggleBtn");
+  const badge = document.getElementById("viewBadge");
+  const sortBar = document.getElementById("sortBar");
+
+  if (currentView === "card") {
+    btn.textContent = "☰";
+    btn.title = "Switch to Table View";
+    btn.classList.remove("active");
+    if (badge) badge.textContent = "Card View";
+    sortBar.classList.remove("visible");
+  } else {
+    btn.textContent = "⊞";
+    btn.title = "Switch to Card View";
+    btn.classList.add("active");
+    if (badge) badge.textContent = "Table View";
+    sortBar.classList.add("visible");
+  }
+}
+
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
 function showSetup() {
   document.getElementById("main").innerHTML =
     '<div class="state-msg"><div class="icon">⚙️</div>' +
-    '<p>Tap the <strong>⚙</strong> button above to enter your<br>Apps Script Web App URL to get started.</p></div>';
+    '<p>Tap the <strong>⚙</strong> button to enter your Apps Script URL.</p></div>';
 }
 
-// ── Data ──────────────────────────────────────────────
 async function loadData() {
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { showSetup(); return; }
@@ -643,44 +695,103 @@ async function loadData() {
     const json = await res.json();
     if (json.status !== "ok") throw new Error(json.message || "Error");
     allData = json.data;
-    renderCards(allData);
+    applyFilters();
     updateMeta(allData);
   } catch (err) {
     document.getElementById("main").innerHTML =
       '<div class="state-msg"><div class="icon">⚠️</div>' +
       '<p>Could not load data.<br><small>' + err.message + '</small></p></div>';
   }
-
   document.getElementById("refreshBtn").classList.remove("loading");
 }
 
-// ── Render ────────────────────────────────────────────
+// ══════════════════════════════════════════
+// FILTER + SORT
+// ══════════════════════════════════════════
+function applyFilters() {
+  const q = (document.getElementById("searchInput").value || "").toLowerCase();
+  let data = q
+    ? allData.filter(r =>
+        ["Stock Num","Vehicle Description","VIN","Zone Description","Product Status","Last Scan Location"]
+          .some(k => String(r[k] || "").toLowerCase().includes(q))
+      )
+    : [...allData];
+
+  if (sortCol) {
+    data.sort((a, b) => {
+      let va = String(a[sortCol] || "").toLowerCase();
+      let vb = String(b[sortCol] || "").toLowerCase();
+      // numeric sort for numeric-looking fields
+      const na = parseFloat(va), nb = parseFloat(vb);
+      if (!isNaN(na) && !isNaN(nb)) { va = na; vb = nb; }
+      if (va < vb) return sortDir === "asc" ? -1 : 1;
+      if (va > vb) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }
+
+  if (currentView === "card") {
+    renderCards(data);
+  } else {
+    renderTable(data);
+  }
+}
+
+function sortBy(col) {
+  if (sortCol === col) {
+    sortDir = sortDir === "asc" ? "desc" : "asc";
+  } else {
+    sortCol = col;
+    sortDir = "asc";
+  }
+  updateSortPills();
+  applyFilters();
+}
+
+function updateSortPills() {
+  document.querySelectorAll(".sort-pill").forEach(p => {
+    p.classList.remove("asc","desc");
+    const arrow = p.querySelector(".sort-arrow");
+    if (arrow) arrow.textContent = "↕";
+  });
+  if (!sortCol) return;
+  const pill = document.getElementById("pill-" + sortCol);
+  if (pill) {
+    pill.classList.add(sortDir);
+    const arrow = pill.querySelector(".sort-arrow");
+    if (arrow) arrow.textContent = sortDir === "asc" ? "↑" : "↓";
+  }
+}
+
+// ══════════════════════════════════════════
+// CARD VIEW RENDER
+// ══════════════════════════════════════════
 function renderCards(data) {
   const main = document.getElementById("main");
   if (!data.length) {
     main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>';
     return;
   }
-  main.innerHTML = data.map(row => buildCard(row)).join("");
+  main.innerHTML = '<div class="cards-grid">' + data.map(r => buildCard(r)).join("") + '</div>';
 }
 
 function buildCard(row) {
-  const sn = row["Stock Num"] || "";
-  const year = row["Year"] || "";
-  const desc = row["Vehicle Description"] || "";
-  const scanDate = row["Last Scan Date"] || "";
-  const scanLoc = row["Last Scan Location"] || "";
-  const zone = row["Zone Description"] || "";
+  const sn        = row["Stock Num"] || "";
+  const year      = row["Year"] || "";
+  const desc      = row["Vehicle Description"] || "";
+  const scanDate  = row["Last Scan Date"] || "";
+  const scanLoc   = row["Last Scan Location"] || "";
+  const zone      = row["Zone Description"] || "";
   const daysColor = row["Days in Color Zone"] || "0";
-  const vin = row["VIN"] || "";
-  const status = row["Product Status"] || "";
-  const daysStatus = row["Days In Status"] || "";
-  const comment = row["Comments"] || "";
+  const vin       = row["VIN"] || "";
+  const status    = row["Product Status"] || "";
+  const daysStatus= row["Days In Status"] || "";
+  const comment   = row["Comments"] || "";
 
   const isExpanded = expandedStock === sn;
   const hasComment = comment.trim() !== "";
-  const daysNum = parseInt(daysColor) || 0;
-  const dayClass = daysNum >= 3 ? "tag-days" : "tag-days-ok";
+  const daysNum    = parseInt(daysColor) || 0;
+  const dayClass   = daysNum >= 3 ? "tag-days" : "tag-days-ok";
 
   return '<div class="card' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="card-' + sn + '">' +
     '<div class="card-header" onclick="toggleCard(\'' + sn + '\')">' +
@@ -701,32 +812,150 @@ function buildCard(row) {
     '<div class="detail-item"><div class="detail-label">Color Zone Days</div><div class="detail-value">' + daysColor + '</div></div>' +
     '<div class="detail-item full"><div class="detail-label">VIN</div><div class="detail-value">' + vin + '</div></div>' +
     '</div></div>' +
-    '<div class="comment-section">' +
+    buildCommentSection(sn, comment, hasComment) +
+    '</div>';
+}
+
+// ══════════════════════════════════════════
+// TABLE VIEW RENDER
+// ══════════════════════════════════════════
+const TABLE_COLS = [
+  { key: "Stock Num",          label: "Stock #",   cls: "accent" },
+  { key: "Year",               label: "Year",      cls: "mono" },
+  { key: "Vehicle Description",label: "Vehicle",   cls: "" },
+  { key: "Last Scan Date",     label: "Scan Date", cls: "mono" },
+  { key: "Zone Description",   label: "Zone",      cls: "" },
+  { key: "Days in Color Zone", label: "Days",      cls: "mono" },
+  { key: "Product Status",     label: "Status",    cls: "" },
+  { key: "Comments",           label: "Notes",     cls: "" },
+];
+
+function renderTable(data) {
+  const main = document.getElementById("main");
+  if (!data.length) {
+    main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>';
+    return;
+  }
+
+  let html = '<div class="table-wrap"><table><thead><tr>';
+  TABLE_COLS.forEach(col => {
+    const isActive = sortCol === col.key;
+    const btnCls = isActive ? (sortDir === "asc" ? "sort-asc" : "sort-desc") : "";
+    const arrow = isActive ? (sortDir === "asc" ? "↑" : "↓") : "↕";
+    html += '<th><button class="th-btn ' + btnCls + '" onclick="sortBy(\'' + col.key + '\')">' +
+      col.label + ' <span class="th-sort-icon">' + arrow + '</span></button></th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  data.forEach(row => {
+    const sn = row["Stock Num"] || "";
+    const hasComment = (row["Comments"] || "").trim() !== "";
+    const isExpanded = expandedStock === sn;
+    const daysNum = parseInt(row["Days in Color Zone"]) || 0;
+
+    html += '<tr class="' + (hasComment ? 'has-comment' : '') + (isExpanded ? ' row-expanded' : '') +
+      '" onclick="toggleTableRow(\'' + sn + '\')">';
+
+    TABLE_COLS.forEach(col => {
+      let val = row[col.key] || "";
+      let cellHtml = "";
+
+      if (col.key === "Days in Color Zone") {
+        const cls = daysNum >= 3 ? "tag-days" : "tag-days-ok";
+        cellHtml = '<span class="td-tag ' + cls + '">' + val + '</span>';
+      } else if (col.key === "Product Status") {
+        cellHtml = '<span class="td-tag tag-status">' + val + '</span>';
+      } else if (col.key === "Comments") {
+        cellHtml = val
+          ? '<span style="font-size:11px;color:var(--accent);">✎</span> ' + truncate(val, 24)
+          : '<span style="color:var(--text-muted);font-style:italic;font-size:11px;">—</span>';
+      } else {
+        cellHtml = val;
+      }
+
+      html += '<td class="' + col.cls + '">' + cellHtml + '</td>';
+    });
+
+    html += '</tr>';
+
+    // Expandable detail row
+    html += '<tr class="row-detail-tr' + (isExpanded ? ' open' : '') + '" id="trow-' + sn + '">' +
+      '<td class="row-detail-cell" colspan="' + TABLE_COLS.length + '">' +
+      '<div class="row-detail-inner">' +
+      '<div class="row-detail-grid">' +
+      '<div><div class="detail-label">VIN</div><div class="detail-value">' + (row["VIN"] || "—") + '</div></div>' +
+      '<div><div class="detail-label">Scan Location</div><div class="detail-value">' + (row["Last Scan Location"] || "—") + '</div></div>' +
+      '<div><div class="detail-label">Days In Status</div><div class="detail-value">' + (row["Days In Status"] || "—") + '</div></div>' +
+      '</div>' +
+      buildCommentSection(sn, row["Comments"] || "", hasComment) +
+      '</div></td></tr>';
+  });
+
+  html += '</tbody></table></div>';
+  main.innerHTML = html;
+}
+
+function truncate(str, n) {
+  return str.length > n ? str.substring(0, n) + "…" : str;
+}
+
+// ══════════════════════════════════════════
+// COMMENT SECTION (shared HTML builder)
+// ══════════════════════════════════════════
+function buildCommentSection(sn, comment, hasComment) {
+  return '<div class="comment-section">' +
     '<div class="detail-label">Comments</div>' +
     '<div class="comment-row">' +
-    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' + (hasComment ? comment : 'No comment yet') + '</div>' +
-    '<button class="btn-edit" onclick="startEdit(\'' + sn + '\')">' + (hasComment ? 'Edit' : '+ Add') + '</button>' +
+    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' +
+    (hasComment ? comment : 'No comment yet') + '</div>' +
+    '<button class="btn-edit" onclick="startEdit(\'' + sn + '\')">' +
+    (hasComment ? 'Edit' : '+ Add') + '</button>' +
     '</div>' +
-    '<textarea class="comment-textarea" id="cinput-' + sn + '" placeholder="Add notes about this vehicle...">' + comment + '</textarea>' +
+    '<textarea class="comment-textarea" id="cinput-' + sn + '" placeholder="Add notes about this vehicle...">' +
+    comment + '</textarea>' +
     '<div class="comment-actions" id="cactions-' + sn + '">' +
     '<button class="btn btn-cancel" onclick="cancelEdit(\'' + sn + '\')">Cancel</button>' +
     '<button class="btn btn-save" id="csave-' + sn + '" onclick="saveComment(\'' + sn + '\')">Save</button>' +
-    '</div></div></div>';
+    '</div></div>';
 }
 
-// ── Interactions ──────────────────────────────────────
+// ══════════════════════════════════════════
+// CARD INTERACTIONS
+// ══════════════════════════════════════════
 function toggleCard(sn) {
   expandedStock = (expandedStock === sn) ? null : sn;
-  filterCards();
+  applyFilters();
+}
+
+function toggleTableRow(sn) {
+  expandedStock = (expandedStock === sn) ? null : sn;
+  // Fast DOM toggle for table (avoid full re-render)
+  const detailTr = document.getElementById("trow-" + sn);
+  if (detailTr) {
+    detailTr.classList.toggle("open", expandedStock === sn);
+    const mainTr = detailTr.previousElementSibling;
+    if (mainTr) mainTr.classList.toggle("row-expanded", expandedStock === sn);
+  }
 }
 
 function startEdit(sn) {
   event.stopPropagation();
-  expandedStock = sn;
-  filterCards();
-  const ta = document.getElementById("cinput-" + sn);
-  const ac = document.getElementById("cactions-" + sn);
-  if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); editingStock = sn; }
+  if (currentView === "card") {
+    expandedStock = sn;
+    applyFilters();
+  } else {
+    // Ensure table row is expanded
+    const detailTr = document.getElementById("trow-" + sn);
+    if (detailTr && !detailTr.classList.contains("open")) {
+      expandedStock = sn;
+      detailTr.classList.add("open");
+    }
+  }
+  setTimeout(() => {
+    const ta = document.getElementById("cinput-" + sn);
+    const ac = document.getElementById("cactions-" + sn);
+    if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); editingStock = sn; }
+  }, 50);
 }
 
 function cancelEdit(sn) {
@@ -745,22 +974,26 @@ async function saveComment(sn) {
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { toast("No URL configured", true); return; }
 
-  const ta = document.getElementById("cinput-" + sn);
+  const ta  = document.getElementById("cinput-" + sn);
   const btn = document.getElementById("csave-" + sn);
   const comment = ta ? ta.value.trim() : "";
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>';
+  btn.innerHTML = '<span class="spinner-sm"></span>';
 
   try {
-    await fetch(url + "?action=updateComment&stockNum=" + encodeURIComponent(sn) + "&comment=" + encodeURIComponent(comment), { mode: "no-cors" });
+    await fetch(url + "?action=updateComment&stockNum=" + encodeURIComponent(sn) +
+      "&comment=" + encodeURIComponent(comment), { mode: "no-cors" });
     const row = allData.find(r => String(r["Stock Num"]) === String(sn));
     if (row) row["Comments"] = comment;
     toast(comment ? "Comment saved ✓" : "Comment cleared");
     editingStock = null;
-    filterCards();
-    expandedStock = sn;
-    filterCards();
+    applyFilters();
+    if (currentView === "card") { expandedStock = sn; applyFilters(); }
+    else {
+      const detailTr = document.getElementById("trow-" + sn);
+      if (detailTr) { detailTr.classList.add("open"); }
+    }
   } catch (err) {
     toast("Save failed: " + err.message, true);
     btn.disabled = false;
@@ -768,19 +1001,9 @@ async function saveComment(sn) {
   }
 }
 
-// ── Filter ────────────────────────────────────────────
-function filterCards() {
-  const q = (document.getElementById("searchInput").value || "").toLowerCase();
-  const filtered = q
-    ? allData.filter(r =>
-        ["Stock Num","Vehicle Description","VIN","Zone Description","Product Status"]
-          .some(k => String(r[k] || "").toLowerCase().includes(q))
-      )
-    : allData;
-  renderCards(filtered);
-}
-
-// ── Meta ──────────────────────────────────────────────
+// ══════════════════════════════════════════
+// META
+// ══════════════════════════════════════════
 function updateMeta(data) {
   document.getElementById("reportMeta").style.display = "flex";
   document.getElementById("reportDate").textContent =
@@ -789,14 +1012,14 @@ function updateMeta(data) {
     data.length + " vehicle" + (data.length !== 1 ? "s" : "");
 }
 
-// ── Modal ─────────────────────────────────────────────
+// ══════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════
 function openModal() {
   document.getElementById("urlInput").value = localStorage.getItem(STORAGE_KEY) || "";
   document.getElementById("configModal").classList.add("open");
 }
-
 function closeModal() { document.getElementById("configModal").classList.remove("open"); }
-
 function saveConfig() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) { toast("Please enter a URL", true); return; }
@@ -804,12 +1027,13 @@ function saveConfig() {
   closeModal();
   loadData();
 }
-
 document.getElementById("configModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
 });
 
-// ── Toast ─────────────────────────────────────────────
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
 function toast(msg, isError) {
   const el = document.getElementById("toast");
   el.textContent = msg;
