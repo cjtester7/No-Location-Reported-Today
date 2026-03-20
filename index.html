@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v5</title>
+<title>No Location Reported · v6</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -461,18 +461,19 @@
 
   /* Task status toggle */
   .status-toggle {
-    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
+    margin-top: 10px; padding-top: 10px;
     border-top: 1px solid var(--border);
   }
   .status-btn {
-    flex: 1; padding: 8px 10px; border-radius: 7px;
+    width: 100%; padding: 9px 14px; border-radius: 7px;
     font-family: var(--font-sans); font-size: 12px; font-weight: 600;
     cursor: pointer; border: 1px solid var(--border);
-    background: var(--surface); color: var(--text-dim);
-    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
-    letter-spacing: 0.2px;
+    background: var(--surface2); color: var(--text-dim);
+    transition: all 0.2s; -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.2px; text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
   }
-  .status-btn:active { transform: scale(0.97); }
+  .status-btn:active { transform: scale(0.98); }
   .status-btn.active-inprogress {
     background: rgba(74,158,255,0.14); border-color: rgba(74,158,255,0.45);
     color: var(--blue);
@@ -941,15 +942,17 @@ function truncate(str, n) {
 // COMMENT SECTION (shared HTML builder)
 // ══════════════════════════════════════════
 function buildCommentSection(sn, comment, hasComment, taskStatus) {
-  const ts = taskStatus || "";
-  const ipCls = ts === "In Progress" ? " active-inprogress" : "";
-  const cpCls = ts === "Completed"   ? " active-completed"  : "";
+  // Default to In Progress if no status set yet
+  const ts = taskStatus || "In Progress";
+  const isCompleted = ts === "Completed";
+  const btnCls = isCompleted ? " active-completed" : " active-inprogress";
+  const btnLabel = isCompleted ? "&#10003; Completed" : "&#9203; In Progress";
 
   return '<div class="comment-section">' +
     '<div class="detail-label" style="margin-bottom:6px;">Task Status</div>' +
     '<div class="status-toggle">' +
-    '<button class="status-btn' + ipCls + '" id="sbip-' + sn + '" onclick="setTaskStatus(\'' + sn + '\',\'In Progress\')">⏳ In Progress</button>' +
-    '<button class="status-btn' + cpCls + '" id="sbcp-' + sn + '" onclick="setTaskStatus(\'' + sn + '\',\'Completed\')">✓ Completed</button>' +
+    '<button class="status-btn' + btnCls + '" id="sbbtn-' + sn + '" onclick="setTaskStatus(\'' + sn + '\')">' +
+    btnLabel + '</button>' +
     '</div>' +
     '<div class="detail-label" style="margin-top:12px;margin-bottom:6px;">Comments</div>' +
     '<div class="comment-row">' +
@@ -1051,7 +1054,7 @@ async function saveComment(sn) {
 // ══════════════════════════════════════════
 // TASK STATUS
 // ══════════════════════════════════════════
-async function setTaskStatus(sn, newStatus) {
+async function setTaskStatus(sn) {
   event.stopPropagation();
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { toast("No URL configured", true); return; }
@@ -1059,21 +1062,24 @@ async function setTaskStatus(sn, newStatus) {
   const row = allData.find(r => String(r["Stock Num"]) === String(sn));
   if (!row) return;
 
-  // Toggle off if already active
-  const finalStatus = row["Task Status"] === newStatus ? "" : newStatus;
+  // Cycle: (empty or In Progress) -> Completed, Completed -> In Progress
+  const current = row["Task Status"] || "In Progress";
+  const newStatus = current === "Completed" ? "In Progress" : "Completed";
 
-  // Update button states immediately (optimistic UI)
-  const ipBtn = document.getElementById("sbip-" + sn);
-  const cpBtn = document.getElementById("sbcp-" + sn);
-  if (ipBtn) { ipBtn.classList.toggle("active-inprogress", finalStatus === "In Progress"); ipBtn.classList.add("saving"); }
-  if (cpBtn) { cpBtn.classList.toggle("active-completed",  finalStatus === "Completed");   cpBtn.classList.add("saving"); }
+  // Optimistic UI update
+  const btn = document.getElementById("sbbtn-" + sn);
+  if (btn) {
+    btn.classList.add("saving");
+    btn.classList.remove("active-inprogress", "active-completed");
+    btn.classList.add(newStatus === "Completed" ? "active-completed" : "active-inprogress");
+    btn.innerHTML = newStatus === "Completed" ? "&#10003; Completed" : "&#9203; In Progress";
+  }
 
   try {
     await fetch(url + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
-      "&taskStatus=" + encodeURIComponent(finalStatus), { mode: "no-cors" });
-    row["Task Status"] = finalStatus;
-    toast(finalStatus ? finalStatus + " ✓" : "Status cleared");
-    // Re-render to update card tag
+      "&taskStatus=" + encodeURIComponent(newStatus), { mode: "no-cors" });
+    row["Task Status"] = newStatus;
+    toast(newStatus + " &#10003;");
     applyFilters();
     if (currentView === "card") { expandedStock = sn; applyFilters(); }
     else {
@@ -1082,8 +1088,7 @@ async function setTaskStatus(sn, newStatus) {
     }
   } catch (err) {
     toast("Save failed: " + err.message, true);
-    if (ipBtn) ipBtn.classList.remove("saving");
-    if (cpBtn) cpBtn.classList.remove("saving");
+    if (btn) btn.classList.remove("saving");
   }
 }
 
