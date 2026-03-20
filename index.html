@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported</title>
+<title>No Location Reported · v15</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -153,12 +153,14 @@ body { background:var(--bg); color:var(--text); font-family:var(--fs);
 @media(min-width:640px){ .cards-grid { grid-template-columns:1fr 1fr; } }
 
 .card { background:var(--surface); border:1px solid var(--border); border-radius:10px;
-        overflow:hidden; box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
+        box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
 .card.has-note { border-color:rgba(240,165,0,.4); }
 .card.open     { border-color:var(--accent); }
 
 .card-hdr { padding:13px 14px; cursor:pointer; -webkit-tap-highlight-color:transparent;
-            display:flex; gap:12px; align-items:flex-start; transition:background .15s; }
+            display:flex; gap:12px; align-items:flex-start; transition:background .15s;
+            border-radius:10px; }
+.card.open .card-hdr { border-radius:10px 10px 0 0; }
 .card-hdr:active { background:var(--surface2); }
 
 .stk-pill { background:var(--surface2); border:1px solid var(--border); border-radius:6px;
@@ -173,7 +175,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--fs);
 .card.open .card-chev { transform:rotate(180deg); }
 
 .card-detail { display:none; border-top:1px solid var(--border); padding:13px 14px;
-               background:var(--bg); }
+               background:var(--bg); border-radius:0 0 10px 10px; }
 .card.open .card-detail { display:block; }
 .det-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:0; }
 .det-item.full { grid-column:1/-1; }
@@ -185,12 +187,13 @@ body { background:var(--bg); color:var(--text); font-family:var(--fs);
 .stk-list { display:flex; flex-direction:column; gap:10px; }
 
 .srow { background:var(--surface); border:1px solid var(--border); border-radius:12px;
-        overflow:hidden; box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
+        box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
 .srow.has-note { border-color:rgba(240,165,0,.4); }
 .srow.open     { border-color:var(--accent); }
 
 .srow-hdr { padding:14px 15px; cursor:pointer; -webkit-tap-highlight-color:transparent;
-            transition:background .15s; }
+            transition:background .15s; border-radius:12px; }
+.srow.open .srow-hdr { border-radius:12px 12px 0 0; }
 .srow-hdr:active { background:var(--surface2); }
 
 .srow-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
@@ -220,7 +223,7 @@ body { background:var(--bg); color:var(--text); font-family:var(--fs);
 .srow.open .srow-chev { transform:rotate(180deg); }
 
 .srow-det { display:none; border-top:1px solid var(--border); padding:14px 15px;
-            background:var(--bg); }
+            background:var(--bg); border-radius:0 0 12px 12px; }
 .srow.open .srow-det { display:block; }
 .srow-det-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
 .srow-det-item.full { grid-column:1/-1; }
@@ -654,6 +657,11 @@ function renderCards(data) {
   var m = document.getElementById("main");
   if (!data.length) { m.innerHTML = emptyMsg(); return; }
   m.innerHTML = '<div class="cards-grid">' + data.map(buildCard).join("") + '</div>';
+  // Restore open state
+  if (expandedSn) {
+    var el = document.getElementById("card-" + expandedSn);
+    if (el) el.classList.add("open");
+  }
 }
 function buildCard(r) {
   var sn = r["Stock Num"]||"", yr = r["Year"]||"", desc = r["Vehicle Description"]||"";
@@ -695,6 +703,11 @@ function renderStacked(data) {
   var m = document.getElementById("main");
   if (!data.length) { m.innerHTML = emptyMsg(); return; }
   m.innerHTML = '<div class="stk-list">' + data.map(buildSrow).join("") + '</div>';
+  // Restore open state after DOM rebuild
+  if (expandedSn) {
+    var el = document.getElementById("srow-" + expandedSn);
+    if (el) el.classList.add("open");
+  }
 }
 function buildSrow(r) {
   var sn = r["Stock Num"]||"", yr = r["Year"]||"", desc = r["Vehicle Description"]||"";
@@ -794,6 +807,15 @@ function renderTable(data) {
   });
   h += '</tbody></table></div>';
   m.innerHTML = h;
+  // Restore open state
+  if (expandedSn) {
+    var dt = document.getElementById("trow-" + expandedSn);
+    if (dt) {
+      dt.classList.add("open");
+      var tr = dt.previousElementSibling;
+      if (tr) tr.classList.add("row-open");
+    }
+  }
 }
 
 // ── COMMENT + STATUS SECTION ──────────────────
@@ -923,22 +945,8 @@ async function saveComment(sn) {
     var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
     if (row) row["Comments"] = cmt;
     toast(cmt ? "Comment saved" : "Comment cleared");
-    applyFilters();
-    // Re-expand using CSS class after re-render
     expandedSn = sn;
-    if (currentView === "card") {
-      var el = document.getElementById("card-" + sn);
-      if (el) el.classList.add("open");
-    } else if (isMobile()) {
-      var el = document.getElementById("srow-" + sn);
-      if (el) el.classList.add("open");
-    } else {
-      var dt = document.getElementById("trow-" + sn);
-      if (dt) {
-        dt.classList.add("open");
-        var tr = dt.previousElementSibling; if (tr) tr.classList.add("row-open");
-      }
-    }
+    applyFilters();
   } catch(e) {
     toast("Save failed: "+e.message, true);
     btn.disabled = false; btn.innerHTML = "Save";
