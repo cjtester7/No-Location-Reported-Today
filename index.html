@@ -3,755 +3,550 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v12</title>
+<title>No Location Reported</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
-  /* ── Dark Theme ── */
-  :root, [data-theme="dark"] {
-    --bg: #0d0d14;
-    --surface: #15151f;
-    --surface2: #1c1c2a;
-    --border: #2a2a3d;
-    --accent: #f0a500;
-    --accent2: #e05c2a;
-    --text: #e8e8f0;
-    --text-dim: #7a7a96;
-    --text-muted: #454560;
-    --green: #2ecf7a;
-    --red: #e05c2a;
-    --blue: #4a9eff;
-    --shadow: rgba(0,0,0,0.4);
-    --table-header-bg: #1c1c2a;
-    --table-row-hover: #1a1a28;
-    --table-row-alt: #131320;
-  }
+/* ── Variables ── */
+:root, [data-theme="dark"] {
+  --bg:#0d0d14; --surface:#15151f; --surface2:#1c1c2a; --border:#2a2a3d;
+  --accent:#f0a500; --accent2:#e05c2a; --text:#e8e8f0; --text-dim:#7a7a96;
+  --text-muted:#454560; --green:#2ecf7a; --blue:#4a9eff; --shadow:rgba(0,0,0,0.4);
+  --tbl-hdr:#1c1c2a; --tbl-hover:#1a1a28; --tbl-alt:#131320;
+}
+[data-theme="light"] {
+  --bg:#f4f4f8; --surface:#fff; --surface2:#ededf3; --border:#dcdce8;
+  --accent:#c47f00; --accent2:#c0440f; --text:#1a1a2e; --text-dim:#555570;
+  --text-muted:#aaaabc; --green:#1a9e57; --blue:#2270cc; --shadow:rgba(0,0,0,0.07);
+  --tbl-hdr:#ededf3; --tbl-hover:#f0f0f6; --tbl-alt:#f9f9fc;
+}
 
-  /* ── Light Theme ── */
-  [data-theme="light"] {
-    --bg: #f4f4f8;
-    --surface: #ffffff;
-    --surface2: #ededf3;
-    --border: #dcdce8;
-    --accent: #c47f00;
-    --accent2: #c0440f;
-    --text: #1a1a2e;
-    --text-dim: #555570;
-    --text-muted: #aaaabc;
-    --green: #1a9e57;
-    --red: #c0440f;
-    --blue: #2270cc;
-    --shadow: rgba(0,0,0,0.07);
-    --table-header-bg: #ededf3;
-    --table-row-hover: #f0f0f6;
-    --table-row-alt: #f9f9fc;
-  }
+* { box-sizing:border-box; margin:0; padding:0;
+    --fm:'IBM Plex Mono',monospace; --fs:'IBM Plex Sans',sans-serif; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0;
-      --font-mono: 'IBM Plex Mono', monospace;
-      --font-sans: 'IBM Plex Sans', sans-serif; }
+body { background:var(--bg); color:var(--text); font-family:var(--fs);
+       min-height:100vh; font-size:14px; transition:background .25s,color .25s; }
 
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: var(--font-sans); min-height: 100vh;
-    font-size: 14px; transition: background 0.25s, color 0.25s;
-  }
+/* ── LOGIN ── */
+.login-wrap { display:none; min-height:100vh; align-items:center;
+              justify-content:center; padding:24px 20px; background:var(--bg); }
+.login-wrap.show { display:flex; }
+.login-card { background:var(--surface); border:1px solid var(--border);
+              border-radius:16px; padding:32px 28px; width:100%; max-width:360px;
+              box-shadow:0 8px 32px var(--shadow); }
+.login-logo { width:56px; height:56px; background:var(--accent); border-radius:12px;
+              display:flex; align-items:center; justify-content:center;
+              font-family:var(--fm); font-weight:600; font-size:17px; color:#000;
+              margin:0 auto 20px; letter-spacing:-0.5px; }
+.login-title { text-align:center; font-size:20px; font-weight:600;
+               color:var(--text); margin-bottom:4px; }
+.login-sub { text-align:center; font-size:12px; color:var(--text-dim);
+             font-family:var(--fm); text-transform:uppercase; letter-spacing:1px;
+             margin-bottom:28px; }
+.login-lbl { display:block; font-family:var(--fm); font-size:11px;
+             color:var(--text-muted); text-transform:uppercase;
+             letter-spacing:.8px; margin-bottom:6px; }
+.login-inp { width:100%; background:var(--bg); border:1px solid var(--border);
+             color:var(--text); font-family:var(--fs); font-size:17px;
+             padding:13px 14px; border-radius:9px; outline:none;
+             -webkit-appearance:none; transition:border-color .15s; }
+.login-inp:focus { border-color:var(--accent); }
+.login-field { margin-bottom:14px; }
+.login-err { background:rgba(224,92,42,.12); border:1px solid rgba(224,92,42,.3);
+             color:var(--accent2); border-radius:8px; padding:10px 13px;
+             font-size:14px; margin-bottom:14px; display:none; text-align:center; }
+.login-err.show { display:block; }
+.login-btn { width:100%; background:var(--accent); color:#000; font-family:var(--fs);
+             font-size:16px; font-weight:600; padding:14px; border-radius:9px;
+             border:none; cursor:pointer; -webkit-tap-highlight-color:transparent;
+             transition:opacity .15s; margin-top:4px; }
+.login-btn:active { opacity:.85; }
+.login-theme { display:flex; justify-content:center; margin-top:20px; gap:6px;
+               align-items:center; cursor:pointer; -webkit-tap-highlight-color:transparent; }
 
-  /* ══════════════════════════════════════
-     MOBILE FONT BOOST
-  ══════════════════════════════════════ */
-  @media (max-width: 639px) {
-    body { font-size: 16px; }
-    .vehicle-name { font-size: 15px !important; }
-    .srow-vehicle { font-size: 15px !important; }
-    .srow-field-value { font-size: 13px !important; }
-    .srow-field-label { font-size: 10px !important; }
-    .srow-stock { font-size: 13px !important; }
-    .srow-ts-badge { font-size: 11px !important; padding: 3px 9px !important; }
-    .srow-status-tag { font-size: 11px !important; }
-    .srow-comment-preview { font-size: 13px !important; }
-    .detail-label { font-size: 11px !important; }
-    .detail-value { font-size: 13px !important; }
-    .comment-text { font-size: 14px !important; }
-    .comment-textarea { font-size: 15px !important; }
-    .btn { font-size: 14px !important; padding: 10px 16px !important; }
-    .btn-edit { font-size: 13px !important; padding: 7px 12px !important; }
-    .status-btn { font-size: 14px !important; padding: 11px !important; }
-    .stock-pill { font-size: 13px !important; }
-    .tag { font-size: 11px !important; padding: 3px 7px !important; }
-    .search-input { font-size: 16px !important; }
-    .sort-pill { font-size: 12px !important; padding: 5px 11px !important; }
-  }
+/* ── HEADER ── */
+.header { background:var(--surface); border-bottom:1px solid var(--border);
+          padding:13px 16px 11px; position:sticky; top:0; z-index:100;
+          box-shadow:0 2px 8px var(--shadow); transition:background .25s,border-color .25s; }
+.hdr-top { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.brand { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.brand-icon { width:34px; height:34px; background:var(--accent); border-radius:8px;
+              display:flex; align-items:center; justify-content:center;
+              font-family:var(--fm); font-weight:600; font-size:13px; color:#000;
+              flex-shrink:0; transition:background .25s; }
+.brand-text { line-height:1.15; }
+.brand-title { font-size:13px; font-weight:600; color:var(--text); }
+.brand-sub { font-size:10px; color:var(--text-dim); font-family:var(--fm);
+             text-transform:uppercase; letter-spacing:1px; }
+.hdr-actions { display:flex; gap:6px; align-items:center; flex-shrink:0; }
 
-  /* ══════════════════════════════════════
-     LOGIN SCREEN
-  ══════════════════════════════════════ */
-  .login-screen {
-    display: none;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 20px;
-    background: var(--bg);
-  }
-  .login-screen.visible { display: flex; }
+.user-lbl { font-family:var(--fm); font-size:11px; font-weight:600;
+            color:var(--text-dim); background:var(--surface2); border:1px solid var(--border);
+            border-radius:6px; padding:4px 10px; white-space:nowrap; text-transform:uppercase; }
 
-  .login-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px 28px;
-    width: 100%;
-    max-width: 360px;
-    box-shadow: 0 8px 32px var(--shadow);
-  }
+.tt { display:flex; align-items:center; gap:5px; cursor:pointer;
+      -webkit-tap-highlight-color:transparent; padding:3px; }
+.tt-track { width:36px; height:20px; background:var(--surface2); border:1px solid var(--border);
+            border-radius:10px; position:relative; transition:background .25s; flex-shrink:0; }
+.tt-knob { width:14px; height:14px; background:var(--accent); border-radius:50%;
+           position:absolute; top:2px; left:2px;
+           transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+[data-theme="light"] .tt-knob { transform:translateX(16px); }
+.tt-ico { font-size:12px; line-height:1; user-select:none; }
 
-  .login-logo {
-    width: 52px; height: 52px;
-    background: var(--accent); border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-mono); font-weight: 600; font-size: 16px;
-    color: #000; letter-spacing: -0.5px;
-    margin: 0 auto 20px;
-  }
+.btn-icon { background:var(--surface2); border:1px solid var(--border); color:var(--text-dim);
+            width:34px; height:34px; border-radius:8px; cursor:pointer; display:flex;
+            align-items:center; justify-content:center; font-size:15px;
+            transition:all .15s; -webkit-tap-highlight-color:transparent; flex-shrink:0; }
+.btn-icon:active { background:var(--border); transform:scale(.95); }
+.btn-icon.loading { opacity:.5; pointer-events:none; }
+.btn-icon.active { background:var(--accent); border-color:var(--accent); color:#000; }
 
-  .login-title {
-    text-align: center; font-size: 18px; font-weight: 600;
-    color: var(--text); margin-bottom: 4px;
-  }
+.rpt-meta { margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.badge { font-family:var(--fm); font-size:10px; padding:3px 8px; border-radius:4px;
+         letter-spacing:.5px; text-transform:uppercase; }
+.b-date { background:rgba(240,165,0,.12); color:var(--accent); border:1px solid rgba(240,165,0,.25); }
+.b-cnt  { background:rgba(46,207,122,.1); color:var(--green); border:1px solid rgba(46,207,122,.2); }
+.b-loc  { background:rgba(74,158,255,.1); color:var(--blue); border:1px solid rgba(74,158,255,.2); }
+.b-view { background:rgba(240,165,0,.1); color:var(--accent); border:1px solid rgba(240,165,0,.2); font-size:9px; }
 
-  .login-sub {
-    text-align: center; font-size: 12px; color: var(--text-dim);
-    font-family: var(--font-mono); text-transform: uppercase;
-    letter-spacing: 1px; margin-bottom: 28px;
-  }
+/* ── TOOLBAR ── */
+.toolbar { padding:10px 16px; background:var(--surface); border-bottom:1px solid var(--border);
+           transition:background .25s,border-color .25s; }
+.srch-wrap { position:relative; }
+.srch-inp { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+            font-family:var(--fs); font-size:16px; padding:10px 12px 10px 38px;
+            border-radius:8px; outline:none; transition:border-color .15s; }
+.srch-inp:focus { border-color:var(--accent); }
+.srch-inp::placeholder { color:var(--text-muted); }
+.srch-ico { position:absolute; left:12px; top:50%; transform:translateY(-50%);
+            color:var(--text-muted); font-size:15px; pointer-events:none; }
 
-  .login-field { margin-bottom: 14px; }
+.sort-bar { display:none; gap:6px; flex-wrap:wrap; margin-top:8px; }
+.sort-bar.show { display:flex; }
+.sort-pill { display:flex; align-items:center; gap:4px; font-family:var(--fm); font-size:10px;
+             padding:5px 10px; border-radius:5px; border:1px solid var(--border);
+             background:var(--surface2); color:var(--text-dim); cursor:pointer;
+             -webkit-tap-highlight-color:transparent; transition:all .15s;
+             white-space:nowrap; text-transform:uppercase; }
+.sort-pill:active { transform:scale(.96); }
+.sort-pill.asc { background:rgba(240,165,0,.12); border-color:rgba(240,165,0,.4); color:var(--accent); }
+.sort-pill.desc { background:rgba(74,158,255,.1); border-color:rgba(74,158,255,.3); color:var(--blue); }
+.s-arr { font-size:9px; }
 
-  .login-label {
-    display: block; font-family: var(--font-mono); font-size: 10px;
-    color: var(--text-muted); text-transform: uppercase;
-    letter-spacing: 0.8px; margin-bottom: 6px;
-  }
+/* ── MAIN ── */
+.main { padding:12px 16px 80px; }
 
-  .login-input {
-    width: 100%; background: var(--bg);
-    border: 1px solid var(--border); color: var(--text);
-    font-family: var(--font-sans); font-size: 16px;
-    padding: 11px 13px; border-radius: 9px; outline: none;
-    transition: border-color 0.15s, background 0.25s;
-    -webkit-appearance: none;
-  }
-  .login-input:focus { border-color: var(--accent); }
+/* ── TAGS (shared) ── */
+.tag { font-family:var(--fm); font-size:10px; padding:3px 7px; border-radius:3px;
+       text-transform:uppercase; letter-spacing:.4px; }
+.tag-zone   { background:rgba(74,158,255,.12); color:var(--blue); }
+.tag-status { background:rgba(240,165,0,.12);  color:var(--accent); }
+.tag-days   { background:rgba(224,92,42,.14);  color:var(--accent2); }
+.tag-ok     { background:rgba(46,207,122,.12); color:var(--green); }
+.tag-ip     { background:rgba(74,158,255,.14); color:var(--blue);   border:1px solid rgba(74,158,255,.3); }
+.tag-cp     { background:rgba(46,207,122,.14); color:var(--green);  border:1px solid rgba(46,207,122,.3); }
+.tag-none   { background:var(--surface2); color:var(--text-muted);  border:1px solid var(--border); }
 
-  .login-error {
-    background: rgba(224,92,42,0.12); border: 1px solid rgba(224,92,42,0.3);
-    color: var(--accent2); border-radius: 8px; padding: 10px 13px;
-    font-size: 13px; margin-bottom: 14px; display: none; text-align: center;
-  }
-  .login-error.visible { display: block; }
+/* ── CARD VIEW ── */
+.cards-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+@media(min-width:640px){ .cards-grid { grid-template-columns:1fr 1fr; } }
 
-  .login-btn {
-    width: 100%; background: var(--accent); color: #000;
-    font-family: var(--font-sans); font-size: 15px; font-weight: 600;
-    padding: 13px; border-radius: 9px; border: none; cursor: pointer;
-    transition: opacity 0.15s; letter-spacing: 0.2px;
-    -webkit-tap-highlight-color: transparent; margin-top: 4px;
-  }
-  .login-btn:active { opacity: 0.85; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:10px;
+        overflow:hidden; box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
+.card.has-note { border-color:rgba(240,165,0,.4); }
+.card.open     { border-color:var(--accent); }
 
-  .login-theme {
-    display: flex; justify-content: center; margin-top: 20px;
-    gap: 6px; align-items: center; cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
+.card-hdr { padding:13px 14px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+            display:flex; gap:12px; align-items:flex-start; transition:background .15s; }
+.card-hdr:active { background:var(--surface2); }
 
-  /* ══════════════════════════════════════
-     HEADER
-  ══════════════════════════════════════ */
-  .header {
-    background: var(--surface); border-bottom: 1px solid var(--border);
-    padding: 13px 16px 11px; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 8px var(--shadow); transition: background 0.25s, border-color 0.25s;
-  }
-  .header-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .brand-icon {
-    width: 34px; height: 34px; background: var(--accent); border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-mono); font-weight: 600; font-size: 13px;
-    color: #000; letter-spacing: -0.5px; flex-shrink: 0; transition: background 0.25s;
-  }
-  .brand-text { line-height: 1.15; }
-  .brand-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
-  .brand-sub { font-size: 10px; color: var(--text-dim); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 1px; }
-  .header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.stk-pill { background:var(--surface2); border:1px solid var(--border); border-radius:6px;
+            padding:4px 9px; font-family:var(--fm); font-size:12px; color:var(--accent);
+            white-space:nowrap; flex-shrink:0; margin-top:2px; }
+.card-body { flex:1; min-width:0; }
+.veh-name { font-size:14px; font-weight:600; color:var(--text); line-height:1.3; margin-bottom:6px; }
+.veh-year { color:var(--accent); margin-right:4px; }
+.card-tags { display:flex; gap:5px; flex-wrap:wrap; }
+.card-chev { color:var(--text-muted); font-size:12px; flex-shrink:0; margin-top:3px;
+             transition:transform .2s; }
+.card.open .card-chev { transform:rotate(180deg); }
 
-  .theme-toggle { display: flex; align-items: center; gap: 5px; cursor: pointer; -webkit-tap-highlight-color: transparent; padding: 3px; }
-  .toggle-track { width: 36px; height: 20px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; position: relative; transition: background 0.25s, border-color 0.25s; flex-shrink: 0; }
-  .toggle-knob { width: 14px; height: 14px; background: var(--accent); border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
-  [data-theme="light"] .toggle-knob { transform: translateX(16px); }
-  .toggle-emoji { font-size: 12px; line-height: 1; user-select: none; }
+.card-detail { display:none; border-top:1px solid var(--border); padding:13px 14px;
+               background:var(--bg); }
+.card.open .card-detail { display:block; }
+.det-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:0; }
+.det-item.full { grid-column:1/-1; }
+.det-lbl { font-family:var(--fm); font-size:10px; color:var(--text-muted);
+           text-transform:uppercase; letter-spacing:.7px; margin-bottom:2px; }
+.det-val { font-size:13px; color:var(--text); font-family:var(--fm); word-break:break-all; }
 
-  .btn-icon {
-    background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
-    width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 15px; transition: all 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
-  }
-  .btn-icon:active { background: var(--border); transform: scale(0.95); }
-  .btn-icon.loading { opacity: 0.5; pointer-events: none; }
-  .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #000; }
+/* ── STACKED LIST (mobile list view) ── */
+.stk-list { display:flex; flex-direction:column; gap:10px; }
 
-  .user-label {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-    color: var(--text-dim); background: var(--surface2);
-    border: 1px solid var(--border); border-radius: 6px;
-    padding: 4px 10px; white-space: nowrap; letter-spacing: 0.3px;
-    text-transform: uppercase; flex-shrink: 0;
-  }
+.srow { background:var(--surface); border:1px solid var(--border); border-radius:12px;
+        overflow:hidden; box-shadow:0 1px 4px var(--shadow); transition:border-color .15s; }
+.srow.has-note { border-color:rgba(240,165,0,.4); }
+.srow.open     { border-color:var(--accent); }
 
-  .report-meta { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .badge { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
-  .badge-date { background: rgba(240,165,0,0.12); color: var(--accent); border: 1px solid rgba(240,165,0,0.25); }
-  .badge-count { background: rgba(46,207,122,0.1); color: var(--green); border: 1px solid rgba(46,207,122,0.2); }
-  .badge-loc { background: rgba(74,158,255,0.1); color: var(--blue); border: 1px solid rgba(74,158,255,0.2); }
-  .badge-view { background: rgba(240,165,0,0.1); color: var(--accent); border: 1px solid rgba(240,165,0,0.2); font-size: 9px; }
+.srow-hdr { padding:14px 15px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+            transition:background .15s; }
+.srow-hdr:active { background:var(--surface2); }
 
-  /* ══════════════════════════════════════
-     TOOLBAR
-  ══════════════════════════════════════ */
-  .toolbar { padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); transition: background 0.25s, border-color 0.25s; }
-  .search-wrap { position: relative; }
-  .search-input {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    font-family: var(--font-sans); font-size: 14px; padding: 9px 12px 9px 36px;
-    border-radius: 8px; outline: none; transition: border-color 0.15s, background 0.25s, color 0.25s;
-  }
-  .search-input:focus { border-color: var(--accent); }
-  .search-input::placeholder { color: var(--text-muted); }
-  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 15px; pointer-events: none; }
+.srow-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+.srow-stk { font-family:var(--fm); font-size:14px; font-weight:600; color:var(--accent); }
+.srow-tsbadge { font-family:var(--fm); font-size:12px; font-weight:600; padding:4px 11px;
+                border-radius:5px; text-transform:uppercase; letter-spacing:.4px; }
+.srow-tsbadge.ip { background:rgba(74,158,255,.14); color:var(--blue);  border:1px solid rgba(74,158,255,.3); }
+.srow-tsbadge.cp { background:rgba(46,207,122,.14); color:var(--green); border:1px solid rgba(46,207,122,.3); }
 
-  .sort-bar { display: none; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-  .sort-bar.visible { display: flex; }
-  .sort-pill {
-    display: flex; align-items: center; gap: 4px;
-    font-family: var(--font-mono); font-size: 10px; padding: 4px 9px; border-radius: 5px;
-    border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim);
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
-    transition: all 0.15s; white-space: nowrap; letter-spacing: 0.3px; text-transform: uppercase;
-  }
-  .sort-pill:active { transform: scale(0.96); }
-  .sort-pill.asc { background: rgba(240,165,0,0.12); border-color: rgba(240,165,0,0.4); color: var(--accent); }
-  .sort-pill.desc { background: rgba(74,158,255,0.1); border-color: rgba(74,158,255,0.3); color: var(--blue); }
-  .sort-arrow { font-size: 9px; }
+.srow-veh { font-size:17px; font-weight:600; color:var(--text); line-height:1.3; margin-bottom:11px; }
+.srow-yr  { color:var(--accent); margin-right:4px; }
 
-  /* ══════════════════════════════════════
-     MAIN
-  ══════════════════════════════════════ */
-  .main { padding: 12px 16px; padding-bottom: 80px; }
+.srow-fields { display:grid; grid-template-columns:1fr 1fr; gap:9px 14px; margin-bottom:11px; }
+.srow-flbl { font-family:var(--fm); font-size:11px; color:var(--text-muted);
+             text-transform:uppercase; letter-spacing:.6px; margin-bottom:3px; }
+.srow-fval { font-size:15px; color:var(--text); font-family:var(--fm);
+             white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-  /* ══════════════════════════════════════
-     CARD VIEW (unchanged from v6)
-  ══════════════════════════════════════ */
-  .cards-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  @media (min-width: 640px) { .cards-grid { grid-template-columns: 1fr 1fr; } }
+.srow-foot { display:flex; align-items:center; gap:8px; }
+.srow-prod { font-family:var(--fm); font-size:11px; padding:3px 8px; border-radius:4px;
+             text-transform:uppercase; flex-shrink:0; }
+.srow-prev { flex:1; font-size:13px; color:var(--text-muted); white-space:nowrap;
+             overflow:hidden; text-overflow:ellipsis; font-style:italic; }
+.srow-prev.has { color:var(--text-dim); font-style:normal; }
+.srow-chev { color:var(--text-muted); font-size:14px; flex-shrink:0; margin-left:auto;
+             transition:transform .2s; }
+.srow.open .srow-chev { transform:rotate(180deg); }
 
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; overflow: hidden;
-    transition: border-color 0.15s, background 0.25s, box-shadow 0.25s;
-    box-shadow: 0 1px 4px var(--shadow);
-  }
-  .card.has-comment { border-color: rgba(240,165,0,0.4); }
-  .card.expanded { border-color: var(--accent); }
+.srow-det { display:none; border-top:1px solid var(--border); padding:14px 15px;
+            background:var(--bg); }
+.srow.open .srow-det { display:block; }
+.srow-det-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.srow-det-item.full { grid-column:1/-1; }
 
-  .card-header {
-    padding: 12px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent;
-    display: flex; gap: 12px; align-items: flex-start; transition: background 0.15s;
-  }
-  .card-header:active { background: var(--surface2); }
+/* ── TABLE (desktop list view) ── */
+.tbl-wrap { display:block; overflow-x:auto; border-radius:10px;
+            border:1px solid var(--border); box-shadow:0 1px 4px var(--shadow); }
+table { width:100%; border-collapse:collapse; font-size:12px; min-width:760px; }
+thead tr { background:var(--tbl-hdr); border-bottom:2px solid var(--border); }
+th { padding:0; text-align:left; border-right:1px solid var(--border); white-space:nowrap; }
+th:last-child { border-right:none; }
+.th-btn { display:flex; align-items:center; gap:5px; width:100%; padding:10px 11px;
+          font-family:var(--fm); font-size:9px; font-weight:600; color:var(--text-dim);
+          text-transform:uppercase; letter-spacing:.7px; cursor:pointer; background:none;
+          border:none; -webkit-tap-highlight-color:transparent; white-space:nowrap; }
+.th-btn:active { background:var(--surface2); }
+.th-btn.asc { color:var(--accent); }
+.th-btn.desc { color:var(--blue); }
+.th-ico { font-size:10px; opacity:.3; transition:opacity .15s,transform .2s; flex-shrink:0; }
+.th-btn.asc .th-ico, .th-btn.desc .th-ico { opacity:1; }
+.th-btn.desc .th-ico { transform:rotate(180deg); }
+tbody tr { border-bottom:1px solid var(--border); cursor:pointer; transition:background .12s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:nth-child(even) { background:var(--tbl-alt); }
+tbody tr:hover { background:var(--tbl-hover); }
+tbody tr.has-note td:first-child { border-left:3px solid var(--accent); }
+tbody tr.row-open { background:var(--tbl-hover); }
+td { padding:9px 11px; color:var(--text); border-right:1px solid var(--border);
+     vertical-align:top; }
+td:last-child { border-right:none; }
+td.mono  { font-family:var(--fm); font-size:11px; }
+td.acct  { font-family:var(--fm); font-size:11px; font-weight:600; color:var(--accent); }
+.td-tag { display:inline-block; font-family:var(--fm); font-size:9px; padding:2px 6px;
+          border-radius:3px; text-transform:uppercase; letter-spacing:.4px; }
+.det-tr { display:none; }
+.det-tr.open { display:table-row; }
+.det-tc { padding:0 !important; border-right:none !important; background:var(--bg) !important; }
+.det-inner { padding:12px 14px; border-top:1px solid var(--border); border-left:3px solid var(--accent); }
+.det-row-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px 16px; margin-bottom:12px; }
 
-  .stock-pill {
-    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
-    padding: 4px 8px; font-family: var(--font-mono); font-size: 11px; color: var(--accent);
-    white-space: nowrap; flex-shrink: 0; margin-top: 1px;
-  }
-  .card-main { flex: 1; min-width: 0; }
-  .vehicle-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 5px; }
-  .vehicle-year { color: var(--accent); margin-right: 4px; }
-  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+/* ── COMMENT + STATUS (shared) ── */
+.cmt-sec { border-top:1px solid var(--border); padding:13px 14px; background:var(--surface2); }
+.cmt-row { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.cmt-txt { font-size:14px; color:var(--text); line-height:1.5; margin-bottom:7px; min-height:18px; }
+.cmt-txt.empty { color:var(--text-muted); font-style:italic; }
+.cmt-area { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+            font-family:var(--fs); font-size:15px; padding:10px 12px; border-radius:7px;
+            outline:none; resize:none; min-height:72px; line-height:1.5; display:none;
+            transition:border-color .15s; }
+.cmt-area:focus { border-color:var(--accent); }
+.cmt-acts { display:flex; gap:7px; margin-top:8px; display:none; }
 
-  .tag { font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .tag-zone { background: rgba(74,158,255,0.12); color: var(--blue); }
-  .tag-status { background: rgba(240,165,0,0.12); color: var(--accent); }
-  .tag-days { background: rgba(224,92,42,0.14); color: var(--accent2); }
-  .tag-days-ok { background: rgba(46,207,122,0.12); color: var(--green); }
-  .tag-in-progress { background: rgba(74,158,255,0.14); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
-  .tag-completed { background: rgba(46,207,122,0.14); color: var(--green); border: 1px solid rgba(46,207,122,0.3); }
-  .tag-no-status { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+.btn { font-family:var(--fs); font-size:14px; font-weight:600; padding:10px 16px;
+       border-radius:7px; cursor:pointer; border:none; transition:all .15s;
+       -webkit-tap-highlight-color:transparent; }
+.btn:active { transform:scale(.97); }
+.btn-save { background:var(--accent); color:#000; flex:1; }
+.btn-save:disabled { opacity:.5; pointer-events:none; }
+.btn-cancel { background:var(--surface); border:1px solid var(--border); color:var(--text-dim); }
+.btn-edit { font-size:13px; padding:6px 12px; background:var(--surface);
+            border:1px solid var(--border); color:var(--text-dim); border-radius:5px;
+            cursor:pointer; -webkit-tap-highlight-color:transparent; font-family:var(--fs);
+            white-space:nowrap; flex-shrink:0; }
+.btn-edit:active { background:var(--border); }
 
-  .card-chevron { color: var(--text-muted); font-size: 12px; flex-shrink: 0; margin-top: 3px; transition: transform 0.2s; }
-  .card.expanded .card-chevron { transform: rotate(180deg); }
+.sts-wrap { margin-top:11px; padding-top:11px; border-top:1px solid var(--border); }
+.sts-btn { width:100%; padding:11px 14px; border-radius:7px; font-family:var(--fs);
+           font-size:15px; font-weight:600; cursor:pointer; border:1px solid var(--border);
+           background:var(--surface2); color:var(--text-dim); transition:all .2s;
+           -webkit-tap-highlight-color:transparent; display:flex; align-items:center;
+           justify-content:center; gap:6px; }
+.sts-btn:active { transform:scale(.98); }
+.sts-btn.ip { background:rgba(74,158,255,.14); border-color:rgba(74,158,255,.45); color:var(--blue); }
+.sts-btn.cp { background:rgba(46,207,122,.14); border-color:rgba(46,207,122,.45); color:var(--green); }
+.sts-btn.saving { opacity:.6; pointer-events:none; }
 
-  .card-detail { display: none; border-top: 1px solid var(--border); padding: 12px 14px; background: var(--bg); }
-  .card.expanded .card-detail { display: block; }
+/* ── MODAL ── */
+.modal-ov { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
+            z-index:200; align-items:flex-end; }
+.modal-ov.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border); border-radius:18px 18px 0 0;
+         padding:20px 16px 32px; width:100%; animation:slideUp .25s ease-out; }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.modal-hnd { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 16px; }
+.modal-ttl { font-size:15px; font-weight:600; margin-bottom:16px; text-align:center; }
+.modal-lbl { font-family:var(--fm); font-size:9px; color:var(--text-muted); text-transform:uppercase;
+             letter-spacing:.8px; margin-bottom:5px; display:block; }
+.modal-inp { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+             font-family:var(--fm); font-size:11px; padding:10px 12px; border-radius:8px;
+             outline:none; margin-bottom:14px; opacity:.7; cursor:default; }
+.btn-modal { width:100%; background:var(--accent); color:#000; font-family:var(--fs);
+             font-size:14px; font-weight:600; padding:12px; border-radius:9px;
+             border:none; cursor:pointer; }
 
-  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0; }
-  .detail-item.full { grid-column: 1 / -1; }
-  .detail-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
-  .detail-value { font-size: 12px; color: var(--text); font-family: var(--font-mono); word-break: break-all; }
+/* ── STATES ── */
+.state-msg { text-align:center; padding:48px 24px; color:var(--text-muted); }
+.state-msg .ico { font-size:36px; margin-bottom:12px; }
+.state-msg p { font-size:14px; line-height:1.7; }
+.loading-st { text-align:center; padding:48px 16px; }
+.loading-st p { color:var(--text-muted); font-size:13px; font-family:var(--fm); margin-top:10px; }
 
-  /* ══════════════════════════════════════
-     TABLE VIEW — DESKTOP (640px+)
-     Standard horizontal table
-  ══════════════════════════════════════ */
-  .table-wrap {
-    display: block; overflow-x: auto; border-radius: 10px;
-    border: 1px solid var(--border); box-shadow: 0 1px 4px var(--shadow);
-    -webkit-overflow-scrolling: touch;
-  }
+/* ── TOAST ── */
+.toast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
+         background:var(--green); color:#fff; font-family:var(--fm); font-size:13px;
+         font-weight:600; padding:11px 22px; border-radius:8px; z-index:999;
+         transition:transform .3s cubic-bezier(.34,1.56,.64,1); white-space:nowrap; }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.err { background:var(--accent2); }
 
-  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 760px; }
-
-  thead tr { background: var(--table-header-bg); border-bottom: 2px solid var(--border); }
-  th { padding: 0; text-align: left; border-right: 1px solid var(--border); white-space: nowrap; }
-  th:last-child { border-right: none; }
-
-  .th-btn {
-    display: flex; align-items: center; gap: 5px; width: 100%; padding: 10px 11px;
-    font-family: var(--font-mono); font-size: 9px; font-weight: 600; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 0.7px; cursor: pointer; background: none; border: none;
-    -webkit-tap-highlight-color: transparent; transition: color 0.15s, background 0.15s; white-space: nowrap;
-  }
-  .th-btn:active { background: var(--surface2); }
-  .th-btn.sort-asc { color: var(--accent); }
-  .th-btn.sort-desc { color: var(--blue); }
-  .th-sort-icon { font-size: 10px; opacity: 0.35; transition: opacity 0.15s, transform 0.2s; flex-shrink: 0; }
-  .th-btn.sort-asc .th-sort-icon, .th-btn.sort-desc .th-sort-icon { opacity: 1; }
-  .th-btn.sort-desc .th-sort-icon { transform: rotate(180deg); }
-
-  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; cursor: pointer; }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:nth-child(even) { background: var(--table-row-alt); }
-  tbody tr:hover { background: var(--table-row-hover); }
-  tbody tr.has-comment td:first-child { border-left: 3px solid var(--accent); }
-  tbody tr.row-expanded { background: var(--table-row-hover); }
-
-  td { padding: 9px 11px; color: var(--text); border-right: 1px solid var(--border); vertical-align: top; font-family: var(--font-sans); }
-  td:last-child { border-right: none; }
-  td.mono { font-family: var(--font-mono); font-size: 11px; }
-  td.accent { color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
-
-  .td-tag { display: inline-block; font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
-
-  .row-detail-tr { display: none; }
-  .row-detail-tr.open { display: table-row; }
-  .row-detail-cell { padding: 0 !important; border-right: none !important; background: var(--bg) !important; }
-  .row-detail-inner { padding: 12px 14px; border-top: 1px solid var(--border); border-left: 3px solid var(--accent); }
-  .row-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; margin-bottom: 12px; }
-
-  /* ══════════════════════════════════════
-     TABLE VIEW — MOBILE (under 640px)
-     Stacked row cards replace the table
-  ══════════════════════════════════════ */
-  .stacked-list { display: flex; flex-direction: column; gap: 10px; }
-
-  .srow {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; overflow: hidden;
-    box-shadow: 0 1px 4px var(--shadow);
-    transition: border-color 0.15s;
-  }
-  .srow.has-comment { border-color: rgba(240,165,0,0.4); }
-  .srow.expanded { border-color: var(--accent); }
-
-  .srow-header {
-    padding: 13px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent;
-    transition: background 0.15s;
-  }
-  .srow-header:active { background: var(--surface2); }
-
-  /* Row 1: stock # + task status badge */
-  .srow-top {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 6px;
-  }
-  .srow-stock {
-    font-family: var(--font-mono); font-size: 13px; font-weight: 600;
-    color: var(--accent); letter-spacing: 0.3px;
-  }
-  .srow-ts-badge {
-    font-family: var(--font-mono); font-size: 11px; padding: 3px 10px;
-    border-radius: 5px; text-transform: uppercase; letter-spacing: 0.4px;
-    font-weight: 600;
-  }
-  .srow-ts-badge.inprogress { background: rgba(74,158,255,0.14); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
-  .srow-ts-badge.completed { background: rgba(46,207,122,0.14); color: var(--green); border: 1px solid rgba(46,207,122,0.3); }
-
-  /* Row 2: vehicle name */
-  .srow-vehicle {
-    font-size: 15px; font-weight: 600; color: var(--text);
-    line-height: 1.3; margin-bottom: 10px;
-  }
-  .srow-year { color: var(--accent); margin-right: 4px; }
-
-  /* Row 3: key data — 2 column grid (easier to read than 3) */
-  .srow-fields {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 8px 12px; margin-bottom: 10px;
-  }
-  .srow-field {}
-  .srow-field-label {
-    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 2px;
-  }
-  .srow-field-value {
-    font-size: 13px; color: var(--text); font-family: var(--font-mono);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-
-  /* Row 4: status tag + comment preview + chevron */
-  .srow-footer {
-    display: flex; align-items: center; gap: 8px;
-  }
-  .srow-status-tag {
-    font-family: var(--font-mono); font-size: 10px; padding: 3px 8px;
-    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px;
-    flex-shrink: 0;
-  }
-  .srow-comment-preview {
-    flex: 1; font-size: 12px; color: var(--text-muted);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    font-style: italic;
-  }
-  .srow-comment-preview.has-text { color: var(--text-dim); font-style: normal; }
-  .srow-chevron { color: var(--text-muted); font-size: 13px; flex-shrink: 0; transition: transform 0.2s; margin-left: auto; }
-  .srow.expanded .srow-chevron { transform: rotate(180deg); }
-
-  /* Expanded detail section for stacked rows */
-  .srow-detail {
-    display: none; border-top: 1px solid var(--border);
-    padding: 13px 14px; background: var(--bg);
-  }
-  .srow.expanded .srow-detail { display: block; }
-
-  .srow-detail-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 10px; margin-bottom: 12px;
-  }
-  .srow-detail-item {}
-  .srow-detail-item.full { grid-column: 1 / -1; }
-
-  /* ══════════════════════════════════════
-     COMMENT + TASK STATUS (shared)
-  ══════════════════════════════════════ */
-  .comment-section {
-    border-top: 1px solid var(--border); padding: 12px 14px;
-    background: var(--surface2); transition: background 0.25s, border-color 0.25s;
-  }
-  .comment-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-  .comment-text { font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 6px; min-height: 16px; }
-  .comment-text.empty { color: var(--text-muted); font-style: italic; }
-
-  .comment-textarea {
-    width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    font-family: var(--font-sans); font-size: 13px; padding: 9px 11px; border-radius: 7px;
-    outline: none; resize: none; min-height: 68px; line-height: 1.5; display: none;
-    transition: border-color 0.15s, background 0.25s, color 0.25s;
-  }
-  .comment-textarea:focus { border-color: var(--accent); }
-  .comment-actions { display: flex; gap: 7px; margin-top: 7px; display: none; }
-
-  .btn { font-family: var(--font-sans); font-size: 12px; font-weight: 600; padding: 8px 14px; border-radius: 7px; cursor: pointer; border: none; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
-  .btn:active { transform: scale(0.97); }
-  .btn-save { background: var(--accent); color: #000; flex: 1; }
-  .btn-save:disabled { opacity: 0.5; pointer-events: none; }
-  .btn-cancel { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); }
-
-  .btn-edit {
-    font-size: 11px; padding: 5px 10px; background: var(--surface); border: 1px solid var(--border);
-    color: var(--text-dim); border-radius: 5px; cursor: pointer; -webkit-tap-highlight-color: transparent;
-    font-family: var(--font-sans); white-space: nowrap; transition: background 0.15s; flex-shrink: 0;
-  }
-  .btn-edit:active { background: var(--border); }
-
-  .status-toggle { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-  .status-btn {
-    width: 100%; padding: 9px 14px; border-radius: 7px;
-    font-family: var(--font-sans); font-size: 12px; font-weight: 600;
-    cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim);
-    transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-    letter-spacing: 0.2px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .status-btn:active { transform: scale(0.98); }
-  .status-btn.active-inprogress { background: rgba(74,158,255,0.14); border-color: rgba(74,158,255,0.45); color: var(--blue); }
-  .status-btn.active-completed { background: rgba(46,207,122,0.14); border-color: rgba(46,207,122,0.45); color: var(--green); }
-  .status-btn.saving { opacity: 0.6; pointer-events: none; }
-
-  /* ══════════════════════════════════════
-     STATES & MODAL
-  ══════════════════════════════════════ */
-  .state-msg { text-align: center; padding: 48px 24px; color: var(--text-muted); }
-  .state-msg .icon { font-size: 36px; margin-bottom: 12px; }
-  .state-msg p { font-size: 13px; line-height: 1.6; }
-  .loading-state { text-align: center; padding: 48px 16px; }
-  .loading-state p { color: var(--text-muted); font-size: 13px; font-family: var(--font-mono); margin-top: 10px; }
-
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: flex-end; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 18px 18px 0 0; padding: 20px 16px 32px; width: 100%; animation: slideUp 0.25s ease-out; }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
-  .modal-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; text-align: center; }
-  .modal-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; display: block; }
-  .modal-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 12px; padding: 10px 12px; border-radius: 8px; outline: none; margin-bottom: 14px; transition: border-color 0.15s; }
-  .modal-input:focus { border-color: var(--accent); }
-  .btn-modal-save { width: 100%; background: var(--accent); color: #000; font-family: var(--font-sans); font-size: 14px; font-weight: 600; padding: 12px; border-radius: 9px; border: none; cursor: pointer; margin-bottom: 8px; }
-  .btn-modal-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font-sans); font-size: 13px; padding: 11px; border-radius: 9px; cursor: pointer; }
-
-  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 10px 20px; border-radius: 8px; z-index: 999; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: var(--accent2); }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner { display: block; width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto 10px; }
-  .spinner-sm { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; }
+/* ── SPINNERS ── */
+@keyframes spin { to{transform:rotate(360deg)} }
+.spin { display:block; width:28px; height:28px; border:3px solid var(--border);
+        border-top-color:var(--accent); border-radius:50%; animation:spin .6s linear infinite;
+        margin:0 auto 10px; }
+.spin-sm { display:inline-block; width:14px; height:14px; border:2px solid var(--border);
+           border-top-color:var(--accent); border-radius:50%; animation:spin .6s linear infinite;
+           vertical-align:middle; }
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
-<div class="login-screen visible" id="loginScreen">
+<!-- ═══ LOGIN ═══ -->
+<div class="login-wrap show" id="loginWrap">
   <div class="login-card">
     <div class="login-logo">NLR</div>
     <div class="login-title">No Location Reported</div>
-    <div class="login-sub">CarMax · Location 4070</div>
-
-    <div class="login-error" id="loginError">Incorrect username or password</div>
-
+    <div class="login-sub">CarMax &middot; Location 4070</div>
+    <div class="login-err" id="loginErr">Incorrect username or password</div>
     <div class="login-field">
-      <label class="login-label">Username</label>
-      <input class="login-input" id="loginUser" type="text" autocomplete="username"
-        autocapitalize="none" autocorrect="off" spellcheck="false"
-        placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()" />
+      <label class="login-lbl">Username</label>
+      <input class="login-inp" id="loginUser" type="text" autocomplete="username"
+        autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Enter username"
+        onkeydown="if(event.key==='Enter')doLogin()" />
     </div>
     <div class="login-field">
-      <label class="login-label">Password</label>
-      <input class="login-input" id="loginPass" type="password" autocomplete="current-password"
+      <label class="login-lbl">Password</label>
+      <input class="login-inp" id="loginPass" type="password" autocomplete="current-password"
         placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
     </div>
-
     <button class="login-btn" onclick="doLogin()">Sign In</button>
-
     <div class="login-theme" onclick="toggleTheme()">
-      <span class="toggle-emoji">🌙</span>
-      <div class="toggle-track"><div class="toggle-knob"></div></div>
-      <span class="toggle-emoji">☀️</span>
+      <span class="tt-ico">&#127769;</span>
+      <div class="tt-track"><div class="tt-knob"></div></div>
+      <span class="tt-ico">&#9728;&#65039;</span>
     </div>
   </div>
 </div>
 
-<!-- Config Modal -->
-<div class="modal-overlay" id="configModal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Admin Info</div>
-    <label class="modal-label">Apps Script URL (set in index.html)</label>
-    <input class="modal-input" id="urlInput" type="url" readonly
-      style="opacity:0.7;cursor:default;font-size:11px;" />
-    <button class="btn-modal-save" onclick="saveConfig()">Close</button>
+<!-- ═══ APP (hidden until login) ═══ -->
+<div id="appWrap" style="display:none;">
+
+  <!-- Admin modal -->
+  <div class="modal-ov" id="adminModal">
+    <div class="modal">
+      <div class="modal-hnd"></div>
+      <div class="modal-ttl">Admin Info</div>
+      <label class="modal-lbl">Apps Script URL</label>
+      <input class="modal-inp" id="adminUrl" type="url" readonly />
+      <button class="btn-modal" onclick="closeModal()">Close</button>
+    </div>
   </div>
-</div>
 
-<!-- App Shell (hidden until login) -->
-<div id="appShell" style="display:none;">
-
-<!-- Header -->
-<div class="header">
-  <div class="header-top">
-    <div class="brand">
-      <div class="brand-icon">NLR</div>
-      <div class="brand-text">
-        <div class="brand-title">No Location Reported</div>
-        <div class="brand-sub">CarMax · Location 4070</div>
+  <!-- Header -->
+  <div class="header">
+    <div class="hdr-top">
+      <div class="brand">
+        <div class="brand-icon">NLR</div>
+        <div class="brand-text">
+          <div class="brand-title">No Location Reported</div>
+          <div class="brand-sub">CarMax &middot; Location 4070</div>
+        </div>
+      </div>
+      <div class="hdr-actions">
+        <span class="user-lbl" id="userLbl"></span>
+        <div class="tt" onclick="toggleTheme()">
+          <span class="tt-ico">&#127769;</span>
+          <div class="tt-track"><div class="tt-knob"></div></div>
+          <span class="tt-ico">&#9728;&#65039;</span>
+        </div>
+        <button class="btn-icon" id="viewBtn" onclick="toggleView()" title="Switch view">&#9776;</button>
+        <button class="btn-icon loading" id="refreshBtn" onclick="loadData()" title="Refresh">&#8635;</button>
+        <button class="btn-icon" id="adminBtn" onclick="openModal()" title="Admin" style="display:none;">&#9881;&#65039;</button>
+        <button class="btn-icon" onclick="doLogout()" title="Sign out" style="font-size:13px;">&#9167;</button>
       </div>
     </div>
-    <div class="header-actions">
-      <span class="user-label" id="userLabel" style="display:none;"></span>
-      <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">
-        <span class="toggle-emoji">🌙</span>
-        <div class="toggle-track"><div class="toggle-knob"></div></div>
-        <span class="toggle-emoji">☀️</span>
-      </div>
-      <button class="btn-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch view">☰</button>
-      <button class="btn-icon" id="refreshBtn" onclick="loadData()" title="Refresh">↻</button>
-      <button class="btn-icon" id="settingsBtn" onclick="openModal()" title="Settings" style="display:none;">⚙</button>
-      <button class="btn-icon" onclick="doLogout()" title="Sign out" style="font-size:13px;">⏏</button>
+    <div class="rpt-meta" id="rptMeta" style="display:none;">
+      <span class="badge b-date" id="rptDate"></span>
+      <span class="badge b-cnt"  id="rptCnt"></span>
+      <span class="badge b-loc">Loc 4070</span>
+      <span class="badge b-view" id="rptView">Card View</span>
     </div>
   </div>
-  <div class="report-meta" id="reportMeta" style="display:none;">
-    <span class="badge badge-date" id="reportDate"></span>
-    <span class="badge badge-count" id="vehicleCount"></span>
-    <span class="badge badge-loc">Loc 4070</span>
-    <span class="badge badge-view" id="viewBadge">Card View</span>
-  </div>
-</div>
 
-<!-- Toolbar -->
-<div class="toolbar">
-  <div class="search-wrap">
-    <span class="search-icon">⊕</span>
-    <input class="search-input" id="searchInput" type="text" placeholder="Search stock #, VIN, vehicle..." oninput="applyFilters()" />
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="srch-wrap">
+      <span class="srch-ico">&#8853;</span>
+      <input class="srch-inp" id="srchInp" type="text"
+        placeholder="Search stock #, VIN, vehicle..." oninput="applyFilters()" />
+    </div>
+    <div class="sort-bar" id="sortBar">
+      <span style="font-family:var(--fm);font-size:9px;color:var(--text-muted);align-self:center;text-transform:uppercase;letter-spacing:.5px;">Sort:</span>
+      <div class="sort-pill" id="pill-Stock Num"          onclick="sortBy('Stock Num')">Stock # <span class="s-arr">&#8597;</span></div>
+      <div class="sort-pill" id="pill-Year"               onclick="sortBy('Year')">Year <span class="s-arr">&#8597;</span></div>
+      <div class="sort-pill" id="pill-Vehicle Description" onclick="sortBy('Vehicle Description')">Vehicle <span class="s-arr">&#8597;</span></div>
+      <div class="sort-pill" id="pill-Zone Description"   onclick="sortBy('Zone Description')">Zone <span class="s-arr">&#8597;</span></div>
+      <div class="sort-pill" id="pill-Days in Color Zone" onclick="sortBy('Days in Color Zone')">Days <span class="s-arr">&#8597;</span></div>
+      <div class="sort-pill" id="pill-Product Status"     onclick="sortBy('Product Status')">Status <span class="s-arr">&#8597;</span></div>
+      <div class="sort-pill" id="pill-Task Status"        onclick="sortBy('Task Status')">Task <span class="s-arr">&#8597;</span></div>
+    </div>
   </div>
-  <div class="sort-bar" id="sortBar">
-    <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);align-self:center;text-transform:uppercase;letter-spacing:0.5px;">Sort:</span>
-    <div class="sort-pill" id="pill-Stock Num" onclick="sortBy('Stock Num')">Stock # <span class="sort-arrow">↕</span></div>
-    <div class="sort-pill" id="pill-Year" onclick="sortBy('Year')">Year <span class="sort-arrow">↕</span></div>
-    <div class="sort-pill" id="pill-Vehicle Description" onclick="sortBy('Vehicle Description')">Vehicle <span class="sort-arrow">↕</span></div>
-    <div class="sort-pill" id="pill-Zone Description" onclick="sortBy('Zone Description')">Zone <span class="sort-arrow">↕</span></div>
-    <div class="sort-pill" id="pill-Days in Color Zone" onclick="sortBy('Days in Color Zone')">Days <span class="sort-arrow">↕</span></div>
-    <div class="sort-pill" id="pill-Product Status" onclick="sortBy('Product Status')">Status <span class="sort-arrow">↕</span></div>
-    <div class="sort-pill" id="pill-Task Status" onclick="sortBy('Task Status')">Task Status <span class="sort-arrow">↕</span></div>
-  </div>
-</div>
 
-<!-- Main -->
-<div class="main" id="main">
-  <div class="loading-state">
-    <div class="spinner"></div>
-    <p>Loading vehicles...</p>
+  <!-- Main content -->
+  <div class="main" id="main">
+    <div class="loading-st"><div class="spin"></div><p>Loading...</p></div>
   </div>
-</div>
 
-</div><!-- end appShell -->
+</div><!-- end appWrap -->
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// CONFIGURATION — edit these two sections
-// ══════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// CONFIGURATION — only edit this section
+// ═══════════════════════════════════════════════
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5OFLb3zGsAyBNnsvgORmY0OwESWMJPXMrjaiFIrk6xb2waMHv4iyZV7CoXbcDVGv3/exec";
 
-// 1. Paste your Apps Script Web App URL here:
-const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
-
-// 2. Users — add or change credentials here:
-const USERS = {
-  "admin": { password: "1234",  role: "admin" },
-  "user1": { password: "user1", role: "user"  }
+var USERS = {
+  "admin": { pw:"1234",  role:"admin" },
+  "user1": { pw:"user1", role:"user"  }
 };
+// ═══════════════════════════════════════════════
 
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-const THEME_KEY   = "nlr_theme";
-const SESSION_KEY = "nlr_session";
-// VIEW_KEY intentionally not used on init — view is set per-device based on screen size
+var SESSION_KEY = "nlr_u";
+var THEME_KEY   = "nlr_t";
 
-let currentUser   = null;
-let allData       = [];
-let expandedStock = null;
-let editingStock  = null;
-let currentView   = "card";
-let sortCol       = null;
-let sortDir       = "asc";
+var currentUser   = null;
+var allData       = [];
+var expandedSn    = null;
+var currentView   = "card";
+var sortCol       = null;
+var sortDir       = "asc";
 
 function isMobile() {
-  return window.matchMedia("(max-width: 639px)").matches;
+  return window.matchMedia("(max-width:639px)").matches;
 }
 
-// ══════════════════════════════════════════
-// INIT — runs once on page load
-// ══════════════════════════════════════════
-window.addEventListener("DOMContentLoaded", () => {
-  // Apply saved theme first so there's no flash
-  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
+// ── BOOT ──────────────────────────────────────
+window.addEventListener("DOMContentLoaded", function() {
+  // Apply saved theme (no flash)
+  var t = localStorage.getItem(THEME_KEY);
+  if (t) applyTheme(t);
 
-  // Check for existing login session
-  const saved = localStorage.getItem(SESSION_KEY);
+  // Restore session
+  var saved = localStorage.getItem(SESSION_KEY);
   if (saved && USERS[saved]) {
     currentUser = saved;
-    bootApp();
+    startApp();
   }
-  // If no session, login screen is already visible (starts with class="login-screen visible")
+  // If no session: login screen already visible (has class "show")
 });
 
-// ══════════════════════════════════════════
-// THEME
-// ══════════════════════════════════════════
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem(THEME_KEY, theme);
+// ── THEME ─────────────────────────────────────
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem(THEME_KEY, t);
 }
 function toggleTheme() {
   applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
 }
 
-// ══════════════════════════════════════════
-// LOGIN / SESSION
-// ══════════════════════════════════════════
+// ── LOGIN ─────────────────────────────────────
 function doLogin() {
-  const username = (document.getElementById("loginUser").value || "").trim().toLowerCase();
-  const password = document.getElementById("loginPass").value || "";
-  const err      = document.getElementById("loginError");
+  var u = (document.getElementById("loginUser").value || "").trim().toLowerCase();
+  var p = document.getElementById("loginPass").value || "";
+  var errEl = document.getElementById("loginErr");
 
-  if (USERS[username] && USERS[username].password === password) {
-    currentUser = username;
-    localStorage.setItem(SESSION_KEY, username);
-    err.classList.remove("visible");
+  if (USERS[u] && USERS[u].pw === p) {
+    currentUser = u;
+    localStorage.setItem(SESSION_KEY, u);
+    errEl.classList.remove("show");
     document.getElementById("loginPass").value = "";
-    document.getElementById("loginScreen").classList.remove("visible");
-    bootApp();
+    document.getElementById("loginWrap").classList.remove("show");
+    startApp();
   } else {
-    err.classList.add("visible");
+    errEl.classList.add("show");
     document.getElementById("loginPass").value = "";
     document.getElementById("loginPass").focus();
   }
 }
 
-// bootApp: called after successful login or session restore
-// Sets up the UI then loads data — single clean entry point
-function bootApp() {
-  const isAdmin = USERS[currentUser] && USERS[currentUser].role === "admin";
-
-  // Set current view: mobile defaults to stacked list, desktop to card
-  // Always re-evaluate on boot so each device gets the right default
+// ── START APP (called after login or session restore) ──
+function startApp() {
+  // Set view based on device — mobile gets stacked list, desktop gets cards
   currentView = isMobile() ? "table" : "card";
 
-  // Show app shell
-  document.getElementById("appShell").style.display = "block";
+  // Show app
+  document.getElementById("appWrap").style.display = "block";
 
-  // Admin-only settings button
-  const settingsBtn = document.getElementById("settingsBtn");
-  if (settingsBtn) settingsBtn.style.display = isAdmin ? "flex" : "none";
+  // Admin button
+  var adminBtn = document.getElementById("adminBtn");
+  if (adminBtn) adminBtn.style.display = (USERS[currentUser].role === "admin") ? "flex" : "none";
 
-  // User label in header
-  const userLabel = document.getElementById("userLabel");
-  if (userLabel) {
-    userLabel.textContent = currentUser;
-    userLabel.style.display = "inline-flex";
-  }
+  // User label
+  var lbl = document.getElementById("userLbl");
+  if (lbl) { lbl.textContent = currentUser; lbl.style.display = "inline-block"; }
 
   updateViewUI();
   loadData();
 }
 
+// ── LOGOUT ────────────────────────────────────
 function doLogout() {
   localStorage.removeItem(SESSION_KEY);
   currentUser = null;
-  allData     = [];
-  expandedStock = null;
-  document.getElementById("appShell").style.display = "none";
-  document.getElementById("loginScreen").classList.add("visible");
-  document.getElementById("loginUser").value  = "";
-  document.getElementById("loginPass").value  = "";
-  document.getElementById("loginError").classList.remove("visible");
+  allData = [];
+  expandedSn = null;
+  document.getElementById("appWrap").style.display = "none";
+  document.getElementById("loginWrap").classList.add("show");
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginErr").classList.remove("show");
+  document.getElementById("rptMeta").style.display = "none";
 }
 
-// ══════════════════════════════════════════
-// VIEW TOGGLE
-// ══════════════════════════════════════════
+// ── VIEW TOGGLE ───────────────────────────────
 function toggleView() {
   currentView = currentView === "card" ? "table" : "card";
   updateViewUI();
@@ -759,526 +554,420 @@ function toggleView() {
 }
 
 function updateViewUI() {
-  const btn   = document.getElementById("viewToggleBtn");
-  const badge = document.getElementById("viewBadge");
-  const sortBar = document.getElementById("sortBar");
+  var btn  = document.getElementById("viewBtn");
+  var lbl  = document.getElementById("rptView");
+  var sbar = document.getElementById("sortBar");
   if (currentView === "card") {
-    btn.textContent = "☰"; btn.title = "Switch to List View";
+    btn.innerHTML = "&#9776;"; btn.title = "Switch to List View";
     btn.classList.remove("active");
-    if (badge) badge.textContent = "Card View";
-    sortBar.classList.remove("visible");
+    if (lbl) lbl.textContent = "Card View";
+    sbar.classList.remove("show");
   } else {
-    btn.textContent = "⊞"; btn.title = "Switch to Card View";
+    btn.innerHTML = "&#8862;"; btn.title = "Switch to Card View";
     btn.classList.add("active");
-    if (badge) badge.textContent = "List View";
-    sortBar.classList.add("visible");
+    if (lbl) lbl.textContent = "List View";
+    sbar.classList.add("show");
   }
 }
 
-// ══════════════════════════════════════════
-// DATA
-// ══════════════════════════════════════════
-function showSetup() {
-  document.getElementById("main").innerHTML =
-    '<div class="state-msg"><div class="icon">⚙️</div>' +
-    '<p><strong>Apps Script URL not set.</strong><br>' +
-    'Open index.html and replace<br><code style="font-size:11px;color:var(--accent);">YOUR_SCRIPT_ID_HERE</code><br>with your deployment ID.</p></div>';
-}
-
+// ── DATA ──────────────────────────────────────
 async function loadData() {
-  if (!SCRIPT_URL || SCRIPT_URL.includes("YOUR_SCRIPT_ID_HERE")) {
-    showSetup(); return;
-  }
-  const url = SCRIPT_URL;
-  document.getElementById("refreshBtn").classList.add("loading");
+  var rb = document.getElementById("refreshBtn");
+  rb.classList.add("loading");
   document.getElementById("main").innerHTML =
-    '<div class="loading-state"><div class="spinner"></div><p>Loading vehicles...</p></div>';
-  document.getElementById("reportMeta").style.display = "none";
+    '<div class="loading-st"><div class="spin"></div><p>Loading vehicles...</p></div>';
+  document.getElementById("rptMeta").style.display = "none";
+
   try {
-    const res  = await fetch(url + "?action=read");
-    const json = await res.json();
-    if (json.status !== "ok") throw new Error(json.message || "Error");
+    var res  = await fetch(SCRIPT_URL + "?action=read");
+    var json = await res.json();
+    if (json.status !== "ok") throw new Error(json.message || "Error reading sheet");
     allData = json.data;
     applyFilters();
     updateMeta(allData);
-  } catch (err) {
+  } catch(e) {
     document.getElementById("main").innerHTML =
-      '<div class="state-msg"><div class="icon">⚠️</div><p>Could not load data.<br><small>' + err.message + '</small></p></div>';
+      '<div class="state-msg"><div class="ico">&#9888;&#65039;</div>' +
+      '<p>Could not load data.<br><small>' + e.message + '</small></p></div>';
   }
-  document.getElementById("refreshBtn").classList.remove("loading");
+  rb.classList.remove("loading");
 }
 
-// ══════════════════════════════════════════
-// FILTER + SORT
-// ══════════════════════════════════════════
+// ── FILTER + SORT ─────────────────────────────
 function applyFilters() {
-  const q = (document.getElementById("searchInput").value || "").toLowerCase();
-  let data = q
-    ? allData.filter(r =>
-        ["Stock Num","Vehicle Description","VIN","Zone Description","Product Status","Last Scan Location","Task Status"]
-          .some(k => String(r[k] || "").toLowerCase().includes(q)))
-    : [...allData];
+  var q = (document.getElementById("srchInp").value || "").toLowerCase();
+  var data = q ? allData.filter(function(r) {
+    return ["Stock Num","Vehicle Description","VIN","Zone Description",
+            "Product Status","Last Scan Location","Task Status"].some(function(k) {
+      return String(r[k] || "").toLowerCase().indexOf(q) !== -1;
+    });
+  }) : allData.slice();
 
   if (sortCol) {
-    data.sort((a, b) => {
-      let va = String(a[sortCol] || "").toLowerCase();
-      let vb = String(b[sortCol] || "").toLowerCase();
-      const na = parseFloat(va), nb = parseFloat(vb);
+    data.sort(function(a, b) {
+      var va = String(a[sortCol] || "").toLowerCase();
+      var vb = String(b[sortCol] || "").toLowerCase();
+      var na = parseFloat(va), nb = parseFloat(vb);
       if (!isNaN(na) && !isNaN(nb)) { va = na; vb = nb; }
       if (va < vb) return sortDir === "asc" ? -1 : 1;
-      if (va > vb) return sortDir === "asc" ? 1 : -1;
+      if (va > vb) return sortDir === "asc" ?  1 : -1;
       return 0;
     });
   }
 
-  if (currentView === "card") {
-    renderCards(data);
-  } else {
-    isMobile() ? renderStackedList(data) : renderTable(data);
-  }
+  if (currentView === "card") renderCards(data);
+  else if (isMobile())        renderStacked(data);
+  else                        renderTable(data);
 }
 
 function sortBy(col) {
-  if (sortCol === col) { sortDir = sortDir === "asc" ? "desc" : "asc"; }
+  if (sortCol === col) sortDir = sortDir === "asc" ? "desc" : "asc";
   else { sortCol = col; sortDir = "asc"; }
-  updateSortPills();
+  updatePills();
   applyFilters();
 }
-
-function updateSortPills() {
-  document.querySelectorAll(".sort-pill").forEach(p => {
+function updatePills() {
+  document.querySelectorAll(".sort-pill").forEach(function(p) {
     p.classList.remove("asc","desc");
-    const a = p.querySelector(".sort-arrow");
-    if (a) a.textContent = "↕";
+    var a = p.querySelector(".s-arr"); if (a) a.innerHTML = "&#8597;";
   });
   if (!sortCol) return;
-  const pill = document.getElementById("pill-" + sortCol);
+  var pill = document.getElementById("pill-" + sortCol);
   if (pill) {
     pill.classList.add(sortDir);
-    const a = pill.querySelector(".sort-arrow");
-    if (a) a.textContent = sortDir === "asc" ? "↑" : "↓";
+    var a = pill.querySelector(".s-arr");
+    if (a) a.innerHTML = sortDir === "asc" ? "&#8593;" : "&#8595;";
   }
 }
 
-// ══════════════════════════════════════════
-// CARD VIEW
-// ══════════════════════════════════════════
+// ── CARD VIEW ─────────────────────────────────
 function renderCards(data) {
-  const main = document.getElementById("main");
-  if (!data.length) { main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>'; return; }
-  main.innerHTML = '<div class="cards-grid">' + data.map(r => buildCard(r)).join("") + '</div>';
+  var m = document.getElementById("main");
+  if (!data.length) { m.innerHTML = emptyMsg(); return; }
+  m.innerHTML = '<div class="cards-grid">' + data.map(buildCard).join("") + '</div>';
 }
-
-function buildCard(row) {
-  const sn         = row["Stock Num"] || "";
-  const year       = row["Year"] || "";
-  const desc       = row["Vehicle Description"] || "";
-  const scanDate   = row["Last Scan Date"] || "";
-  const scanLoc    = row["Last Scan Location"] || "";
-  const zone       = row["Zone Description"] || "";
-  const daysColor  = row["Days in Color Zone"] || "0";
-  const vin        = row["VIN"] || "";
-  const status     = row["Product Status"] || "";
-  const daysStatus = row["Days In Status"] || "";
-  const comment    = row["Comments"] || "";
-  const taskStatus = row["Task Status"] || "";
-
-  const isExpanded = expandedStock === sn;
-  const hasComment = comment.trim() !== "";
-  const daysNum    = parseInt(daysColor) || 0;
-  const dayClass   = daysNum >= 3 ? "tag-days" : "tag-days-ok";
-  const tsCls      = taskStatus === "Completed" ? "tag-completed" : taskStatus === "In Progress" ? "tag-in-progress" : "tag-no-status";
-  const tsLabel    = taskStatus || "No Status";
-
-  return '<div class="card' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="card-' + sn + '">' +
-    '<div class="card-header" onclick="toggleCard(\'' + sn + '\')">' +
-    '<div class="stock-pill">#' + sn + '</div>' +
-    '<div class="card-main">' +
-    '<div class="vehicle-name"><span class="vehicle-year">' + year + '</span>' + desc + '</div>' +
+function buildCard(r) {
+  var sn = r["Stock Num"]||"", yr = r["Year"]||"", desc = r["Vehicle Description"]||"";
+  var sd = r["Last Scan Date"]||"", sl = r["Last Scan Location"]||"";
+  var zn = r["Zone Description"]||"", dc = r["Days in Color Zone"]||"0";
+  var vin= r["VIN"]||"", ps = r["Product Status"]||"", ds = r["Days In Status"]||"";
+  var cmt= r["Comments"]||"", ts = r["Task Status"]||"";
+  var isOpen = expandedSn === sn;
+  var hasCmt = cmt.trim() !== "";
+  var dn  = parseInt(dc)||0;
+  var dc2 = dn >= 3 ? "tag-days" : "tag-ok";
+  var tc  = ts === "Completed" ? "tag-cp" : ts === "In Progress" ? "tag-ip" : "tag-none";
+  var tl  = ts || "No Status";
+  return '<div class="card'+(hasCmt?" has-note":"")+(isOpen?" open":"")+'\" id=\"card-'+sn+'">' +
+    '<div class="card-hdr" onclick="toggleCard(\''+sn+'\')">' +
+    '<div class="stk-pill">#'+sn+'</div>' +
+    '<div class="card-body">' +
+    '<div class="veh-name"><span class="veh-year">'+yr+'</span>'+desc+'</div>' +
     '<div class="card-tags">' +
-    '<span class="tag tag-zone">' + (zone || scanLoc) + '</span>' +
-    '<span class="tag tag-status">' + status + '</span>' +
-    '<span class="tag ' + dayClass + '">' + daysColor + ' day' + (daysNum !== 1 ? 's' : '') + '</span>' +
-    '<span class="tag ' + tsCls + '">' + tsLabel + '</span>' +
+    '<span class="tag tag-zone">'+(zn||sl)+'</span>' +
+    '<span class="tag tag-status">'+ps+'</span>' +
+    '<span class="tag '+dc2+'">'+dc+' day'+(dn!==1?'s':'')+'</span>' +
+    '<span class="tag '+tc+'">'+tl+'</span>' +
     '</div></div>' +
-    '<span class="card-chevron">▾</span></div>' +
+    '<span class="card-chev">&#9660;</span></div>' +
     '<div class="card-detail">' +
-    '<div class="detail-grid">' +
-    '<div class="detail-item"><div class="detail-label">Last Scan Date</div><div class="detail-value">' + scanDate + '</div></div>' +
-    '<div class="detail-item"><div class="detail-label">Scan Location</div><div class="detail-value">' + scanLoc + '</div></div>' +
-    '<div class="detail-item"><div class="detail-label">Days In Status</div><div class="detail-value">' + daysStatus + '</div></div>' +
-    '<div class="detail-item"><div class="detail-label">Color Zone Days</div><div class="detail-value">' + daysColor + '</div></div>' +
-    '<div class="detail-item full"><div class="detail-label">VIN</div><div class="detail-value">' + vin + '</div></div>' +
+    '<div class="det-grid">' +
+    '<div class="det-item"><div class="det-lbl">Scan Date</div><div class="det-val">'+sd+'</div></div>' +
+    '<div class="det-item"><div class="det-lbl">Location</div><div class="det-val">'+sl+'</div></div>' +
+    '<div class="det-item"><div class="det-lbl">Days In Status</div><div class="det-val">'+ds+'</div></div>' +
+    '<div class="det-item"><div class="det-lbl">Color Zone Days</div><div class="det-val">'+dc+'</div></div>' +
+    '<div class="det-item full"><div class="det-lbl">VIN</div><div class="det-val">'+vin+'</div></div>' +
     '</div></div>' +
-    buildCommentSection(sn, comment, hasComment, taskStatus) +
-    '</div>';
+    buildCmtSection(sn, cmt, hasCmt, ts) + '</div>';
 }
 
-// ══════════════════════════════════════════
-// STACKED LIST (mobile list view)
-// ══════════════════════════════════════════
-function renderStackedList(data) {
-  const main = document.getElementById("main");
-  if (!data.length) { main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>'; return; }
-  main.innerHTML = '<div class="stacked-list">' + data.map(r => buildStackedRow(r)).join("") + '</div>';
+// ── STACKED LIST (mobile) ─────────────────────
+function renderStacked(data) {
+  var m = document.getElementById("main");
+  if (!data.length) { m.innerHTML = emptyMsg(); return; }
+  m.innerHTML = '<div class="stk-list">' + data.map(buildSrow).join("") + '</div>';
 }
-
-function buildStackedRow(row) {
-  const sn         = row["Stock Num"] || "";
-  const year       = row["Year"] || "";
-  const desc       = row["Vehicle Description"] || "";
-  const scanDate   = row["Last Scan Date"] || "";
-  const scanLoc    = row["Last Scan Location"] || "";
-  const zone       = row["Zone Description"] || "";
-  const daysColor  = row["Days in Color Zone"] || "0";
-  const vin        = row["VIN"] || "";
-  const status     = row["Product Status"] || "";
-  const daysStatus = row["Days In Status"] || "";
-  const comment    = row["Comments"] || "";
-  const taskStatus = row["Task Status"] || "";
-
-  const isExpanded = expandedStock === sn;
-  const hasComment = comment.trim() !== "";
-  const daysNum    = parseInt(daysColor) || 0;
-  const dayClass   = daysNum >= 3 ? "tag-days" : "tag-days-ok";
-
-  // Task status badge on header
-  const tsIp = taskStatus !== "Completed";
-  const tsBadgeCls = taskStatus === "Completed" ? "completed" : "inprogress";
-  const tsBadgeLabel = taskStatus === "Completed" ? "Completed" : "In Progress";
-
-  // Product status tag color
-  const statusTagCls = "tag-status";
-
-  return '<div class="srow' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="srow-' + sn + '">' +
-
-    // ── Collapsed header ──
-    '<div class="srow-header" onclick="toggleStackedRow(\'' + sn + '\')">' +
-
+function buildSrow(r) {
+  var sn = r["Stock Num"]||"", yr = r["Year"]||"", desc = r["Vehicle Description"]||"";
+  var sd = r["Last Scan Date"]||"", sl = r["Last Scan Location"]||"";
+  var zn = r["Zone Description"]||"", dc = r["Days in Color Zone"]||"0";
+  var vin= r["VIN"]||"", ps = r["Product Status"]||"", ds = r["Days In Status"]||"";
+  var cmt= r["Comments"]||"", ts = r["Task Status"]||"";
+  var isOpen = expandedSn === sn;
+  var hasCmt = cmt.trim() !== "";
+  var tbCls  = ts === "Completed" ? "cp" : "ip";
+  var tbLbl  = ts === "Completed" ? "Completed" : "In Progress";
+  return '<div class="srow'+(hasCmt?" has-note":"")+(isOpen?" open":"")+'\" id=\"srow-'+sn+'">' +
+    '<div class="srow-hdr" onclick="toggleSrow(\''+sn+'\')">' +
     '<div class="srow-top">' +
-    '<span class="srow-stock">#' + sn + '</span>' +
-    '<span class="srow-ts-badge ' + tsBadgeCls + '">' + tsBadgeLabel + '</span>' +
+    '<span class="srow-stk">#'+sn+'</span>' +
+    '<span class="srow-tsbadge '+tbCls+'">'+tbLbl+'</span>' +
     '</div>' +
-
-    '<div class="srow-vehicle"><span class="srow-year">' + year + '</span>' + desc + '</div>' +
-
+    '<div class="srow-veh"><span class="srow-yr">'+yr+'</span>'+desc+'</div>' +
     '<div class="srow-fields">' +
-    '<div class="srow-field"><div class="srow-field-label">Zone</div><div class="srow-field-value">' + (zone || scanLoc || '—') + '</div></div>' +
-    '<div class="srow-field"><div class="srow-field-label">Scan Date</div><div class="srow-field-value">' + (scanDate || '—') + '</div></div>' +
-    '<div class="srow-field"><div class="srow-field-label">Days</div><div class="srow-field-value">' + daysColor + '</div></div>' +
+    '<div><div class="srow-flbl">Zone</div><div class="srow-fval">'+(zn||sl||"—")+'</div></div>' +
+    '<div><div class="srow-flbl">Scan Date</div><div class="srow-fval">'+(sd||"—")+'</div></div>' +
+    '<div><div class="srow-flbl">Days</div><div class="srow-fval">'+dc+'</div></div>' +
+    '<div><div class="srow-flbl">Days In Status</div><div class="srow-fval">'+(ds||"—")+'</div></div>' +
     '</div>' +
-
-    '<div class="srow-footer">' +
-    '<span class="td-tag ' + statusTagCls + '">' + status + '</span>' +
-    '<span class="srow-comment-preview' + (hasComment ? ' has-text' : '') + '">' +
-    (hasComment ? truncate(comment, 30) : 'No comment') + '</span>' +
-    '<span class="srow-chevron">▾</span>' +
+    '<div class="srow-foot">' +
+    '<span class="srow-prod tag-status td-tag">'+ps+'</span>' +
+    '<span class="srow-prev'+(hasCmt?" has":"")+'">'+( hasCmt ? trunc(cmt,32) : "No comment")+'</span>' +
+    '<span class="srow-chev">&#9660;</span>' +
+    '</div></div>' +
+    '<div class="srow-det">' +
+    '<div class="srow-det-grid">' +
+    '<div class="srow-det-item"><div class="det-lbl">Scan Location</div><div class="det-val">'+(sl||"—")+'</div></div>' +
+    '<div class="srow-det-item"><div class="det-lbl">VIN</div><div class="det-val">'+(vin||"—")+'</div></div>' +
     '</div>' +
-
-    '</div>' + // end srow-header
-
-    // ── Expanded detail ──
-    '<div class="srow-detail">' +
-    '<div class="srow-detail-grid">' +
-    '<div class="srow-detail-item"><div class="detail-label">Scan Location</div><div class="detail-value">' + (scanLoc || '—') + '</div></div>' +
-    '<div class="srow-detail-item"><div class="detail-label">Days In Status</div><div class="detail-value">' + (daysStatus || '—') + '</div></div>' +
-    '<div class="srow-detail-item full"><div class="detail-label">VIN</div><div class="detail-value">' + (vin || '—') + '</div></div>' +
-    '</div>' +
-    buildCommentSection(sn, comment, hasComment, taskStatus) +
-    '</div>' +
-
-    '</div>';
+    buildCmtSection(sn, cmt, hasCmt, ts) + '</div></div>';
 }
 
-// ══════════════════════════════════════════
-// TABLE VIEW (desktop list view)
-// ══════════════════════════════════════════
-const TABLE_COLS = [
-  { key: "Stock Num",           label: "Stock #",     cls: "accent" },
-  { key: "Year",                label: "Year",        cls: "mono" },
-  { key: "Vehicle Description", label: "Vehicle",     cls: "" },
-  { key: "Last Scan Date",      label: "Scan Date",   cls: "mono" },
-  { key: "Zone Description",    label: "Zone",        cls: "" },
-  { key: "Days in Color Zone",  label: "Days",        cls: "mono" },
-  { key: "Product Status",      label: "Prod Status", cls: "" },
-  { key: "Task Status",         label: "Task Status", cls: "" },
-  { key: "Comments",            label: "Notes",       cls: "" },
+// ── TABLE (desktop list view) ─────────────────
+var TCOLS = [
+  {k:"Stock Num",          l:"Stock #",   c:"acct"},
+  {k:"Year",               l:"Year",      c:"mono"},
+  {k:"Vehicle Description",l:"Vehicle",   c:""},
+  {k:"Last Scan Date",     l:"Scan Date", c:"mono"},
+  {k:"Zone Description",   l:"Zone",      c:""},
+  {k:"Days in Color Zone", l:"Days",      c:"mono"},
+  {k:"Product Status",     l:"Prod Status",c:""},
+  {k:"Task Status",        l:"Task",      c:""},
+  {k:"Comments",           l:"Notes",     c:""}
 ];
-
 function renderTable(data) {
-  const main = document.getElementById("main");
-  if (!data.length) { main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>'; return; }
-
-  let html = '<div class="table-wrap"><table><thead><tr>';
-  TABLE_COLS.forEach(col => {
-    const isActive = sortCol === col.key;
-    const btnCls   = isActive ? (sortDir === "asc" ? "sort-asc" : "sort-desc") : "";
-    const arrow    = isActive ? (sortDir === "asc" ? "↑" : "↓") : "↕";
-    html += '<th><button class="th-btn ' + btnCls + '" onclick="sortBy(\'' + col.key + '\')">' +
-      col.label + ' <span class="th-sort-icon">' + arrow + '</span></button></th>';
+  var m = document.getElementById("main");
+  if (!data.length) { m.innerHTML = emptyMsg(); return; }
+  var h = '<div class="tbl-wrap"><table><thead><tr>';
+  TCOLS.forEach(function(col) {
+    var act = sortCol === col.k;
+    var bc  = act ? (sortDir === "asc" ? "asc" : "desc") : "";
+    var arr = act ? (sortDir === "asc" ? "&#8593;" : "&#8595;") : "&#8597;";
+    h += '<th><button class="th-btn '+bc+'" onclick="sortBy(\''+col.k+'\')">'+
+         col.l+' <span class="th-ico">'+arr+'</span></button></th>';
   });
-  html += '</tr></thead><tbody>';
-
-  data.forEach(row => {
-    const sn         = row["Stock Num"] || "";
-    const hasComment = (row["Comments"] || "").trim() !== "";
-    const isExpanded = expandedStock === sn;
-    const daysNum    = parseInt(row["Days in Color Zone"]) || 0;
-    const taskStatus = row["Task Status"] || "";
-
-    html += '<tr class="' + (hasComment ? 'has-comment ' : '') + (isExpanded ? 'row-expanded' : '') +
-      '" onclick="toggleTableRow(\'' + sn + '\')">';
-
-    TABLE_COLS.forEach(col => {
-      let val = row[col.key] || "";
-      let cellHtml = "";
-      if (col.key === "Days in Color Zone") {
-        const cls = daysNum >= 3 ? "tag-days" : "tag-days-ok";
-        cellHtml = '<span class="td-tag ' + cls + '">' + val + '</span>';
-      } else if (col.key === "Product Status") {
-        cellHtml = '<span class="td-tag tag-status">' + val + '</span>';
-      } else if (col.key === "Task Status") {
-        const tsCls = val === "Completed" ? "tag-completed" : val === "In Progress" ? "tag-in-progress" : "tag-no-status";
-        cellHtml = '<span class="td-tag ' + tsCls + '">' + (val || "—") + '</span>';
-      } else if (col.key === "Comments") {
-        cellHtml = val
-          ? '<span style="font-size:11px;color:var(--accent);">✎</span> ' + truncate(val, 22)
-          : '<span style="color:var(--text-muted);font-style:italic;font-size:11px;">—</span>';
-      } else {
-        cellHtml = val;
-      }
-      html += '<td class="' + col.cls + '">' + cellHtml + '</td>';
+  h += '</tr></thead><tbody>';
+  data.forEach(function(r) {
+    var sn  = r["Stock Num"]||"";
+    var hasCmt = (r["Comments"]||"").trim() !== "";
+    var isOpen = expandedSn === sn;
+    var dn  = parseInt(r["Days in Color Zone"])||0;
+    var ts  = r["Task Status"]||"";
+    h += '<tr class="'+(hasCmt?"has-note ":"")+(isOpen?"row-open":"")+
+         '" onclick="toggleTrow(\''+sn+'\')">';
+    TCOLS.forEach(function(col) {
+      var v = r[col.k]||"";
+      var cell = "";
+      if (col.k === "Days in Color Zone") {
+        cell = '<span class="td-tag '+(dn>=3?"tag-days":"tag-ok")+'">'+v+'</span>';
+      } else if (col.k === "Product Status") {
+        cell = '<span class="td-tag tag-status">'+v+'</span>';
+      } else if (col.k === "Task Status") {
+        var tc = v==="Completed"?"tag-cp":v==="In Progress"?"tag-ip":"tag-none";
+        cell = '<span class="td-tag '+tc+'">'+(v||"—")+'</span>';
+      } else if (col.k === "Comments") {
+        cell = v ? '<span style="font-size:11px;color:var(--accent);">&#9998;</span> '+trunc(v,22)
+                 : '<span style="color:var(--text-muted);font-style:italic;font-size:11px;">—</span>';
+      } else { cell = v; }
+      h += '<td class="'+col.c+'">'+cell+'</td>';
     });
-
-    html += '</tr>';
-
-    html += '<tr class="row-detail-tr' + (isExpanded ? ' open' : '') + '" id="trow-' + sn + '">' +
-      '<td class="row-detail-cell" colspan="' + TABLE_COLS.length + '">' +
-      '<div class="row-detail-inner">' +
-      '<div class="row-detail-grid">' +
-      '<div><div class="detail-label">VIN</div><div class="detail-value">' + (row["VIN"] || "—") + '</div></div>' +
-      '<div><div class="detail-label">Scan Location</div><div class="detail-value">' + (row["Last Scan Location"] || "—") + '</div></div>' +
-      '<div><div class="detail-label">Days In Status</div><div class="detail-value">' + (row["Days In Status"] || "—") + '</div></div>' +
-      '</div>' +
-      buildCommentSection(sn, row["Comments"] || "", hasComment, taskStatus) +
-      '</div></td></tr>';
+    h += '</tr>';
+    h += '<tr class="det-tr'+(isOpen?" open":"")+'\" id=\"trow-'+sn+'">' +
+         '<td class="det-tc" colspan="'+TCOLS.length+'">' +
+         '<div class="det-inner">' +
+         '<div class="det-row-grid">' +
+         '<div><div class="det-lbl">VIN</div><div class="det-val">'+(r["VIN"]||"—")+'</div></div>' +
+         '<div><div class="det-lbl">Scan Location</div><div class="det-val">'+(r["Last Scan Location"]||"—")+'</div></div>' +
+         '<div><div class="det-lbl">Days In Status</div><div class="det-val">'+(r["Days In Status"]||"—")+'</div></div>' +
+         '</div>' +
+         buildCmtSection(sn, r["Comments"]||"", hasCmt, ts) +
+         '</div></td></tr>';
   });
-
-  html += '</tbody></table></div>';
-  main.innerHTML = html;
+  h += '</tbody></table></div>';
+  m.innerHTML = h;
 }
 
-function truncate(str, n) { return str.length > n ? str.substring(0, n) + "..." : str; }
-
-// ══════════════════════════════════════════
-// COMMENT + STATUS SECTION (shared builder)
-// ══════════════════════════════════════════
-function buildCommentSection(sn, comment, hasComment, taskStatus) {
-  const ts          = taskStatus || "In Progress";
-  const isCompleted = ts === "Completed";
-  const btnCls      = isCompleted ? " active-completed" : " active-inprogress";
-  const btnLabel    = isCompleted ? "&#10003; Completed" : "&#9203; In Progress";
-
-  return '<div class="comment-section">' +
-    '<div class="detail-label" style="margin-bottom:6px;">Task Status</div>' +
-    '<div class="status-toggle">' +
-    '<button class="status-btn' + btnCls + '" id="sbbtn-' + sn + '" onclick="setTaskStatus(\'' + sn + '\')">' + btnLabel + '</button>' +
+// ── COMMENT + STATUS SECTION ──────────────────
+function buildCmtSection(sn, cmt, hasCmt, ts) {
+  var eff = ts || "In Progress";
+  var isCP = eff === "Completed";
+  var bCls = isCP ? " cp" : " ip";
+  var bLbl = isCP ? "&#10003; Completed" : "&#9203; In Progress";
+  return '<div class="cmt-sec">' +
+    '<div class="det-lbl" style="margin-bottom:7px;">Task Status</div>' +
+    '<div class="sts-wrap">' +
+    '<button class="sts-btn'+bCls+'" id="sbbtn-'+sn+'" onclick="setTaskStatus(\''+sn+'\')">'+bLbl+'</button>' +
     '</div>' +
-    '<div class="detail-label" style="margin-top:12px;margin-bottom:6px;">Comments</div>' +
-    '<div class="comment-row">' +
-    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' + (hasComment ? comment : 'No comment yet') + '</div>' +
-    '<button class="btn-edit" onclick="startEdit(\'' + sn + '\')">' + (hasComment ? 'Edit' : '+ Add') + '</button>' +
+    '<div class="det-lbl" style="margin-top:13px;margin-bottom:7px;">Comments</div>' +
+    '<div class="cmt-row">' +
+    '<div class="cmt-txt'+(hasCmt?"":" empty")+'" id="ctxt-'+sn+'">'+
+    (hasCmt?cmt:"No comment yet")+'</div>' +
+    '<button class="btn-edit" onclick="startEdit(\''+sn+'\')">'+( hasCmt?"Edit":"+ Add")+'</button>' +
     '</div>' +
-    '<textarea class="comment-textarea" id="cinput-' + sn + '" placeholder="Add notes about this vehicle...">' + comment + '</textarea>' +
-    '<div class="comment-actions" id="cactions-' + sn + '">' +
-    '<button class="btn btn-cancel" onclick="cancelEdit(\'' + sn + '\')">Cancel</button>' +
-    '<button class="btn btn-save" id="csave-' + sn + '" onclick="saveComment(\'' + sn + '\')">Save</button>' +
+    '<textarea class="cmt-area" id="cinp-'+sn+'" placeholder="Add notes...">'+cmt+'</textarea>' +
+    '<div class="cmt-acts" id="cact-'+sn+'">' +
+    '<button class="btn btn-cancel" onclick="cancelEdit(\''+sn+'\')">Cancel</button>' +
+    '<button class="btn btn-save" id="csav-'+sn+'" onclick="saveComment(\''+sn+'\')">Save</button>' +
     '</div></div>';
 }
 
-// ══════════════════════════════════════════
-// INTERACTIONS
-// ══════════════════════════════════════════
+// ── TOGGLE HANDLERS ───────────────────────────
 function toggleCard(sn) {
-  expandedStock = (expandedStock === sn) ? null : sn;
+  expandedSn = expandedSn === sn ? null : sn;
   applyFilters();
 }
-
-function toggleStackedRow(sn) {
-  expandedStock = (expandedStock === sn) ? null : sn;
-  // Fast DOM toggle — avoid full re-render
-  const el = document.getElementById("srow-" + sn);
+function toggleSrow(sn) {
+  expandedSn = expandedSn === sn ? null : sn;
+  var el = document.getElementById("srow-" + sn);
   if (el) {
-    el.classList.toggle("expanded", expandedStock === sn);
-    const detail = el.querySelector(".srow-detail");
-    if (detail) detail.style.display = expandedStock === sn ? "block" : "none";
+    el.classList.toggle("open", expandedSn === sn);
+    var det = el.querySelector(".srow-det");
+    if (det) det.style.display = expandedSn === sn ? "block" : "none";
+  }
+}
+function toggleTrow(sn) {
+  expandedSn = expandedSn === sn ? null : sn;
+  var dt = document.getElementById("trow-" + sn);
+  if (dt) {
+    dt.classList.toggle("open", expandedSn === sn);
+    var tr = dt.previousElementSibling;
+    if (tr) tr.classList.toggle("row-open", expandedSn === sn);
   }
 }
 
-function toggleTableRow(sn) {
-  expandedStock = (expandedStock === sn) ? null : sn;
-  const detailTr = document.getElementById("trow-" + sn);
-  if (detailTr) {
-    detailTr.classList.toggle("open", expandedStock === sn);
-    const mainTr = detailTr.previousElementSibling;
-    if (mainTr) mainTr.classList.toggle("row-expanded", expandedStock === sn);
-  }
-}
-
+// ── EDIT COMMENT ──────────────────────────────
 function startEdit(sn) {
   event.stopPropagation();
-  // Ensure row is expanded in whichever view
+  // Expand the row if needed
   if (currentView === "card") {
-    expandedStock = sn; applyFilters();
+    expandedSn = sn; applyFilters();
   } else if (isMobile()) {
-    const el = document.getElementById("srow-" + sn);
-    if (el && !el.classList.contains("expanded")) {
-      expandedStock = sn;
-      el.classList.add("expanded");
-      const detail = el.querySelector(".srow-detail");
-      if (detail) detail.style.display = "block";
+    var el = document.getElementById("srow-" + sn);
+    if (el && !el.classList.contains("open")) {
+      expandedSn = sn; el.classList.add("open");
+      var det = el.querySelector(".srow-det");
+      if (det) det.style.display = "block";
     }
   } else {
-    const detailTr = document.getElementById("trow-" + sn);
-    if (detailTr && !detailTr.classList.contains("open")) {
-      expandedStock = sn; detailTr.classList.add("open");
+    var dt = document.getElementById("trow-" + sn);
+    if (dt && !dt.classList.contains("open")) {
+      expandedSn = sn; dt.classList.add("open");
     }
   }
-  setTimeout(() => {
-    const ta = document.getElementById("cinput-" + sn);
-    const ac = document.getElementById("cactions-" + sn);
-    if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); editingStock = sn; }
+  setTimeout(function() {
+    var ta = document.getElementById("cinp-" + sn);
+    var ac = document.getElementById("cact-" + sn);
+    if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); }
   }, 60);
 }
-
 function cancelEdit(sn) {
   event.stopPropagation();
-  const ta  = document.getElementById("cinput-" + sn);
-  const ac  = document.getElementById("cactions-" + sn);
-  const row = allData.find(r => String(r["Stock Num"]) === String(sn));
+  var ta = document.getElementById("cinp-" + sn);
+  var ac = document.getElementById("cact-" + sn);
+  var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
   if (ta && row) ta.value = row["Comments"] || "";
   if (ta) ta.style.display = "none";
   if (ac) ac.style.display = "none";
-  editingStock = null;
 }
-
 async function saveComment(sn) {
   event.stopPropagation();
-  const url = SCRIPT_URL;
-
-  const ta      = document.getElementById("cinput-" + sn);
-  const btn     = document.getElementById("csave-" + sn);
-  const comment = ta ? ta.value.trim() : "";
-
+  var ta  = document.getElementById("cinp-" + sn);
+  var btn = document.getElementById("csav-" + sn);
+  var cmt = ta ? ta.value.trim() : "";
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner-sm"></span>';
-
+  btn.innerHTML = '<span class="spin-sm"></span>';
   try {
-    await fetch(url + "?action=updateComment&stockNum=" + encodeURIComponent(sn) +
-      "&comment=" + encodeURIComponent(comment), { mode: "no-cors" });
-    const row = allData.find(r => String(r["Stock Num"]) === String(sn));
-    if (row) row["Comments"] = comment;
-    toast(comment ? "Comment saved" : "Comment cleared");
-    editingStock = null;
+    await fetch(SCRIPT_URL + "?action=updateComment&stockNum=" + encodeURIComponent(sn) +
+      "&comment=" + encodeURIComponent(cmt), { mode:"no-cors" });
+    var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
+    if (row) row["Comments"] = cmt;
+    toast(cmt ? "Comment saved" : "Comment cleared");
     applyFilters();
-    // Re-expand after re-render
-    if (currentView === "card") { expandedStock = sn; applyFilters(); }
+    // Re-expand
+    if (currentView === "card") { expandedSn = sn; applyFilters(); }
     else if (isMobile()) {
-      const el = document.getElementById("srow-" + sn);
-      if (el) { el.classList.add("expanded"); const d = el.querySelector(".srow-detail"); if (d) d.style.display = "block"; }
+      var el = document.getElementById("srow-"+sn);
+      if (el) { el.classList.add("open"); var d=el.querySelector(".srow-det"); if(d)d.style.display="block"; }
     } else {
-      const dt = document.getElementById("trow-" + sn);
-      if (dt) dt.classList.add("open");
+      var dt = document.getElementById("trow-"+sn); if(dt)dt.classList.add("open");
     }
-  } catch (err) {
-    toast("Save failed: " + err.message, true);
+  } catch(e) {
+    toast("Save failed: "+e.message, true);
     btn.disabled = false; btn.innerHTML = "Save";
   }
 }
 
-// ══════════════════════════════════════════
-// TASK STATUS
-// ══════════════════════════════════════════
+// ── TASK STATUS ───────────────────────────────
 async function setTaskStatus(sn) {
   event.stopPropagation();
-  const url = SCRIPT_URL;
-
-  const row = allData.find(r => String(r["Stock Num"]) === String(sn));
+  var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
   if (!row) return;
-
-  const current   = row["Task Status"] || "In Progress";
-  const newStatus = current === "Completed" ? "In Progress" : "Completed";
-
-  const btn = document.getElementById("sbbtn-" + sn);
+  var cur = row["Task Status"] || "In Progress";
+  var nxt = cur === "Completed" ? "In Progress" : "Completed";
+  // Optimistic UI
+  var btn = document.getElementById("sbbtn-" + sn);
   if (btn) {
-    btn.classList.add("saving");
-    btn.classList.remove("active-inprogress", "active-completed");
-    btn.classList.add(newStatus === "Completed" ? "active-completed" : "active-inprogress");
-    btn.innerHTML = newStatus === "Completed" ? "&#10003; Completed" : "&#9203; In Progress";
+    btn.classList.remove("ip","cp"); btn.classList.add("saving");
+    btn.classList.add(nxt === "Completed" ? "cp" : "ip");
+    btn.innerHTML = nxt === "Completed" ? "&#10003; Completed" : "&#9203; In Progress";
   }
-
-  // Also update the collapsed header badge immediately
-  const badge = document.querySelector("#srow-" + sn + " .srow-ts-badge");
+  // Update badge in stacked row header
+  var badge = document.querySelector("#srow-"+sn+" .srow-tsbadge");
   if (badge) {
-    badge.className = "srow-ts-badge " + (newStatus === "Completed" ? "completed" : "inprogress");
-    badge.textContent = newStatus === "Completed" ? "Completed" : "In Progress";
+    badge.className = "srow-tsbadge " + (nxt === "Completed" ? "cp" : "ip");
+    badge.textContent = nxt === "Completed" ? "Completed" : "In Progress";
   }
-
   try {
-    await fetch(url + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
-      "&taskStatus=" + encodeURIComponent(newStatus), { mode: "no-cors" });
-    row["Task Status"] = newStatus;
-    toast(newStatus === "Completed" ? "Marked Completed" : "Marked In Progress");
+    await fetch(SCRIPT_URL + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
+      "&taskStatus=" + encodeURIComponent(nxt), { mode:"no-cors" });
+    row["Task Status"] = nxt;
+    toast(nxt === "Completed" ? "Marked Completed" : "Marked In Progress");
     if (btn) btn.classList.remove("saving");
-  } catch (err) {
-    toast("Save failed: " + err.message, true);
+  } catch(e) {
+    toast("Save failed: "+e.message, true);
     if (btn) btn.classList.remove("saving");
   }
 }
 
-// ══════════════════════════════════════════
-// META
-// ══════════════════════════════════════════
+// ── META ──────────────────────────────────────
 function updateMeta(data) {
-  document.getElementById("reportMeta").style.display = "flex";
-  document.getElementById("reportDate").textContent =
-    new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" });
-  document.getElementById("vehicleCount").textContent =
+  document.getElementById("rptMeta").style.display = "flex";
+  document.getElementById("rptDate").textContent =
+    new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"2-digit"});
+  document.getElementById("rptCnt").textContent =
     data.length + " vehicle" + (data.length !== 1 ? "s" : "");
 }
 
-// ══════════════════════════════════════════
-// MODAL (admin view only)
-// ══════════════════════════════════════════
+// ── ADMIN MODAL ───────────────────────────────
 function openModal() {
-  document.getElementById("urlInput").value = SCRIPT_URL;
-  document.getElementById("configModal").classList.add("open");
+  document.getElementById("adminUrl").value = SCRIPT_URL;
+  document.getElementById("adminModal").classList.add("open");
 }
-function closeModal() { document.getElementById("configModal").classList.remove("open"); }
-function saveConfig() {
-  closeModal();
-  toast("URL is set in the HTML file");
-}
-document.getElementById("configModal").addEventListener("click", function(e) {
+function closeModal() { document.getElementById("adminModal").classList.remove("open"); }
+document.getElementById("adminModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
 });
 
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
-function toast(msg, isError) {
-  const el = document.getElementById("toast");
+// ── TOAST ─────────────────────────────────────
+function toast(msg, isErr) {
+  var el = document.getElementById("toast");
   el.textContent = msg;
-  el.className = "toast show" + (isError ? " error" : "");
+  el.className = "toast show" + (isErr ? " err" : "");
   clearTimeout(window._tt);
-  window._tt = setTimeout(() => { el.className = "toast"; }, 2500);
+  window._tt = setTimeout(function() { el.className = "toast"; }, 2500);
 }
 
-// Re-render on resize so desktop/mobile layout switches cleanly
-let _resizeTimer;
-window.addEventListener("resize", () => {
-  clearTimeout(_resizeTimer);
-  _resizeTimer = setTimeout(() => {
+// ── HELPERS ───────────────────────────────────
+function trunc(s, n) { return s.length > n ? s.substring(0,n)+"..." : s; }
+function emptyMsg() {
+  return '<div class="state-msg"><div class="ico">&#10003;</div><p>No vehicles to display.</p></div>';
+}
+
+// Re-render list view on resize (handles rotation)
+var _rt;
+window.addEventListener("resize", function() {
+  clearTimeout(_rt);
+  _rt = setTimeout(function() {
     if (currentView === "table") applyFilters();
   }, 200);
 });
