@@ -309,8 +309,9 @@ td.acct  { font-family:var(--fm); font-size:11px; font-weight:600; color:var(--a
 .modal-lbl { font-family:var(--fm); font-size:9px; color:var(--text-muted); text-transform:uppercase;
              letter-spacing:.8px; margin-bottom:5px; display:block; }
 .modal-inp { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
-             font-family:var(--fm); font-size:11px; padding:10px 12px; border-radius:8px;
-             outline:none; margin-bottom:14px; opacity:.7; cursor:default; }
+             font-family:var(--fm); font-size:12px; padding:10px 12px; border-radius:8px;
+             outline:none; margin-bottom:14px; transition:border-color .15s; }
+.modal-inp:focus { border-color:var(--accent); }
 .btn-modal { width:100%; background:var(--accent); color:#000; font-family:var(--fs);
              font-size:14px; font-weight:600; padding:12px; border-radius:9px;
              border:none; cursor:pointer; }
@@ -376,10 +377,13 @@ td.acct  { font-family:var(--fm); font-size:11px; font-weight:600; color:var(--a
   <div class="modal-ov" id="adminModal">
     <div class="modal">
       <div class="modal-hnd"></div>
-      <div class="modal-ttl">Admin Info</div>
-      <label class="modal-lbl">Apps Script URL</label>
-      <input class="modal-inp" id="adminUrl" type="url" readonly />
-      <button class="btn-modal" onclick="closeModal()">Close</button>
+      <div class="modal-ttl">Admin Settings</div>
+      <label class="modal-lbl">Apps Script Web App URL</label>
+      <input class="modal-inp" id="adminUrl" type="url"
+        placeholder="https://script.google.com/macros/s/..." />
+      <button class="btn-modal" onclick="saveAdminUrl()" style="margin-bottom:8px;">Save &amp; Refresh</button>
+      <button class="btn-modal" onclick="closeModal()"
+        style="background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);">Cancel</button>
     </div>
   </div>
 
@@ -473,6 +477,10 @@ window.addEventListener("DOMContentLoaded", function() {
   // Apply saved theme (no flash)
   var t = localStorage.getItem(THEME_KEY);
   if (t) applyTheme(t);
+
+  // Load any admin URL override saved previously
+  var savedUrl = localStorage.getItem("nlr_url_override");
+  if (savedUrl) window._scriptUrl = savedUrl;
 
   // Restore session
   var saved = localStorage.getItem(SESSION_KEY);
@@ -572,6 +580,7 @@ function updateViewUI() {
 
 // ── DATA ──────────────────────────────────────
 async function loadData() {
+  var url = window._scriptUrl || SCRIPT_URL;
   var rb = document.getElementById("refreshBtn");
   rb.classList.add("loading");
   document.getElementById("main").innerHTML =
@@ -579,7 +588,7 @@ async function loadData() {
   document.getElementById("rptMeta").style.display = "none";
 
   try {
-    var res  = await fetch(SCRIPT_URL + "?action=read");
+    var res  = await fetch(url + "?action=read");
     var json = await res.json();
     if (json.status !== "ok") throw new Error(json.message || "Error reading sheet");
     allData = json.data;
@@ -813,19 +822,35 @@ function buildCmtSection(sn, cmt, hasCmt, ts) {
 
 // ── TOGGLE HANDLERS ───────────────────────────
 function toggleCard(sn) {
+  // Close previously open card
+  if (expandedSn && expandedSn !== sn) {
+    var prev = document.getElementById("card-" + expandedSn);
+    if (prev) prev.classList.remove("open");
+  }
   expandedSn = expandedSn === sn ? null : sn;
-  applyFilters();
+  var el = document.getElementById("card-" + sn);
+  if (el) el.classList.toggle("open", expandedSn === sn);
 }
 function toggleSrow(sn) {
+  // Close previously open row
+  if (expandedSn && expandedSn !== sn) {
+    var prev = document.getElementById("srow-" + expandedSn);
+    if (prev) prev.classList.remove("open");
+  }
   expandedSn = expandedSn === sn ? null : sn;
   var el = document.getElementById("srow-" + sn);
-  if (el) {
-    el.classList.toggle("open", expandedSn === sn);
-    var det = el.querySelector(".srow-det");
-    if (det) det.style.display = expandedSn === sn ? "block" : "none";
-  }
+  if (el) el.classList.toggle("open", expandedSn === sn);
 }
 function toggleTrow(sn) {
+  // Close previously open row
+  if (expandedSn && expandedSn !== sn) {
+    var prevDt = document.getElementById("trow-" + expandedSn);
+    if (prevDt) {
+      prevDt.classList.remove("open");
+      var prevTr = prevDt.previousElementSibling;
+      if (prevTr) prevTr.classList.remove("row-open");
+    }
+  }
   expandedSn = expandedSn === sn ? null : sn;
   var dt = document.getElementById("trow-" + sn);
   if (dt) {
@@ -838,20 +863,36 @@ function toggleTrow(sn) {
 // ── EDIT COMMENT ──────────────────────────────
 function startEdit(sn) {
   event.stopPropagation();
-  // Expand the row if needed
+  // Expand the row using CSS class (no inline styles)
   if (currentView === "card") {
-    expandedSn = sn; applyFilters();
-  } else if (isMobile()) {
-    var el = document.getElementById("srow-" + sn);
-    if (el && !el.classList.contains("open")) {
-      expandedSn = sn; el.classList.add("open");
-      var det = el.querySelector(".srow-det");
-      if (det) det.style.display = "block";
+    if (expandedSn && expandedSn !== sn) {
+      var prev = document.getElementById("card-" + expandedSn);
+      if (prev) prev.classList.remove("open");
     }
+    expandedSn = sn;
+    var el = document.getElementById("card-" + sn);
+    if (el) el.classList.add("open");
+  } else if (isMobile()) {
+    if (expandedSn && expandedSn !== sn) {
+      var prev = document.getElementById("srow-" + expandedSn);
+      if (prev) prev.classList.remove("open");
+    }
+    expandedSn = sn;
+    var el = document.getElementById("srow-" + sn);
+    if (el) el.classList.add("open");
   } else {
+    if (expandedSn && expandedSn !== sn) {
+      var prevDt = document.getElementById("trow-" + expandedSn);
+      if (prevDt) {
+        prevDt.classList.remove("open");
+        var pt = prevDt.previousElementSibling; if (pt) pt.classList.remove("row-open");
+      }
+    }
+    expandedSn = sn;
     var dt = document.getElementById("trow-" + sn);
-    if (dt && !dt.classList.contains("open")) {
-      expandedSn = sn; dt.classList.add("open");
+    if (dt) {
+      dt.classList.add("open");
+      var tr = dt.previousElementSibling; if (tr) tr.classList.add("row-open");
     }
   }
   setTimeout(function() {
@@ -877,19 +918,26 @@ async function saveComment(sn) {
   btn.disabled = true;
   btn.innerHTML = '<span class="spin-sm"></span>';
   try {
-    await fetch(SCRIPT_URL + "?action=updateComment&stockNum=" + encodeURIComponent(sn) +
+    var _u = window._scriptUrl || SCRIPT_URL; await fetch(_u + "?action=updateComment&stockNum=" + encodeURIComponent(sn) +
       "&comment=" + encodeURIComponent(cmt), { mode:"no-cors" });
     var row = allData.find(function(r) { return String(r["Stock Num"]) === String(sn); });
     if (row) row["Comments"] = cmt;
     toast(cmt ? "Comment saved" : "Comment cleared");
     applyFilters();
-    // Re-expand
-    if (currentView === "card") { expandedSn = sn; applyFilters(); }
-    else if (isMobile()) {
-      var el = document.getElementById("srow-"+sn);
-      if (el) { el.classList.add("open"); var d=el.querySelector(".srow-det"); if(d)d.style.display="block"; }
+    // Re-expand using CSS class after re-render
+    expandedSn = sn;
+    if (currentView === "card") {
+      var el = document.getElementById("card-" + sn);
+      if (el) el.classList.add("open");
+    } else if (isMobile()) {
+      var el = document.getElementById("srow-" + sn);
+      if (el) el.classList.add("open");
     } else {
-      var dt = document.getElementById("trow-"+sn); if(dt)dt.classList.add("open");
+      var dt = document.getElementById("trow-" + sn);
+      if (dt) {
+        dt.classList.add("open");
+        var tr = dt.previousElementSibling; if (tr) tr.classList.add("row-open");
+      }
     }
   } catch(e) {
     toast("Save failed: "+e.message, true);
@@ -918,7 +966,7 @@ async function setTaskStatus(sn) {
     badge.textContent = nxt === "Completed" ? "Completed" : "In Progress";
   }
   try {
-    await fetch(SCRIPT_URL + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
+    var _u = window._scriptUrl || SCRIPT_URL; await fetch(_u + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
       "&taskStatus=" + encodeURIComponent(nxt), { mode:"no-cors" });
     row["Task Status"] = nxt;
     toast(nxt === "Completed" ? "Marked Completed" : "Marked In Progress");
@@ -940,10 +988,23 @@ function updateMeta(data) {
 
 // ── ADMIN MODAL ───────────────────────────────
 function openModal() {
-  document.getElementById("adminUrl").value = SCRIPT_URL;
+  // Show current active URL (runtime override or hardcoded default)
+  document.getElementById("adminUrl").value = window._scriptUrl || SCRIPT_URL;
   document.getElementById("adminModal").classList.add("open");
 }
 function closeModal() { document.getElementById("adminModal").classList.remove("open"); }
+function saveAdminUrl() {
+  var url = document.getElementById("adminUrl").value.trim();
+  if (!url || !url.startsWith("https://")) {
+    toast("Please enter a valid https:// URL", true); return;
+  }
+  // Override at runtime — survives the session without editing the file
+  window._scriptUrl = url;
+  localStorage.setItem("nlr_url_override", url);
+  closeModal();
+  toast("URL updated — reloading data");
+  loadData();
+}
 document.getElementById("adminModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
 });
