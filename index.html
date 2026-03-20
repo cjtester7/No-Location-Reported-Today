@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v7</title>
+<title>No Location Reported · v9</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -55,6 +55,115 @@
     background: var(--bg); color: var(--text);
     font-family: var(--font-sans); min-height: 100vh;
     font-size: 14px; transition: background 0.25s, color 0.25s;
+  }
+
+  /* ══════════════════════════════════════
+     MOBILE FONT BOOST
+  ══════════════════════════════════════ */
+  @media (max-width: 639px) {
+    body { font-size: 16px; }
+    .vehicle-name { font-size: 15px !important; }
+    .srow-vehicle { font-size: 15px !important; }
+    .srow-field-value { font-size: 13px !important; }
+    .srow-field-label { font-size: 10px !important; }
+    .srow-stock { font-size: 13px !important; }
+    .srow-ts-badge { font-size: 11px !important; padding: 3px 9px !important; }
+    .srow-status-tag { font-size: 11px !important; }
+    .srow-comment-preview { font-size: 13px !important; }
+    .detail-label { font-size: 11px !important; }
+    .detail-value { font-size: 13px !important; }
+    .comment-text { font-size: 14px !important; }
+    .comment-textarea { font-size: 15px !important; }
+    .btn { font-size: 14px !important; padding: 10px 16px !important; }
+    .btn-edit { font-size: 13px !important; padding: 7px 12px !important; }
+    .status-btn { font-size: 14px !important; padding: 11px !important; }
+    .stock-pill { font-size: 13px !important; }
+    .tag { font-size: 11px !important; padding: 3px 7px !important; }
+    .search-input { font-size: 16px !important; }
+    .sort-pill { font-size: 12px !important; padding: 5px 11px !important; }
+  }
+
+  /* ══════════════════════════════════════
+     LOGIN SCREEN
+  ══════════════════════════════════════ */
+  .login-screen {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+    background: var(--bg);
+  }
+  .login-screen.visible { display: flex; }
+
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 8px 32px var(--shadow);
+  }
+
+  .login-logo {
+    width: 52px; height: 52px;
+    background: var(--accent); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-weight: 600; font-size: 16px;
+    color: #000; letter-spacing: -0.5px;
+    margin: 0 auto 20px;
+  }
+
+  .login-title {
+    text-align: center; font-size: 18px; font-weight: 600;
+    color: var(--text); margin-bottom: 4px;
+  }
+
+  .login-sub {
+    text-align: center; font-size: 12px; color: var(--text-dim);
+    font-family: var(--font-mono); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 28px;
+  }
+
+  .login-field { margin-bottom: 14px; }
+
+  .login-label {
+    display: block; font-family: var(--font-mono); font-size: 10px;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.8px; margin-bottom: 6px;
+  }
+
+  .login-input {
+    width: 100%; background: var(--bg);
+    border: 1px solid var(--border); color: var(--text);
+    font-family: var(--font-sans); font-size: 16px;
+    padding: 11px 13px; border-radius: 9px; outline: none;
+    transition: border-color 0.15s, background 0.25s;
+    -webkit-appearance: none;
+  }
+  .login-input:focus { border-color: var(--accent); }
+
+  .login-error {
+    background: rgba(224,92,42,0.12); border: 1px solid rgba(224,92,42,0.3);
+    color: var(--accent2); border-radius: 8px; padding: 10px 13px;
+    font-size: 13px; margin-bottom: 14px; display: none; text-align: center;
+  }
+  .login-error.visible { display: block; }
+
+  .login-btn {
+    width: 100%; background: var(--accent); color: #000;
+    font-family: var(--font-sans); font-size: 15px; font-weight: 600;
+    padding: 13px; border-radius: 9px; border: none; cursor: pointer;
+    transition: opacity 0.15s; letter-spacing: 0.2px;
+    -webkit-tap-highlight-color: transparent; margin-top: 4px;
+  }
+  .login-btn:active { opacity: 0.85; }
+
+  .login-theme {
+    display: flex; justify-content: center; margin-top: 20px;
+    gap: 6px; align-items: center; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* ══════════════════════════════════════
@@ -403,17 +512,50 @@
 </head>
 <body>
 
+<!-- Login Screen -->
+<div class="login-screen visible" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">NLR</div>
+    <div class="login-title">No Location Reported</div>
+    <div class="login-sub">CarMax · Location 4070</div>
+
+    <div class="login-error" id="loginError">Incorrect username or password</div>
+
+    <div class="login-field">
+      <label class="login-label">Username</label>
+      <input class="login-input" id="loginUser" type="text" autocomplete="username"
+        autocapitalize="none" autocorrect="off" spellcheck="false"
+        placeholder="Enter username" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+    <div class="login-field">
+      <label class="login-label">Password</label>
+      <input class="login-input" id="loginPass" type="password" autocomplete="current-password"
+        placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()" />
+    </div>
+
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+
+    <div class="login-theme" onclick="toggleTheme()">
+      <span class="toggle-emoji">🌙</span>
+      <div class="toggle-track"><div class="toggle-knob"></div></div>
+      <span class="toggle-emoji">☀️</span>
+    </div>
+  </div>
+</div>
+
 <!-- Config Modal -->
 <div class="modal-overlay" id="configModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Apps Script URL</div>
-    <label class="modal-label">Web App URL</label>
-    <input class="modal-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/..." />
-    <button class="btn-modal-save" onclick="saveConfig()">Save &amp; Refresh</button>
-    <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+    <div class="modal-title">App Info</div>
+    <label class="modal-label">Apps Script URL (hardcoded)</label>
+    <input class="modal-input" id="urlInput" type="url" readonly style="opacity:0.6;cursor:default;" />
+    <button class="btn-modal-save" onclick="saveConfig()">Close</button>
   </div>
 </div>
+
+<!-- App Shell (hidden until login) -->
+<div id="appShell" style="display:none;">
 
 <!-- Header -->
 <div class="header">
@@ -433,7 +575,8 @@
       </div>
       <button class="btn-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch view">☰</button>
       <button class="btn-icon" id="refreshBtn" onclick="loadData()" title="Refresh">↻</button>
-      <button class="btn-icon" onclick="openModal()" title="Settings">⚙</button>
+      <button class="btn-icon" id="settingsBtn" onclick="openModal()" title="Settings" style="display:none;">⚙</button>
+      <button class="btn-icon" onclick="doLogout()" title="Sign out" style="font-size:13px;">⏏</button>
     </div>
   </div>
   <div class="report-meta" id="reportMeta" style="display:none;">
@@ -441,6 +584,7 @@
     <span class="badge badge-count" id="vehicleCount"></span>
     <span class="badge badge-loc">Loc 4070</span>
     <span class="badge badge-view" id="viewBadge">Card View</span>
+    <span class="badge" style="background:rgba(116,116,180,0.12);color:var(--text-dim);border:1px solid rgba(116,116,180,0.2);" id="userBadge"></span>
   </div>
 </div>
 
@@ -470,15 +614,34 @@
   </div>
 </div>
 
+</div><!-- end appShell -->
+
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
-const STORAGE_KEY = "nlr_script_url";
+
+// -------------------------------------------------------
+// ADMIN: Paste your Apps Script Web App URL below.
+// This is the only place you need to update it.
+// -------------------------------------------------------
+const SCRIPT_URL  = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
+// -------------------------------------------------------
+
+// Users: { username: { password, role } }
+// role "admin" sees the ⚙ settings button; role "user" does not
+const USERS = {
+  "admin": { password: "1234",  role: "admin" },
+  "user1": { password: "user1", role: "user"  }
+};
+
 const THEME_KEY   = "nlr_theme";
 const VIEW_KEY    = "nlr_view";
+const SESSION_KEY = "nlr_session";
+
+let currentUser   = null;
 
 let allData       = [];
 let expandedStock = null;
@@ -495,9 +658,15 @@ function isMobile() { return window.innerWidth < 640; }
 window.addEventListener("DOMContentLoaded", () => {
   applyTheme(localStorage.getItem(THEME_KEY) || "dark");
   currentView = localStorage.getItem(VIEW_KEY) || "card";
-  updateViewUI();
-  const url = localStorage.getItem(STORAGE_KEY);
-  if (!url) { showSetup(); } else { loadData(); }
+
+  // Restore session if previously logged in
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved && USERS[saved]) {
+    currentUser = saved;
+    showApp();
+  } else {
+    document.getElementById("loginScreen").classList.add("visible");
+  }
 });
 
 // ══════════════════════════════════════════
@@ -509,6 +678,57 @@ function applyTheme(theme) {
 }
 function toggleTheme() {
   applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+}
+
+// ══════════════════════════════════════════
+// LOGIN / SESSION
+// ══════════════════════════════════════════
+function doLogin() {
+  const username = (document.getElementById("loginUser").value || "").trim().toLowerCase();
+  const password = document.getElementById("loginPass").value || "";
+  const err      = document.getElementById("loginError");
+
+  if (USERS[username] && USERS[username].password === password) {
+    currentUser = username;
+    sessionStorage.setItem(SESSION_KEY, username);
+    err.classList.remove("visible");
+    document.getElementById("loginPass").value = "";
+    showApp();
+  } else {
+    err.classList.add("visible");
+    document.getElementById("loginPass").value = "";
+    document.getElementById("loginPass").focus();
+  }
+}
+
+function showApp() {
+  document.getElementById("loginScreen").classList.remove("visible");
+  document.getElementById("appShell").style.display = "block";
+
+  // Show/hide admin-only settings button
+  const settingsBtn = document.getElementById("settingsBtn");
+  if (settingsBtn) {
+    settingsBtn.style.display = USERS[currentUser] && USERS[currentUser].role === "admin" ? "flex" : "none";
+  }
+
+  // Show logged-in user badge
+  const userBadge = document.getElementById("userBadge");
+  if (userBadge) userBadge.textContent = currentUser;
+
+  updateViewUI();
+  loadData();
+}
+
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  currentUser = null;
+  allData = [];
+  expandedStock = null;
+  document.getElementById("appShell").style.display = "none";
+  document.getElementById("loginScreen").classList.add("visible");
+  document.getElementById("loginUser").value = "";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginError").classList.remove("visible");
 }
 
 // ══════════════════════════════════════════
@@ -543,13 +763,13 @@ function updateViewUI() {
 // ══════════════════════════════════════════
 function showSetup() {
   document.getElementById("main").innerHTML =
-    '<div class="state-msg"><div class="icon">⚙️</div>' +
-    '<p>Tap the <strong>⚙</strong> button to enter your Apps Script URL.</p></div>';
+    '<div class="state-msg"><div class="icon">⚠️</div>' +
+    '<p>Apps Script URL not configured.<br>Please contact your administrator.</p></div>';
 }
 
 async function loadData() {
-  const url = localStorage.getItem(STORAGE_KEY);
-  if (!url) { showSetup(); return; }
+  const url = SCRIPT_URL;
+  if (!url || url.includes("YOUR_SCRIPT_ID_HERE")) { showSetup(); return; }
   document.getElementById("refreshBtn").classList.add("loading");
   document.getElementById("main").innerHTML =
     '<div class="loading-state"><div class="spinner"></div><p>Loading vehicles...</p></div>';
@@ -924,8 +1144,7 @@ function cancelEdit(sn) {
 
 async function saveComment(sn) {
   event.stopPropagation();
-  const url = localStorage.getItem(STORAGE_KEY);
-  if (!url) { toast("No URL configured", true); return; }
+  const url = SCRIPT_URL;
 
   const ta      = document.getElementById("cinput-" + sn);
   const btn     = document.getElementById("csave-" + sn);
@@ -962,8 +1181,7 @@ async function saveComment(sn) {
 // ══════════════════════════════════════════
 async function setTaskStatus(sn) {
   event.stopPropagation();
-  const url = localStorage.getItem(STORAGE_KEY);
-  if (!url) { toast("No URL configured", true); return; }
+  const url = SCRIPT_URL;
 
   const row = allData.find(r => String(r["Stock Num"]) === String(sn));
   if (!row) return;
@@ -1010,18 +1228,16 @@ function updateMeta(data) {
 }
 
 // ══════════════════════════════════════════
-// MODAL
+// MODAL (admin info only)
 // ══════════════════════════════════════════
 function openModal() {
-  document.getElementById("urlInput").value = localStorage.getItem(STORAGE_KEY) || "";
+  document.getElementById("urlInput").value = SCRIPT_URL;
   document.getElementById("configModal").classList.add("open");
 }
 function closeModal() { document.getElementById("configModal").classList.remove("open"); }
 function saveConfig() {
-  const url = document.getElementById("urlInput").value.trim();
-  if (!url) { toast("Please enter a URL", true); return; }
-  localStorage.setItem(STORAGE_KEY, url);
-  closeModal(); loadData();
+  closeModal();
+  toast("URL is hardcoded in index.html");
 }
 document.getElementById("configModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
