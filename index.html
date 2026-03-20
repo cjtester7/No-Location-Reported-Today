@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v11</title>
+<title>No Location Reported · v12</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -556,11 +556,11 @@
 <div class="modal-overlay" id="configModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Admin Settings</div>
-    <label class="modal-label">Apps Script Web App URL</label>
-    <input class="modal-input" id="urlInput" type="url" placeholder="https://script.google.com/macros/s/..." />
-    <button class="btn-modal-save" onclick="saveConfig()">Save &amp; Refresh</button>
-    <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+    <div class="modal-title">Admin Info</div>
+    <label class="modal-label">Apps Script URL (set in index.html)</label>
+    <input class="modal-input" id="urlInput" type="url" readonly
+      style="opacity:0.7;cursor:default;font-size:11px;" />
+    <button class="btn-modal-save" onclick="saveConfig()">Close</button>
   </div>
 </div>
 
@@ -630,29 +630,26 @@
 
 <script>
 // ══════════════════════════════════════════
-// STATE
+// CONFIGURATION — edit these two sections
 // ══════════════════════════════════════════
 
-// -------------------------------------------------------
-// ADMIN: Paste your Apps Script Web App URL below.
-// This is the only place you need to update it.
-// -------------------------------------------------------
-const SCRIPT_URL  = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
-// -------------------------------------------------------
+// 1. Paste your Apps Script Web App URL here:
+const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
 
-// Users: { username: { password, role } }
-// role "admin" sees the ⚙ settings button; role "user" does not
+// 2. Users — add or change credentials here:
 const USERS = {
   "admin": { password: "1234",  role: "admin" },
   "user1": { password: "user1", role: "user"  }
 };
 
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
 const THEME_KEY   = "nlr_theme";
-const VIEW_KEY    = "nlr_view";
 const SESSION_KEY = "nlr_session";
+// VIEW_KEY intentionally not used on init — view is set per-device based on screen size
 
 let currentUser   = null;
-
 let allData       = [];
 let expandedStock = null;
 let editingStock  = null;
@@ -661,25 +658,23 @@ let sortCol       = null;
 let sortDir       = "asc";
 
 function isMobile() {
-  // Use matchMedia for reliable viewport detection on real devices
   return window.matchMedia("(max-width: 639px)").matches;
 }
 
 // ══════════════════════════════════════════
-// INIT
+// INIT — runs once on page load
 // ══════════════════════════════════════════
 window.addEventListener("DOMContentLoaded", () => {
+  // Apply saved theme first so there's no flash
   applyTheme(localStorage.getItem(THEME_KEY) || "dark");
-  currentView = localStorage.getItem(VIEW_KEY) || "card";
 
-  // Restore session if previously logged in
+  // Check for existing login session
   const saved = localStorage.getItem(SESSION_KEY);
   if (saved && USERS[saved]) {
     currentUser = saved;
-    showApp();
-  } else {
-    document.getElementById("loginScreen").classList.add("visible");
+    bootApp();
   }
+  // If no session, login screen is already visible (starts with class="login-screen visible")
 });
 
 // ══════════════════════════════════════════
@@ -706,7 +701,8 @@ function doLogin() {
     localStorage.setItem(SESSION_KEY, username);
     err.classList.remove("visible");
     document.getElementById("loginPass").value = "";
-    showApp();
+    document.getElementById("loginScreen").classList.remove("visible");
+    bootApp();
   } else {
     err.classList.add("visible");
     document.getElementById("loginPass").value = "";
@@ -714,27 +710,27 @@ function doLogin() {
   }
 }
 
-function showApp() {
-  document.getElementById("loginScreen").classList.remove("visible");
-  document.getElementById("appShell").style.display = "block";
-
+// bootApp: called after successful login or session restore
+// Sets up the UI then loads data — single clean entry point
+function bootApp() {
   const isAdmin = USERS[currentUser] && USERS[currentUser].role === "admin";
 
-  // Show/hide admin-only settings button
+  // Set current view: mobile defaults to stacked list, desktop to card
+  // Always re-evaluate on boot so each device gets the right default
+  currentView = isMobile() ? "table" : "card";
+
+  // Show app shell
+  document.getElementById("appShell").style.display = "block";
+
+  // Admin-only settings button
   const settingsBtn = document.getElementById("settingsBtn");
   if (settingsBtn) settingsBtn.style.display = isAdmin ? "flex" : "none";
 
-  // Show logged-in user label top-right
+  // User label in header
   const userLabel = document.getElementById("userLabel");
   if (userLabel) {
     userLabel.textContent = currentUser;
     userLabel.style.display = "inline-flex";
-  }
-
-  // Default mobile to stacked list view unless user has set a preference
-  const savedView = localStorage.getItem(VIEW_KEY);
-  if (!savedView && isMobile()) {
-    currentView = "table"; // renders as stacked cards on mobile
   }
 
   updateViewUI();
@@ -744,12 +740,12 @@ function showApp() {
 function doLogout() {
   localStorage.removeItem(SESSION_KEY);
   currentUser = null;
-  allData = [];
+  allData     = [];
   expandedStock = null;
   document.getElementById("appShell").style.display = "none";
   document.getElementById("loginScreen").classList.add("visible");
-  document.getElementById("loginUser").value = "";
-  document.getElementById("loginPass").value = "";
+  document.getElementById("loginUser").value  = "";
+  document.getElementById("loginPass").value  = "";
   document.getElementById("loginError").classList.remove("visible");
 }
 
@@ -758,7 +754,6 @@ function doLogout() {
 // ══════════════════════════════════════════
 function toggleView() {
   currentView = currentView === "card" ? "table" : "card";
-  localStorage.setItem(VIEW_KEY, currentView);
   updateViewUI();
   applyFilters();
 }
@@ -784,17 +779,17 @@ function updateViewUI() {
 // DATA
 // ══════════════════════════════════════════
 function showSetup() {
-  const isAdmin = currentUser && USERS[currentUser] && USERS[currentUser].role === "admin";
-  document.getElementById("main").innerHTML = isAdmin
-    ? '<div class="state-msg"><div class="icon">⚙️</div>' +
-      '<p><strong>Apps Script URL not set.</strong><br>Tap the ⚙ button above to paste your URL.</p></div>'
-    : '<div class="state-msg"><div class="icon">⚠️</div>' +
-      '<p>App not configured yet.<br>Please ask your administrator to set up the URL.</p></div>';
+  document.getElementById("main").innerHTML =
+    '<div class="state-msg"><div class="icon">⚙️</div>' +
+    '<p><strong>Apps Script URL not set.</strong><br>' +
+    'Open index.html and replace<br><code style="font-size:11px;color:var(--accent);">YOUR_SCRIPT_ID_HERE</code><br>with your deployment ID.</p></div>';
 }
 
 async function loadData() {
-  const url = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
-  if (!url || url.includes("YOUR_SCRIPT_ID_HERE")) { showSetup(); return; }
+  if (!SCRIPT_URL || SCRIPT_URL.includes("YOUR_SCRIPT_ID_HERE")) {
+    showSetup(); return;
+  }
+  const url = SCRIPT_URL;
   document.getElementById("refreshBtn").classList.add("loading");
   document.getElementById("main").innerHTML =
     '<div class="loading-state"><div class="spinner"></div><p>Loading vehicles...</p></div>';
@@ -1169,7 +1164,7 @@ function cancelEdit(sn) {
 
 async function saveComment(sn) {
   event.stopPropagation();
-  const url = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
+  const url = SCRIPT_URL;
 
   const ta      = document.getElementById("cinput-" + sn);
   const btn     = document.getElementById("csave-" + sn);
@@ -1206,7 +1201,7 @@ async function saveComment(sn) {
 // ══════════════════════════════════════════
 async function setTaskStatus(sn) {
   event.stopPropagation();
-  const url = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
+  const url = SCRIPT_URL;
 
   const row = allData.find(r => String(r["Stock Num"]) === String(sn));
   if (!row) return;
@@ -1253,21 +1248,16 @@ function updateMeta(data) {
 }
 
 // ══════════════════════════════════════════
-// MODAL (admin info only)
+// MODAL (admin view only)
 // ══════════════════════════════════════════
 function openModal() {
-  const current = localStorage.getItem("nlr_script_url") || SCRIPT_URL;
-  document.getElementById("urlInput").value = current;
+  document.getElementById("urlInput").value = SCRIPT_URL;
   document.getElementById("configModal").classList.add("open");
 }
 function closeModal() { document.getElementById("configModal").classList.remove("open"); }
 function saveConfig() {
-  const url = document.getElementById("urlInput").value.trim();
-  if (!url) { toast("Please enter a URL", true); return; }
-  localStorage.setItem("nlr_script_url", url);
   closeModal();
-  toast("URL saved");
-  loadData();
+  toast("URL is set in the HTML file");
 }
 document.getElementById("configModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
