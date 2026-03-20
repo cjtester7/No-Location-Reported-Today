@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v6</title>
+<title>No Location Reported · v7</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -52,176 +52,96 @@
       --font-sans: 'IBM Plex Sans', sans-serif; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-sans);
-    min-height: 100vh;
-    font-size: 14px;
-    transition: background 0.25s, color 0.25s;
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-sans); min-height: 100vh;
+    font-size: 14px; transition: background 0.25s, color 0.25s;
   }
 
   /* ══════════════════════════════════════
      HEADER
   ══════════════════════════════════════ */
   .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 13px 16px 11px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 8px var(--shadow);
-    transition: background 0.25s, border-color 0.25s;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 13px 16px 11px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px var(--shadow); transition: background 0.25s, border-color 0.25s;
   }
-
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
+  .header-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-
   .brand-icon {
-    width: 34px; height: 34px;
-    background: var(--accent);
-    border-radius: 8px;
+    width: 34px; height: 34px; background: var(--accent); border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-mono);
-    font-weight: 600; font-size: 13px;
-    color: #000; letter-spacing: -0.5px;
-    flex-shrink: 0;
-    transition: background 0.25s;
+    font-family: var(--font-mono); font-weight: 600; font-size: 13px;
+    color: #000; letter-spacing: -0.5px; flex-shrink: 0; transition: background 0.25s;
   }
-
   .brand-text { line-height: 1.15; }
   .brand-title { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.3px; }
   .brand-sub { font-size: 10px; color: var(--text-dim); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 1px; }
-
   .header-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
 
-  /* Theme toggle */
-  .theme-toggle {
-    display: flex; align-items: center; gap: 5px;
-    cursor: pointer; -webkit-tap-highlight-color: transparent; padding: 3px;
-  }
-  .toggle-track {
-    width: 36px; height: 20px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; position: relative;
-    transition: background 0.25s, border-color 0.25s; flex-shrink: 0;
-  }
-  .toggle-knob {
-    width: 14px; height: 14px; background: var(--accent);
-    border-radius: 50%; position: absolute; top: 2px; left: 2px;
-    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  }
+  .theme-toggle { display: flex; align-items: center; gap: 5px; cursor: pointer; -webkit-tap-highlight-color: transparent; padding: 3px; }
+  .toggle-track { width: 36px; height: 20px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; position: relative; transition: background 0.25s, border-color 0.25s; flex-shrink: 0; }
+  .toggle-knob { width: 14px; height: 14px; background: var(--accent); border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
   [data-theme="light"] .toggle-knob { transform: translateX(16px); }
   .toggle-emoji { font-size: 12px; line-height: 1; user-select: none; }
 
-  /* View toggle button */
   .btn-icon {
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text-dim); width: 34px; height: 34px;
-    border-radius: 8px; cursor: pointer;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text-dim);
+    width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 15px; transition: all 0.15s;
-    -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    font-size: 15px; transition: all 0.15s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
   }
   .btn-icon:active { background: var(--border); transform: scale(0.95); }
   .btn-icon.loading { opacity: 0.5; pointer-events: none; }
   .btn-icon.active { background: var(--accent); border-color: var(--accent); color: #000; }
 
   .report-meta { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-
-  .badge {
-    font-family: var(--font-mono); font-size: 10px;
-    padding: 3px 8px; border-radius: 4px;
-    letter-spacing: 0.5px; text-transform: uppercase;
-  }
+  .badge { font-family: var(--font-mono); font-size: 10px; padding: 3px 8px; border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase; }
   .badge-date { background: rgba(240,165,0,0.12); color: var(--accent); border: 1px solid rgba(240,165,0,0.25); }
   .badge-count { background: rgba(46,207,122,0.1); color: var(--green); border: 1px solid rgba(46,207,122,0.2); }
   .badge-loc { background: rgba(74,158,255,0.1); color: var(--blue); border: 1px solid rgba(74,158,255,0.2); }
   .badge-view { background: rgba(240,165,0,0.1); color: var(--accent); border: 1px solid rgba(240,165,0,0.2); font-size: 9px; }
 
   /* ══════════════════════════════════════
-     TOOLBAR (search + sort bar)
+     TOOLBAR
   ══════════════════════════════════════ */
-  .toolbar {
-    padding: 10px 16px;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    transition: background 0.25s, border-color 0.25s;
-  }
-
+  .toolbar { padding: 10px 16px; background: var(--surface); border-bottom: 1px solid var(--border); transition: background 0.25s, border-color 0.25s; }
   .search-wrap { position: relative; }
-
   .search-input {
-    width: 100%; background: var(--bg);
-    border: 1px solid var(--border); color: var(--text);
-    font-family: var(--font-sans); font-size: 14px;
-    padding: 9px 12px 9px 36px; border-radius: 8px; outline: none;
-    transition: border-color 0.15s, background 0.25s, color 0.25s;
+    width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    font-family: var(--font-sans); font-size: 14px; padding: 9px 12px 9px 36px;
+    border-radius: 8px; outline: none; transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
   .search-input:focus { border-color: var(--accent); }
   .search-input::placeholder { color: var(--text-muted); }
+  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 15px; pointer-events: none; }
 
-  .search-icon {
-    position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
-    color: var(--text-muted); font-size: 15px; pointer-events: none;
-  }
-
-  /* Sort pills (shown below search in list/table mode) */
-  .sort-bar {
-    display: none;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-  }
+  .sort-bar { display: none; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
   .sort-bar.visible { display: flex; }
-
   .sort-pill {
     display: flex; align-items: center; gap: 4px;
-    font-family: var(--font-mono); font-size: 10px;
-    padding: 4px 9px; border-radius: 5px;
-    border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text-dim);
+    font-family: var(--font-mono); font-size: 10px; padding: 4px 9px; border-radius: 5px;
+    border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim);
     cursor: pointer; -webkit-tap-highlight-color: transparent;
-    transition: all 0.15s; white-space: nowrap; letter-spacing: 0.3px;
-    text-transform: uppercase;
+    transition: all 0.15s; white-space: nowrap; letter-spacing: 0.3px; text-transform: uppercase;
   }
   .sort-pill:active { transform: scale(0.96); }
   .sort-pill.asc { background: rgba(240,165,0,0.12); border-color: rgba(240,165,0,0.4); color: var(--accent); }
   .sort-pill.desc { background: rgba(74,158,255,0.1); border-color: rgba(74,158,255,0.3); color: var(--blue); }
-
   .sort-arrow { font-size: 9px; }
 
   /* ══════════════════════════════════════
-     MAIN CONTENT AREA
+     MAIN
   ══════════════════════════════════════ */
-  .main {
-    padding: 12px 16px;
-    padding-bottom: 80px;
-  }
+  .main { padding: 12px 16px; padding-bottom: 80px; }
 
   /* ══════════════════════════════════════
-     CARD VIEW
+     CARD VIEW (unchanged from v6)
   ══════════════════════════════════════ */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  /* 2-column on wider phones / tablets */
-  @media (min-width: 600px) {
-    .cards-grid { grid-template-columns: 1fr 1fr; }
-  }
+  .cards-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 640px) { .cards-grid { grid-template-columns: 1fr 1fr; } }
 
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; overflow: hidden;
     transition: border-color 0.15s, background 0.25s, box-shadow 0.25s;
     box-shadow: 0 1px 4px var(--shadow);
@@ -230,36 +150,22 @@
   .card.expanded { border-color: var(--accent); }
 
   .card-header {
-    padding: 12px 14px; cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    display: flex; gap: 12px; align-items: flex-start;
-    transition: background 0.15s;
+    padding: 12px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    display: flex; gap: 12px; align-items: flex-start; transition: background 0.15s;
   }
   .card-header:active { background: var(--surface2); }
 
   .stock-pill {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; padding: 4px 8px;
-    font-family: var(--font-mono); font-size: 11px; color: var(--accent);
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+    padding: 4px 8px; font-family: var(--font-mono); font-size: 11px; color: var(--accent);
     white-space: nowrap; flex-shrink: 0; margin-top: 1px;
-    transition: background 0.25s, border-color 0.25s, color 0.25s;
   }
-
   .card-main { flex: 1; min-width: 0; }
-
-  .vehicle-name {
-    font-size: 13px; font-weight: 600; color: var(--text);
-    line-height: 1.3; margin-bottom: 5px;
-  }
+  .vehicle-name { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 5px; }
   .vehicle-year { color: var(--accent); margin-right: 4px; }
-
   .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
 
-  .tag {
-    font-family: var(--font-mono); font-size: 9px;
-    padding: 2px 6px; border-radius: 3px;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
+  .tag { font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
   .tag-zone { background: rgba(74,158,255,0.12); color: var(--blue); }
   .tag-status { background: rgba(240,165,0,0.12); color: var(--accent); }
   .tag-days { background: rgba(224,92,42,0.14); color: var(--accent2); }
@@ -268,220 +174,201 @@
   .tag-completed { background: rgba(46,207,122,0.14); color: var(--green); border: 1px solid rgba(46,207,122,0.3); }
   .tag-no-status { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
 
-  .card-chevron {
-    color: var(--text-muted); font-size: 12px;
-    flex-shrink: 0; margin-top: 3px;
-    transition: transform 0.2s, color 0.25s;
-  }
+  .card-chevron { color: var(--text-muted); font-size: 12px; flex-shrink: 0; margin-top: 3px; transition: transform 0.2s; }
   .card.expanded .card-chevron { transform: rotate(180deg); }
 
-  .card-detail {
-    display: none; border-top: 1px solid var(--border);
-    padding: 12px 14px; background: var(--bg);
-    transition: background 0.25s, border-color 0.25s;
-  }
+  .card-detail { display: none; border-top: 1px solid var(--border); padding: 12px 14px; background: var(--bg); }
   .card.expanded .card-detail { display: block; }
 
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 0; }
   .detail-item.full { grid-column: 1 / -1; }
-
-  .detail-label {
-    font-family: var(--font-mono); font-size: 9px;
-    color: var(--text-muted); text-transform: uppercase;
-    letter-spacing: 0.8px; margin-bottom: 2px;
-  }
-  .detail-value {
-    font-size: 12px; color: var(--text);
-    font-family: var(--font-mono); word-break: break-all;
-  }
+  .detail-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+  .detail-value { font-size: 12px; color: var(--text); font-family: var(--font-mono); word-break: break-all; }
 
   /* ══════════════════════════════════════
-     TABLE VIEW
+     TABLE VIEW — DESKTOP (640px+)
+     Standard horizontal table
   ══════════════════════════════════════ */
   .table-wrap {
-    display: block;
-    overflow-x: auto;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    box-shadow: 0 1px 4px var(--shadow);
+    display: block; overflow-x: auto; border-radius: 10px;
+    border: 1px solid var(--border); box-shadow: 0 1px 4px var(--shadow);
     -webkit-overflow-scrolling: touch;
   }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-    min-width: 680px;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 760px; }
 
-  thead tr {
-    background: var(--table-header-bg);
-    border-bottom: 2px solid var(--border);
-  }
-
-  th {
-    padding: 0;
-    text-align: left;
-    border-right: 1px solid var(--border);
-    white-space: nowrap;
-  }
+  thead tr { background: var(--table-header-bg); border-bottom: 2px solid var(--border); }
+  th { padding: 0; text-align: left; border-right: 1px solid var(--border); white-space: nowrap; }
   th:last-child { border-right: none; }
 
   .th-btn {
-    display: flex; align-items: center; gap: 5px;
-    width: 100%; padding: 10px 11px;
-    font-family: var(--font-mono); font-size: 9px;
-    font-weight: 600; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 0.7px;
-    cursor: pointer; background: none; border: none;
-    -webkit-tap-highlight-color: transparent;
-    transition: color 0.15s, background 0.15s;
-    white-space: nowrap;
+    display: flex; align-items: center; gap: 5px; width: 100%; padding: 10px 11px;
+    font-family: var(--font-mono); font-size: 9px; font-weight: 600; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.7px; cursor: pointer; background: none; border: none;
+    -webkit-tap-highlight-color: transparent; transition: color 0.15s, background 0.15s; white-space: nowrap;
   }
   .th-btn:active { background: var(--surface2); }
   .th-btn.sort-asc { color: var(--accent); }
   .th-btn.sort-desc { color: var(--blue); }
-
-  .th-sort-icon {
-    font-size: 10px; opacity: 0.35;
-    transition: opacity 0.15s, transform 0.2s;
-    flex-shrink: 0;
-  }
-  .th-btn.sort-asc .th-sort-icon,
-  .th-btn.sort-desc .th-sort-icon { opacity: 1; }
+  .th-sort-icon { font-size: 10px; opacity: 0.35; transition: opacity 0.15s, transform 0.2s; flex-shrink: 0; }
+  .th-btn.sort-asc .th-sort-icon, .th-btn.sort-desc .th-sort-icon { opacity: 1; }
   .th-btn.sort-desc .th-sort-icon { transform: rotate(180deg); }
 
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.12s;
-    cursor: pointer;
-  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.12s; cursor: pointer; }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:nth-child(even) { background: var(--table-row-alt); }
   tbody tr:hover { background: var(--table-row-hover); }
   tbody tr.has-comment td:first-child { border-left: 3px solid var(--accent); }
   tbody tr.row-expanded { background: var(--table-row-hover); }
 
-  td {
-    padding: 9px 11px; color: var(--text);
-    border-right: 1px solid var(--border);
-    vertical-align: top; font-family: var(--font-sans);
-    transition: color 0.25s;
-  }
+  td { padding: 9px 11px; color: var(--text); border-right: 1px solid var(--border); vertical-align: top; font-family: var(--font-sans); }
   td:last-child { border-right: none; }
-
   td.mono { font-family: var(--font-mono); font-size: 11px; }
   td.accent { color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
 
-  .td-tag {
-    display: inline-block;
-    font-family: var(--font-mono); font-size: 9px;
-    padding: 2px 6px; border-radius: 3px;
-    text-transform: uppercase; letter-spacing: 0.4px;
-  }
+  .td-tag { display: inline-block; font-family: var(--font-mono); font-size: 9px; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-  /* Expandable row detail in table */
   .row-detail-tr { display: none; }
   .row-detail-tr.open { display: table-row; }
-
-  .row-detail-cell {
-    padding: 0 !important;
-    border-right: none !important;
-    background: var(--bg) !important;
-  }
-
-  .row-detail-inner {
-    padding: 12px 14px;
-    border-top: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-  }
-
-  .row-detail-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px 16px;
-    margin-bottom: 12px;
-  }
-
-  @media (max-width: 480px) {
-    .row-detail-grid { grid-template-columns: 1fr 1fr; }
-  }
+  .row-detail-cell { padding: 0 !important; border-right: none !important; background: var(--bg) !important; }
+  .row-detail-inner { padding: 12px 14px; border-top: 1px solid var(--border); border-left: 3px solid var(--accent); }
+  .row-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; margin-bottom: 12px; }
 
   /* ══════════════════════════════════════
-     COMMENT SECTION (shared)
+     TABLE VIEW — MOBILE (under 640px)
+     Stacked row cards replace the table
+  ══════════════════════════════════════ */
+  .stacked-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .srow {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+    box-shadow: 0 1px 4px var(--shadow);
+    transition: border-color 0.15s;
+  }
+  .srow.has-comment { border-color: rgba(240,165,0,0.4); }
+  .srow.expanded { border-color: var(--accent); }
+
+  .srow-header {
+    padding: 11px 13px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+  }
+  .srow-header:active { background: var(--surface2); }
+
+  /* Row 1: stock # + task status badge */
+  .srow-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .srow-stock {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    color: var(--accent); letter-spacing: 0.3px;
+  }
+  .srow-ts-badge {
+    font-family: var(--font-mono); font-size: 9px; padding: 2px 8px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px;
+    font-weight: 600;
+  }
+  .srow-ts-badge.inprogress { background: rgba(74,158,255,0.14); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
+  .srow-ts-badge.completed { background: rgba(46,207,122,0.14); color: var(--green); border: 1px solid rgba(46,207,122,0.3); }
+
+  /* Row 2: vehicle name */
+  .srow-vehicle {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    line-height: 1.3; margin-bottom: 7px;
+  }
+  .srow-year { color: var(--accent); margin-right: 4px; }
+
+  /* Row 3: key data fields in a 3-column mini-grid */
+  .srow-fields {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px 8px; margin-bottom: 7px;
+  }
+  .srow-field {}
+  .srow-field-label {
+    font-family: var(--font-mono); font-size: 8px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 1px;
+  }
+  .srow-field-value {
+    font-size: 11px; color: var(--text); font-family: var(--font-mono);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Row 4: status tag + comment preview + chevron */
+  .srow-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .srow-status-tag {
+    font-family: var(--font-mono); font-size: 9px; padding: 2px 7px;
+    border-radius: 3px; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .srow-comment-preview {
+    flex: 1; font-size: 11px; color: var(--text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-style: italic;
+  }
+  .srow-comment-preview.has-text { color: var(--text-dim); font-style: normal; }
+  .srow-chevron { color: var(--text-muted); font-size: 11px; flex-shrink: 0; transition: transform 0.2s; }
+  .srow.expanded .srow-chevron { transform: rotate(180deg); }
+
+  /* Expanded detail section for stacked rows */
+  .srow-detail {
+    display: none; border-top: 1px solid var(--border);
+    padding: 11px 13px; background: var(--bg);
+  }
+  .srow.expanded .srow-detail { display: block; }
+
+  .srow-detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 12px;
+  }
+  .srow-detail-item {}
+  .srow-detail-item.full { grid-column: 1 / -1; }
+
+  /* ══════════════════════════════════════
+     COMMENT + TASK STATUS (shared)
   ══════════════════════════════════════ */
   .comment-section {
-    border-top: 1px solid var(--border);
-    padding: 12px 14px;
-    background: var(--surface2);
-    transition: background 0.25s, border-color 0.25s;
+    border-top: 1px solid var(--border); padding: 12px 14px;
+    background: var(--surface2); transition: background 0.25s, border-color 0.25s;
   }
-
   .comment-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-
-  .comment-text {
-    font-size: 12px; color: var(--text); line-height: 1.5;
-    margin-bottom: 6px; min-height: 16px;
-  }
+  .comment-text { font-size: 12px; color: var(--text); line-height: 1.5; margin-bottom: 6px; min-height: 16px; }
   .comment-text.empty { color: var(--text-muted); font-style: italic; }
 
   .comment-textarea {
-    width: 100%; background: var(--bg);
-    border: 1px solid var(--border); color: var(--text);
-    font-family: var(--font-sans); font-size: 13px;
-    padding: 9px 11px; border-radius: 7px; outline: none;
-    resize: none; min-height: 68px; line-height: 1.5;
-    display: none;
+    width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    font-family: var(--font-sans); font-size: 13px; padding: 9px 11px; border-radius: 7px;
+    outline: none; resize: none; min-height: 68px; line-height: 1.5; display: none;
     transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
   .comment-textarea:focus { border-color: var(--accent); }
-
   .comment-actions { display: flex; gap: 7px; margin-top: 7px; display: none; }
 
-  .btn {
-    font-family: var(--font-sans); font-size: 12px; font-weight: 600;
-    padding: 8px 14px; border-radius: 7px; cursor: pointer; border: none;
-    transition: all 0.15s; -webkit-tap-highlight-color: transparent;
-  }
+  .btn { font-family: var(--font-sans); font-size: 12px; font-weight: 600; padding: 8px 14px; border-radius: 7px; cursor: pointer; border: none; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
   .btn:active { transform: scale(0.97); }
   .btn-save { background: var(--accent); color: #000; flex: 1; }
   .btn-save:disabled { opacity: 0.5; pointer-events: none; }
   .btn-cancel { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); }
 
   .btn-edit {
-    font-size: 11px; padding: 5px 10px;
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--text-dim); border-radius: 5px;
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
-    font-family: var(--font-sans); white-space: nowrap;
-    transition: background 0.15s, border-color 0.25s;
-    flex-shrink: 0;
+    font-size: 11px; padding: 5px 10px; background: var(--surface); border: 1px solid var(--border);
+    color: var(--text-dim); border-radius: 5px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    font-family: var(--font-sans); white-space: nowrap; transition: background 0.15s; flex-shrink: 0;
   }
   .btn-edit:active { background: var(--border); }
 
-  /* Task status toggle */
-  .status-toggle {
-    margin-top: 10px; padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
+  .status-toggle { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
   .status-btn {
     width: 100%; padding: 9px 14px; border-radius: 7px;
     font-family: var(--font-sans); font-size: 12px; font-weight: 600;
-    cursor: pointer; border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text-dim);
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim);
     transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-    letter-spacing: 0.2px; text-align: center;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    letter-spacing: 0.2px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .status-btn:active { transform: scale(0.98); }
-  .status-btn.active-inprogress {
-    background: rgba(74,158,255,0.14); border-color: rgba(74,158,255,0.45);
-    color: var(--blue);
-  }
-  .status-btn.active-completed {
-    background: rgba(46,207,122,0.14); border-color: rgba(46,207,122,0.45);
-    color: var(--green);
-  }
+  .status-btn.active-inprogress { background: rgba(74,158,255,0.14); border-color: rgba(74,158,255,0.45); color: var(--blue); }
+  .status-btn.active-completed { background: rgba(46,207,122,0.14); border-color: rgba(46,207,122,0.45); color: var(--green); }
   .status-btn.saving { opacity: 0.6; pointer-events: none; }
 
   /* ══════════════════════════════════════
@@ -490,74 +377,28 @@
   .state-msg { text-align: center; padding: 48px 24px; color: var(--text-muted); }
   .state-msg .icon { font-size: 36px; margin-bottom: 12px; }
   .state-msg p { font-size: 13px; line-height: 1.6; }
-
   .loading-state { text-align: center; padding: 48px 16px; }
   .loading-state p { color: var(--text-muted); font-size: 13px; font-family: var(--font-mono); margin-top: 10px; }
 
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6); z-index: 200; align-items: flex-end;
-  }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: flex-end; }
   .modal-overlay.open { display: flex; }
-
-  .modal {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 18px 18px 0 0; padding: 20px 16px 32px; width: 100%;
-    animation: slideUp 0.25s ease-out;
-    transition: background 0.25s, border-color 0.25s;
-  }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 18px 18px 0 0; padding: 20px 16px 32px; width: 100%; animation: slideUp 0.25s ease-out; }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
   .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
   .modal-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; text-align: center; }
   .modal-label { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; display: block; }
-
-  .modal-input {
-    width: 100%; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); font-family: var(--font-mono); font-size: 12px;
-    padding: 10px 12px; border-radius: 8px; outline: none; margin-bottom: 14px;
-    transition: border-color 0.15s, background 0.25s, color 0.25s;
-  }
+  .modal-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--font-mono); font-size: 12px; padding: 10px 12px; border-radius: 8px; outline: none; margin-bottom: 14px; transition: border-color 0.15s; }
   .modal-input:focus { border-color: var(--accent); }
+  .btn-modal-save { width: 100%; background: var(--accent); color: #000; font-family: var(--font-sans); font-size: 14px; font-weight: 600; padding: 12px; border-radius: 9px; border: none; cursor: pointer; margin-bottom: 8px; }
+  .btn-modal-cancel { width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-family: var(--font-sans); font-size: 13px; padding: 11px; border-radius: 9px; cursor: pointer; }
 
-  .btn-modal-save {
-    width: 100%; background: var(--accent); color: #000;
-    font-family: var(--font-sans); font-size: 14px; font-weight: 600;
-    padding: 12px; border-radius: 9px; border: none; cursor: pointer; margin-bottom: 8px;
-  }
-  .btn-modal-cancel {
-    width: 100%; background: transparent; border: 1px solid var(--border);
-    color: var(--text-dim); font-family: var(--font-sans); font-size: 13px;
-    padding: 11px; border-radius: 9px; cursor: pointer;
-  }
-
-  /* Toast */
-  .toast {
-    position: fixed; bottom: 20px; left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--green); color: #fff;
-    font-family: var(--font-mono); font-size: 12px; font-weight: 600;
-    padding: 10px 20px; border-radius: 8px; z-index: 999;
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    white-space: nowrap;
-  }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--green); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 10px 20px; border-radius: 8px; z-index: 999; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error { background: var(--accent2); }
 
-  /* Spinner */
   @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    display: block; width: 28px; height: 28px;
-    border: 3px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin 0.6s linear infinite;
-    margin: 0 auto 10px;
-  }
-  .spinner-sm {
-    display: inline-block; width: 14px; height: 14px;
-    border: 2px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; animation: spin 0.6s linear infinite;
-    vertical-align: middle;
-  }
+  .spinner { display: block; width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto 10px; }
+  .spinner-sm { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; }
 </style>
 </head>
 <body>
@@ -590,7 +431,7 @@
         <div class="toggle-track"><div class="toggle-knob"></div></div>
         <span class="toggle-emoji">☀️</span>
       </div>
-      <button class="btn-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch view">⊞</button>
+      <button class="btn-icon" id="viewToggleBtn" onclick="toggleView()" title="Switch view">☰</button>
       <button class="btn-icon" id="refreshBtn" onclick="loadData()" title="Refresh">↻</button>
       <button class="btn-icon" onclick="openModal()" title="Settings">⚙</button>
     </div>
@@ -607,10 +448,8 @@
 <div class="toolbar">
   <div class="search-wrap">
     <span class="search-icon">⊕</span>
-    <input class="search-input" id="searchInput" type="text"
-      placeholder="Search stock #, VIN, vehicle..." oninput="applyFilters()" />
+    <input class="search-input" id="searchInput" type="text" placeholder="Search stock #, VIN, vehicle..." oninput="applyFilters()" />
   </div>
-  <!-- Sort pills (table/list view) -->
   <div class="sort-bar" id="sortBar">
     <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-muted);align-self:center;text-transform:uppercase;letter-spacing:0.5px;">Sort:</span>
     <div class="sort-pill" id="pill-Stock Num" onclick="sortBy('Stock Num')">Stock # <span class="sort-arrow">↕</span></div>
@@ -631,7 +470,6 @@
   </div>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
@@ -640,15 +478,16 @@
 // ══════════════════════════════════════════
 const STORAGE_KEY = "nlr_script_url";
 const THEME_KEY   = "nlr_theme";
-const VIEW_KEY    = "nlr_view";   // "card" | "table"
+const VIEW_KEY    = "nlr_view";
 
-let allData      = [];
+let allData       = [];
 let expandedStock = null;
 let editingStock  = null;
 let currentView   = "card";
 let sortCol       = null;
-let sortDir       = "asc"; // "asc" | "desc"
-const TASK_STATUSES = ["", "In Progress", "Completed"];
+let sortDir       = "asc";
+
+function isMobile() { return window.innerWidth < 640; }
 
 // ══════════════════════════════════════════
 // INIT
@@ -683,21 +522,18 @@ function toggleView() {
 }
 
 function updateViewUI() {
-  const btn = document.getElementById("viewToggleBtn");
+  const btn   = document.getElementById("viewToggleBtn");
   const badge = document.getElementById("viewBadge");
   const sortBar = document.getElementById("sortBar");
-
   if (currentView === "card") {
-    btn.textContent = "☰";
-    btn.title = "Switch to Table View";
+    btn.textContent = "☰"; btn.title = "Switch to List View";
     btn.classList.remove("active");
     if (badge) badge.textContent = "Card View";
     sortBar.classList.remove("visible");
   } else {
-    btn.textContent = "⊞";
-    btn.title = "Switch to Card View";
+    btn.textContent = "⊞"; btn.title = "Switch to Card View";
     btn.classList.add("active");
-    if (badge) badge.textContent = "Table View";
+    if (badge) badge.textContent = "List View";
     sortBar.classList.add("visible");
   }
 }
@@ -714,14 +550,12 @@ function showSetup() {
 async function loadData() {
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { showSetup(); return; }
-
   document.getElementById("refreshBtn").classList.add("loading");
   document.getElementById("main").innerHTML =
     '<div class="loading-state"><div class="spinner"></div><p>Loading vehicles...</p></div>';
   document.getElementById("reportMeta").style.display = "none";
-
   try {
-    const res = await fetch(url + "?action=read");
+    const res  = await fetch(url + "?action=read");
     const json = await res.json();
     if (json.status !== "ok") throw new Error(json.message || "Error");
     allData = json.data;
@@ -729,8 +563,7 @@ async function loadData() {
     updateMeta(allData);
   } catch (err) {
     document.getElementById("main").innerHTML =
-      '<div class="state-msg"><div class="icon">⚠️</div>' +
-      '<p>Could not load data.<br><small>' + err.message + '</small></p></div>';
+      '<div class="state-msg"><div class="icon">⚠️</div><p>Could not load data.<br><small>' + err.message + '</small></p></div>';
   }
   document.getElementById("refreshBtn").classList.remove("loading");
 }
@@ -742,16 +575,14 @@ function applyFilters() {
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   let data = q
     ? allData.filter(r =>
-        ["Stock Num","Vehicle Description","VIN","Zone Description","Product Status","Last Scan Location"]
-          .some(k => String(r[k] || "").toLowerCase().includes(q))
-      )
+        ["Stock Num","Vehicle Description","VIN","Zone Description","Product Status","Last Scan Location","Task Status"]
+          .some(k => String(r[k] || "").toLowerCase().includes(q)))
     : [...allData];
 
   if (sortCol) {
     data.sort((a, b) => {
       let va = String(a[sortCol] || "").toLowerCase();
       let vb = String(b[sortCol] || "").toLowerCase();
-      // numeric sort for numeric-looking fields
       const na = parseFloat(va), nb = parseFloat(vb);
       if (!isNaN(na) && !isNaN(nb)) { va = na; vb = nb; }
       if (va < vb) return sortDir === "asc" ? -1 : 1;
@@ -763,17 +594,13 @@ function applyFilters() {
   if (currentView === "card") {
     renderCards(data);
   } else {
-    renderTable(data);
+    isMobile() ? renderStackedList(data) : renderTable(data);
   }
 }
 
 function sortBy(col) {
-  if (sortCol === col) {
-    sortDir = sortDir === "asc" ? "desc" : "asc";
-  } else {
-    sortCol = col;
-    sortDir = "asc";
-  }
+  if (sortCol === col) { sortDir = sortDir === "asc" ? "desc" : "asc"; }
+  else { sortCol = col; sortDir = "asc"; }
   updateSortPills();
   applyFilters();
 }
@@ -781,43 +608,40 @@ function sortBy(col) {
 function updateSortPills() {
   document.querySelectorAll(".sort-pill").forEach(p => {
     p.classList.remove("asc","desc");
-    const arrow = p.querySelector(".sort-arrow");
-    if (arrow) arrow.textContent = "↕";
+    const a = p.querySelector(".sort-arrow");
+    if (a) a.textContent = "↕";
   });
   if (!sortCol) return;
   const pill = document.getElementById("pill-" + sortCol);
   if (pill) {
     pill.classList.add(sortDir);
-    const arrow = pill.querySelector(".sort-arrow");
-    if (arrow) arrow.textContent = sortDir === "asc" ? "↑" : "↓";
+    const a = pill.querySelector(".sort-arrow");
+    if (a) a.textContent = sortDir === "asc" ? "↑" : "↓";
   }
 }
 
 // ══════════════════════════════════════════
-// CARD VIEW RENDER
+// CARD VIEW
 // ══════════════════════════════════════════
 function renderCards(data) {
   const main = document.getElementById("main");
-  if (!data.length) {
-    main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>';
-    return;
-  }
+  if (!data.length) { main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>'; return; }
   main.innerHTML = '<div class="cards-grid">' + data.map(r => buildCard(r)).join("") + '</div>';
 }
 
 function buildCard(row) {
-  const sn        = row["Stock Num"] || "";
-  const year      = row["Year"] || "";
-  const desc      = row["Vehicle Description"] || "";
-  const scanDate  = row["Last Scan Date"] || "";
-  const scanLoc   = row["Last Scan Location"] || "";
-  const zone      = row["Zone Description"] || "";
-  const daysColor = row["Days in Color Zone"] || "0";
-  const vin       = row["VIN"] || "";
-  const status    = row["Product Status"] || "";
-  const daysStatus= row["Days In Status"] || "";
-  const comment   = row["Comments"] || "";
-  const taskStatus= row["Task Status"] || "";
+  const sn         = row["Stock Num"] || "";
+  const year       = row["Year"] || "";
+  const desc       = row["Vehicle Description"] || "";
+  const scanDate   = row["Last Scan Date"] || "";
+  const scanLoc    = row["Last Scan Location"] || "";
+  const zone       = row["Zone Description"] || "";
+  const daysColor  = row["Days in Color Zone"] || "0";
+  const vin        = row["VIN"] || "";
+  const status     = row["Product Status"] || "";
+  const daysStatus = row["Days In Status"] || "";
+  const comment    = row["Comments"] || "";
+  const taskStatus = row["Task Status"] || "";
 
   const isExpanded = expandedStock === sn;
   const hasComment = comment.trim() !== "";
@@ -851,50 +675,123 @@ function buildCard(row) {
 }
 
 // ══════════════════════════════════════════
-// TABLE VIEW RENDER
+// STACKED LIST (mobile list view)
+// ══════════════════════════════════════════
+function renderStackedList(data) {
+  const main = document.getElementById("main");
+  if (!data.length) { main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>'; return; }
+  main.innerHTML = '<div class="stacked-list">' + data.map(r => buildStackedRow(r)).join("") + '</div>';
+}
+
+function buildStackedRow(row) {
+  const sn         = row["Stock Num"] || "";
+  const year       = row["Year"] || "";
+  const desc       = row["Vehicle Description"] || "";
+  const scanDate   = row["Last Scan Date"] || "";
+  const scanLoc    = row["Last Scan Location"] || "";
+  const zone       = row["Zone Description"] || "";
+  const daysColor  = row["Days in Color Zone"] || "0";
+  const vin        = row["VIN"] || "";
+  const status     = row["Product Status"] || "";
+  const daysStatus = row["Days In Status"] || "";
+  const comment    = row["Comments"] || "";
+  const taskStatus = row["Task Status"] || "";
+
+  const isExpanded = expandedStock === sn;
+  const hasComment = comment.trim() !== "";
+  const daysNum    = parseInt(daysColor) || 0;
+  const dayClass   = daysNum >= 3 ? "tag-days" : "tag-days-ok";
+
+  // Task status badge on header
+  const tsIp = taskStatus !== "Completed";
+  const tsBadgeCls = taskStatus === "Completed" ? "completed" : "inprogress";
+  const tsBadgeLabel = taskStatus === "Completed" ? "Completed" : "In Progress";
+
+  // Product status tag color
+  const statusTagCls = "tag-status";
+
+  return '<div class="srow' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="srow-' + sn + '">' +
+
+    // ── Collapsed header ──
+    '<div class="srow-header" onclick="toggleStackedRow(\'' + sn + '\')">' +
+
+    '<div class="srow-top">' +
+    '<span class="srow-stock">#' + sn + '</span>' +
+    '<span class="srow-ts-badge ' + tsBadgeCls + '">' + tsBadgeLabel + '</span>' +
+    '</div>' +
+
+    '<div class="srow-vehicle"><span class="srow-year">' + year + '</span>' + desc + '</div>' +
+
+    '<div class="srow-fields">' +
+    '<div class="srow-field"><div class="srow-field-label">Zone</div><div class="srow-field-value">' + (zone || scanLoc || '—') + '</div></div>' +
+    '<div class="srow-field"><div class="srow-field-label">Scan Date</div><div class="srow-field-value">' + (scanDate || '—') + '</div></div>' +
+    '<div class="srow-field"><div class="srow-field-label">Days</div><div class="srow-field-value">' + daysColor + '</div></div>' +
+    '</div>' +
+
+    '<div class="srow-footer">' +
+    '<span class="td-tag ' + statusTagCls + '">' + status + '</span>' +
+    '<span class="srow-comment-preview' + (hasComment ? ' has-text' : '') + '">' +
+    (hasComment ? truncate(comment, 30) : 'No comment') + '</span>' +
+    '<span class="srow-chevron">▾</span>' +
+    '</div>' +
+
+    '</div>' + // end srow-header
+
+    // ── Expanded detail ──
+    '<div class="srow-detail">' +
+    '<div class="srow-detail-grid">' +
+    '<div class="srow-detail-item"><div class="detail-label">Scan Location</div><div class="detail-value">' + (scanLoc || '—') + '</div></div>' +
+    '<div class="srow-detail-item"><div class="detail-label">Days In Status</div><div class="detail-value">' + (daysStatus || '—') + '</div></div>' +
+    '<div class="srow-detail-item full"><div class="detail-label">VIN</div><div class="detail-value">' + (vin || '—') + '</div></div>' +
+    '</div>' +
+    buildCommentSection(sn, comment, hasComment, taskStatus) +
+    '</div>' +
+
+    '</div>';
+}
+
+// ══════════════════════════════════════════
+// TABLE VIEW (desktop list view)
 // ══════════════════════════════════════════
 const TABLE_COLS = [
-  { key: "Stock Num",          label: "Stock #",     cls: "accent" },
-  { key: "Year",               label: "Year",        cls: "mono" },
-  { key: "Vehicle Description",label: "Vehicle",     cls: "" },
-  { key: "Last Scan Date",     label: "Scan Date",   cls: "mono" },
-  { key: "Zone Description",   label: "Zone",        cls: "" },
-  { key: "Days in Color Zone", label: "Days",        cls: "mono" },
-  { key: "Product Status",     label: "Status",      cls: "" },
-  { key: "Task Status",        label: "Task Status", cls: "" },
-  { key: "Comments",           label: "Notes",       cls: "" },
+  { key: "Stock Num",           label: "Stock #",     cls: "accent" },
+  { key: "Year",                label: "Year",        cls: "mono" },
+  { key: "Vehicle Description", label: "Vehicle",     cls: "" },
+  { key: "Last Scan Date",      label: "Scan Date",   cls: "mono" },
+  { key: "Zone Description",    label: "Zone",        cls: "" },
+  { key: "Days in Color Zone",  label: "Days",        cls: "mono" },
+  { key: "Product Status",      label: "Prod Status", cls: "" },
+  { key: "Task Status",         label: "Task Status", cls: "" },
+  { key: "Comments",            label: "Notes",       cls: "" },
 ];
 
 function renderTable(data) {
   const main = document.getElementById("main");
-  if (!data.length) {
-    main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>';
-    return;
-  }
+  if (!data.length) { main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>'; return; }
 
   let html = '<div class="table-wrap"><table><thead><tr>';
   TABLE_COLS.forEach(col => {
     const isActive = sortCol === col.key;
-    const btnCls = isActive ? (sortDir === "asc" ? "sort-asc" : "sort-desc") : "";
-    const arrow = isActive ? (sortDir === "asc" ? "↑" : "↓") : "↕";
+    const btnCls   = isActive ? (sortDir === "asc" ? "sort-asc" : "sort-desc") : "";
+    const arrow    = isActive ? (sortDir === "asc" ? "↑" : "↓") : "↕";
     html += '<th><button class="th-btn ' + btnCls + '" onclick="sortBy(\'' + col.key + '\')">' +
       col.label + ' <span class="th-sort-icon">' + arrow + '</span></button></th>';
   });
   html += '</tr></thead><tbody>';
 
   data.forEach(row => {
-    const sn = row["Stock Num"] || "";
+    const sn         = row["Stock Num"] || "";
     const hasComment = (row["Comments"] || "").trim() !== "";
     const isExpanded = expandedStock === sn;
-    const daysNum = parseInt(row["Days in Color Zone"]) || 0;
+    const daysNum    = parseInt(row["Days in Color Zone"]) || 0;
+    const taskStatus = row["Task Status"] || "";
 
-    html += '<tr class="' + (hasComment ? 'has-comment' : '') + (isExpanded ? ' row-expanded' : '') +
+    html += '<tr class="' + (hasComment ? 'has-comment ' : '') + (isExpanded ? 'row-expanded' : '') +
       '" onclick="toggleTableRow(\'' + sn + '\')">';
 
     TABLE_COLS.forEach(col => {
       let val = row[col.key] || "";
       let cellHtml = "";
-
       if (col.key === "Days in Color Zone") {
         const cls = daysNum >= 3 ? "tag-days" : "tag-days-ok";
         cellHtml = '<span class="td-tag ' + cls + '">' + val + '</span>';
@@ -902,22 +799,19 @@ function renderTable(data) {
         cellHtml = '<span class="td-tag tag-status">' + val + '</span>';
       } else if (col.key === "Task Status") {
         const tsCls = val === "Completed" ? "tag-completed" : val === "In Progress" ? "tag-in-progress" : "tag-no-status";
-        const tsLabel = val || "—";
-        cellHtml = '<span class="td-tag ' + tsCls + '">' + tsLabel + '</span>';
+        cellHtml = '<span class="td-tag ' + tsCls + '">' + (val || "—") + '</span>';
       } else if (col.key === "Comments") {
         cellHtml = val
-          ? '<span style="font-size:11px;color:var(--accent);">✎</span> ' + truncate(val, 24)
+          ? '<span style="font-size:11px;color:var(--accent);">✎</span> ' + truncate(val, 22)
           : '<span style="color:var(--text-muted);font-style:italic;font-size:11px;">—</span>';
       } else {
         cellHtml = val;
       }
-
       html += '<td class="' + col.cls + '">' + cellHtml + '</td>';
     });
 
     html += '</tr>';
 
-    // Expandable detail row
     html += '<tr class="row-detail-tr' + (isExpanded ? ' open' : '') + '" id="trow-' + sn + '">' +
       '<td class="row-detail-cell" colspan="' + TABLE_COLS.length + '">' +
       '<div class="row-detail-inner">' +
@@ -926,7 +820,7 @@ function renderTable(data) {
       '<div><div class="detail-label">Scan Location</div><div class="detail-value">' + (row["Last Scan Location"] || "—") + '</div></div>' +
       '<div><div class="detail-label">Days In Status</div><div class="detail-value">' + (row["Days In Status"] || "—") + '</div></div>' +
       '</div>' +
-      buildCommentSection(sn, row["Comments"] || "", hasComment, row["Task Status"] || "") +
+      buildCommentSection(sn, row["Comments"] || "", hasComment, taskStatus) +
       '</div></td></tr>';
   });
 
@@ -934,35 +828,28 @@ function renderTable(data) {
   main.innerHTML = html;
 }
 
-function truncate(str, n) {
-  return str.length > n ? str.substring(0, n) + "…" : str;
-}
+function truncate(str, n) { return str.length > n ? str.substring(0, n) + "..." : str; }
 
 // ══════════════════════════════════════════
-// COMMENT SECTION (shared HTML builder)
+// COMMENT + STATUS SECTION (shared builder)
 // ══════════════════════════════════════════
 function buildCommentSection(sn, comment, hasComment, taskStatus) {
-  // Default to In Progress if no status set yet
-  const ts = taskStatus || "In Progress";
+  const ts          = taskStatus || "In Progress";
   const isCompleted = ts === "Completed";
-  const btnCls = isCompleted ? " active-completed" : " active-inprogress";
-  const btnLabel = isCompleted ? "&#10003; Completed" : "&#9203; In Progress";
+  const btnCls      = isCompleted ? " active-completed" : " active-inprogress";
+  const btnLabel    = isCompleted ? "&#10003; Completed" : "&#9203; In Progress";
 
   return '<div class="comment-section">' +
     '<div class="detail-label" style="margin-bottom:6px;">Task Status</div>' +
     '<div class="status-toggle">' +
-    '<button class="status-btn' + btnCls + '" id="sbbtn-' + sn + '" onclick="setTaskStatus(\'' + sn + '\')">' +
-    btnLabel + '</button>' +
+    '<button class="status-btn' + btnCls + '" id="sbbtn-' + sn + '" onclick="setTaskStatus(\'' + sn + '\')">' + btnLabel + '</button>' +
     '</div>' +
     '<div class="detail-label" style="margin-top:12px;margin-bottom:6px;">Comments</div>' +
     '<div class="comment-row">' +
-    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' +
-    (hasComment ? comment : 'No comment yet') + '</div>' +
-    '<button class="btn-edit" onclick="startEdit(\'' + sn + '\')">' +
-    (hasComment ? 'Edit' : '+ Add') + '</button>' +
+    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' + (hasComment ? comment : 'No comment yet') + '</div>' +
+    '<button class="btn-edit" onclick="startEdit(\'' + sn + '\')">' + (hasComment ? 'Edit' : '+ Add') + '</button>' +
     '</div>' +
-    '<textarea class="comment-textarea" id="cinput-' + sn + '" placeholder="Add notes about this vehicle...">' +
-    comment + '</textarea>' +
+    '<textarea class="comment-textarea" id="cinput-' + sn + '" placeholder="Add notes about this vehicle...">' + comment + '</textarea>' +
     '<div class="comment-actions" id="cactions-' + sn + '">' +
     '<button class="btn btn-cancel" onclick="cancelEdit(\'' + sn + '\')">Cancel</button>' +
     '<button class="btn btn-save" id="csave-' + sn + '" onclick="saveComment(\'' + sn + '\')">Save</button>' +
@@ -970,16 +857,26 @@ function buildCommentSection(sn, comment, hasComment, taskStatus) {
 }
 
 // ══════════════════════════════════════════
-// CARD INTERACTIONS
+// INTERACTIONS
 // ══════════════════════════════════════════
 function toggleCard(sn) {
   expandedStock = (expandedStock === sn) ? null : sn;
   applyFilters();
 }
 
+function toggleStackedRow(sn) {
+  expandedStock = (expandedStock === sn) ? null : sn;
+  // Fast DOM toggle — avoid full re-render
+  const el = document.getElementById("srow-" + sn);
+  if (el) {
+    el.classList.toggle("expanded", expandedStock === sn);
+    const detail = el.querySelector(".srow-detail");
+    if (detail) detail.style.display = expandedStock === sn ? "block" : "none";
+  }
+}
+
 function toggleTableRow(sn) {
   expandedStock = (expandedStock === sn) ? null : sn;
-  // Fast DOM toggle for table (avoid full re-render)
   const detailTr = document.getElementById("trow-" + sn);
   if (detailTr) {
     detailTr.classList.toggle("open", expandedStock === sn);
@@ -990,28 +887,34 @@ function toggleTableRow(sn) {
 
 function startEdit(sn) {
   event.stopPropagation();
+  // Ensure row is expanded in whichever view
   if (currentView === "card") {
-    expandedStock = sn;
-    applyFilters();
+    expandedStock = sn; applyFilters();
+  } else if (isMobile()) {
+    const el = document.getElementById("srow-" + sn);
+    if (el && !el.classList.contains("expanded")) {
+      expandedStock = sn;
+      el.classList.add("expanded");
+      const detail = el.querySelector(".srow-detail");
+      if (detail) detail.style.display = "block";
+    }
   } else {
-    // Ensure table row is expanded
     const detailTr = document.getElementById("trow-" + sn);
     if (detailTr && !detailTr.classList.contains("open")) {
-      expandedStock = sn;
-      detailTr.classList.add("open");
+      expandedStock = sn; detailTr.classList.add("open");
     }
   }
   setTimeout(() => {
     const ta = document.getElementById("cinput-" + sn);
     const ac = document.getElementById("cactions-" + sn);
     if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); editingStock = sn; }
-  }, 50);
+  }, 60);
 }
 
 function cancelEdit(sn) {
   event.stopPropagation();
-  const ta = document.getElementById("cinput-" + sn);
-  const ac = document.getElementById("cactions-" + sn);
+  const ta  = document.getElementById("cinput-" + sn);
+  const ac  = document.getElementById("cactions-" + sn);
   const row = allData.find(r => String(r["Stock Num"]) === String(sn));
   if (ta && row) ta.value = row["Comments"] || "";
   if (ta) ta.style.display = "none";
@@ -1024,8 +927,8 @@ async function saveComment(sn) {
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { toast("No URL configured", true); return; }
 
-  const ta  = document.getElementById("cinput-" + sn);
-  const btn = document.getElementById("csave-" + sn);
+  const ta      = document.getElementById("cinput-" + sn);
+  const btn     = document.getElementById("csave-" + sn);
   const comment = ta ? ta.value.trim() : "";
 
   btn.disabled = true;
@@ -1036,18 +939,21 @@ async function saveComment(sn) {
       "&comment=" + encodeURIComponent(comment), { mode: "no-cors" });
     const row = allData.find(r => String(r["Stock Num"]) === String(sn));
     if (row) row["Comments"] = comment;
-    toast(comment ? "Comment saved ✓" : "Comment cleared");
+    toast(comment ? "Comment saved" : "Comment cleared");
     editingStock = null;
     applyFilters();
+    // Re-expand after re-render
     if (currentView === "card") { expandedStock = sn; applyFilters(); }
-    else {
-      const detailTr = document.getElementById("trow-" + sn);
-      if (detailTr) { detailTr.classList.add("open"); }
+    else if (isMobile()) {
+      const el = document.getElementById("srow-" + sn);
+      if (el) { el.classList.add("expanded"); const d = el.querySelector(".srow-detail"); if (d) d.style.display = "block"; }
+    } else {
+      const dt = document.getElementById("trow-" + sn);
+      if (dt) dt.classList.add("open");
     }
   } catch (err) {
     toast("Save failed: " + err.message, true);
-    btn.disabled = false;
-    btn.innerHTML = "Save";
+    btn.disabled = false; btn.innerHTML = "Save";
   }
 }
 
@@ -1062,11 +968,9 @@ async function setTaskStatus(sn) {
   const row = allData.find(r => String(r["Stock Num"]) === String(sn));
   if (!row) return;
 
-  // Cycle: (empty or In Progress) -> Completed, Completed -> In Progress
-  const current = row["Task Status"] || "In Progress";
+  const current   = row["Task Status"] || "In Progress";
   const newStatus = current === "Completed" ? "In Progress" : "Completed";
 
-  // Optimistic UI update
   const btn = document.getElementById("sbbtn-" + sn);
   if (btn) {
     btn.classList.add("saving");
@@ -1075,17 +979,19 @@ async function setTaskStatus(sn) {
     btn.innerHTML = newStatus === "Completed" ? "&#10003; Completed" : "&#9203; In Progress";
   }
 
+  // Also update the collapsed header badge immediately
+  const badge = document.querySelector("#srow-" + sn + " .srow-ts-badge");
+  if (badge) {
+    badge.className = "srow-ts-badge " + (newStatus === "Completed" ? "completed" : "inprogress");
+    badge.textContent = newStatus === "Completed" ? "Completed" : "In Progress";
+  }
+
   try {
     await fetch(url + "?action=updateTaskStatus&stockNum=" + encodeURIComponent(sn) +
       "&taskStatus=" + encodeURIComponent(newStatus), { mode: "no-cors" });
     row["Task Status"] = newStatus;
-    toast(newStatus + " &#10003;");
-    applyFilters();
-    if (currentView === "card") { expandedStock = sn; applyFilters(); }
-    else {
-      const detailTr = document.getElementById("trow-" + sn);
-      if (detailTr) detailTr.classList.add("open");
-    }
+    toast(newStatus === "Completed" ? "Marked Completed" : "Marked In Progress");
+    if (btn) btn.classList.remove("saving");
   } catch (err) {
     toast("Save failed: " + err.message, true);
     if (btn) btn.classList.remove("saving");
@@ -1115,8 +1021,7 @@ function saveConfig() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) { toast("Please enter a URL", true); return; }
   localStorage.setItem(STORAGE_KEY, url);
-  closeModal();
-  loadData();
+  closeModal(); loadData();
 }
 document.getElementById("configModal").addEventListener("click", function(e) {
   if (e.target === this) closeModal();
@@ -1132,6 +1037,15 @@ function toast(msg, isError) {
   clearTimeout(window._tt);
   window._tt = setTimeout(() => { el.className = "toast"; }, 2500);
 }
+
+// Re-render on resize so desktop/mobile layout switches cleanly
+let _resizeTimer;
+window.addEventListener("resize", () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => {
+    if (currentView === "table") applyFilters();
+  }, 200);
+});
 </script>
 </body>
 </html>
