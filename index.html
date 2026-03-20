@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported · v10</title>
+<title>No Location Reported · v11</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -355,11 +355,11 @@
      TABLE VIEW — MOBILE (under 640px)
      Stacked row cards replace the table
   ══════════════════════════════════════ */
-  .stacked-list { display: flex; flex-direction: column; gap: 8px; }
+  .stacked-list { display: flex; flex-direction: column; gap: 10px; }
 
   .srow {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; overflow: hidden;
+    border-radius: 12px; overflow: hidden;
     box-shadow: 0 1px 4px var(--shadow);
     transition: border-color 0.15s;
   }
@@ -367,7 +367,7 @@
   .srow.expanded { border-color: var(--accent); }
 
   .srow-header {
-    padding: 11px 13px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    padding: 13px 14px; cursor: pointer; -webkit-tap-highlight-color: transparent;
     transition: background 0.15s;
   }
   .srow-header:active { background: var(--surface2); }
@@ -375,15 +375,15 @@
   /* Row 1: stock # + task status badge */
   .srow-top {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
   .srow-stock {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    font-family: var(--font-mono); font-size: 13px; font-weight: 600;
     color: var(--accent); letter-spacing: 0.3px;
   }
   .srow-ts-badge {
-    font-family: var(--font-mono); font-size: 9px; padding: 2px 8px;
-    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px;
+    font-family: var(--font-mono); font-size: 11px; padding: 3px 10px;
+    border-radius: 5px; text-transform: uppercase; letter-spacing: 0.4px;
     font-weight: 600;
   }
   .srow-ts-badge.inprogress { background: rgba(74,158,255,0.14); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
@@ -391,53 +391,54 @@
 
   /* Row 2: vehicle name */
   .srow-vehicle {
-    font-size: 13px; font-weight: 600; color: var(--text);
-    line-height: 1.3; margin-bottom: 7px;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    line-height: 1.3; margin-bottom: 10px;
   }
   .srow-year { color: var(--accent); margin-right: 4px; }
 
-  /* Row 3: key data fields in a 3-column mini-grid */
+  /* Row 3: key data — 2 column grid (easier to read than 3) */
   .srow-fields {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 6px 8px; margin-bottom: 7px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px 12px; margin-bottom: 10px;
   }
   .srow-field {}
   .srow-field-label {
-    font-family: var(--font-mono); font-size: 8px; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 1px;
+    font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 2px;
   }
   .srow-field-value {
-    font-size: 11px; color: var(--text); font-family: var(--font-mono);
+    font-size: 13px; color: var(--text); font-family: var(--font-mono);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
 
   /* Row 4: status tag + comment preview + chevron */
   .srow-footer {
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    display: flex; align-items: center; gap: 8px;
   }
   .srow-status-tag {
-    font-family: var(--font-mono); font-size: 9px; padding: 2px 7px;
-    border-radius: 3px; text-transform: uppercase; letter-spacing: 0.4px;
+    font-family: var(--font-mono); font-size: 10px; padding: 3px 8px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px;
+    flex-shrink: 0;
   }
   .srow-comment-preview {
-    flex: 1; font-size: 11px; color: var(--text-muted);
+    flex: 1; font-size: 12px; color: var(--text-muted);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     font-style: italic;
   }
   .srow-comment-preview.has-text { color: var(--text-dim); font-style: normal; }
-  .srow-chevron { color: var(--text-muted); font-size: 11px; flex-shrink: 0; transition: transform 0.2s; }
+  .srow-chevron { color: var(--text-muted); font-size: 13px; flex-shrink: 0; transition: transform 0.2s; margin-left: auto; }
   .srow.expanded .srow-chevron { transform: rotate(180deg); }
 
   /* Expanded detail section for stacked rows */
   .srow-detail {
     display: none; border-top: 1px solid var(--border);
-    padding: 11px 13px; background: var(--bg);
+    padding: 13px 14px; background: var(--bg);
   }
   .srow.expanded .srow-detail { display: block; }
 
   .srow-detail-grid {
     display: grid; grid-template-columns: 1fr 1fr;
-    gap: 8px; margin-bottom: 12px;
+    gap: 10px; margin-bottom: 12px;
   }
   .srow-detail-item {}
   .srow-detail-item.full { grid-column: 1 / -1; }
@@ -659,7 +660,10 @@ let currentView   = "card";
 let sortCol       = null;
 let sortDir       = "asc";
 
-function isMobile() { return window.innerWidth < 640; }
+function isMobile() {
+  // Use matchMedia for reliable viewport detection on real devices
+  return window.matchMedia("(max-width: 639px)").matches;
+}
 
 // ══════════════════════════════════════════
 // INIT
@@ -669,7 +673,7 @@ window.addEventListener("DOMContentLoaded", () => {
   currentView = localStorage.getItem(VIEW_KEY) || "card";
 
   // Restore session if previously logged in
-  const saved = sessionStorage.getItem(SESSION_KEY);
+  const saved = localStorage.getItem(SESSION_KEY);
   if (saved && USERS[saved]) {
     currentUser = saved;
     showApp();
@@ -699,7 +703,7 @@ function doLogin() {
 
   if (USERS[username] && USERS[username].password === password) {
     currentUser = username;
-    sessionStorage.setItem(SESSION_KEY, username);
+    localStorage.setItem(SESSION_KEY, username);
     err.classList.remove("visible");
     document.getElementById("loginPass").value = "";
     showApp();
@@ -727,12 +731,18 @@ function showApp() {
     userLabel.style.display = "inline-flex";
   }
 
+  // Default mobile to stacked list view unless user has set a preference
+  const savedView = localStorage.getItem(VIEW_KEY);
+  if (!savedView && isMobile()) {
+    currentView = "table"; // renders as stacked cards on mobile
+  }
+
   updateViewUI();
   loadData();
 }
 
 function doLogout() {
-  sessionStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(SESSION_KEY);
   currentUser = null;
   allData = [];
   expandedStock = null;
@@ -774,9 +784,12 @@ function updateViewUI() {
 // DATA
 // ══════════════════════════════════════════
 function showSetup() {
-  document.getElementById("main").innerHTML =
-    '<div class="state-msg"><div class="icon">⚠️</div>' +
-    '<p>Apps Script URL not configured.<br>Please contact your administrator.</p></div>';
+  const isAdmin = currentUser && USERS[currentUser] && USERS[currentUser].role === "admin";
+  document.getElementById("main").innerHTML = isAdmin
+    ? '<div class="state-msg"><div class="icon">⚙️</div>' +
+      '<p><strong>Apps Script URL not set.</strong><br>Tap the ⚙ button above to paste your URL.</p></div>'
+    : '<div class="state-msg"><div class="icon">⚠️</div>' +
+      '<p>App not configured yet.<br>Please ask your administrator to set up the URL.</p></div>';
 }
 
 async function loadData() {
