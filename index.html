@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,7 +7,8 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
-  :root {
+  /* ── Dark Theme (default) ── */
+  :root, [data-theme="dark"] {
     --bg: #0d0d14;
     --surface: #15151f;
     --surface2: #1c1c2a;
@@ -20,12 +21,27 @@
     --green: #2ecf7a;
     --red: #e05c2a;
     --blue: #4a9eff;
-    --radius: 10px;
-    --font-mono: 'IBM Plex Mono', monospace;
-    --font-sans: 'IBM Plex Sans', sans-serif;
+    --shadow: rgba(0,0,0,0.4);
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ── Light Theme ── */
+  [data-theme="light"] {
+    --bg: #f4f4f8;
+    --surface: #ffffff;
+    --surface2: #ededf3;
+    --border: #dcdce8;
+    --accent: #c47f00;
+    --accent2: #c0440f;
+    --text: #1a1a2e;
+    --text-dim: #555570;
+    --text-muted: #aaaabc;
+    --green: #1a9e57;
+    --red: #c0440f;
+    --blue: #2270cc;
+    --shadow: rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; --font-mono: 'IBM Plex Mono', monospace; --font-sans: 'IBM Plex Sans', sans-serif; }
 
   body {
     background: var(--bg);
@@ -33,7 +49,44 @@
     font-family: var(--font-sans);
     min-height: 100vh;
     font-size: 14px;
+    transition: background 0.25s, color 0.25s;
   }
+
+  /* ── Theme Toggle ── */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    padding: 4px;
+  }
+
+  .toggle-track {
+    width: 38px;
+    height: 21px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    position: relative;
+    transition: background 0.25s, border-color 0.25s;
+    flex-shrink: 0;
+  }
+
+  .toggle-knob {
+    width: 15px;
+    height: 15px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), background 0.25s;
+  }
+
+  [data-theme="light"] .toggle-knob { transform: translateX(17px); }
+
+  .toggle-emoji { font-size: 13px; line-height: 1; user-select: none; }
 
   /* ── Header ── */
   .header {
@@ -43,21 +96,18 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: background 0.25s, border-color 0.25s;
   }
 
   .header-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 8px;
   }
 
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-  }
+  .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
   .brand-icon {
     width: 34px;
@@ -72,17 +122,18 @@
     font-size: 13px;
     color: #000;
     letter-spacing: -0.5px;
+    transition: background 0.25s;
+    flex-shrink: 0;
   }
 
-  .brand-text {
-    line-height: 1.15;
-  }
+  .brand-text { line-height: 1.15; }
 
   .brand-title {
     font-size: 13px;
     font-weight: 600;
     color: var(--text);
     letter-spacing: 0.3px;
+    transition: color 0.25s;
   }
 
   .brand-sub {
@@ -91,13 +142,10 @@
     font-family: var(--font-mono);
     text-transform: uppercase;
     letter-spacing: 1px;
+    transition: color 0.25s;
   }
 
-  .header-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
+  .header-actions { display: flex; gap: 6px; align-items: center; }
 
   .btn-icon {
     background: var(--surface2);
@@ -113,18 +161,13 @@
     font-size: 16px;
     transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
   }
 
   .btn-icon:active { background: var(--border); transform: scale(0.95); }
   .btn-icon.loading { opacity: 0.5; pointer-events: none; }
 
-  .report-meta {
-    margin-top: 10px;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .report-meta { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 
   .badge {
     font-family: var(--font-mono);
@@ -144,7 +187,10 @@
     padding: 10px 16px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
+    transition: background 0.25s, border-color 0.25s;
   }
+
+  .search-wrap { position: relative; }
 
   .search-input {
     width: 100%;
@@ -156,15 +202,11 @@
     padding: 9px 12px 9px 36px;
     border-radius: 8px;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
 
   .search-input:focus { border-color: var(--accent); }
   .search-input::placeholder { color: var(--text-muted); }
-
-  .search-wrap {
-    position: relative;
-  }
 
   .search-icon {
     position: absolute;
@@ -176,7 +218,7 @@
     pointer-events: none;
   }
 
-  /* ── Main Content ── */
+  /* ── Main ── */
   .main {
     padding: 12px 16px;
     display: flex;
@@ -185,16 +227,17 @@
     padding-bottom: 80px;
   }
 
-  /* ── Vehicle Card ── */
+  /* ── Cards ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 10px;
     overflow: hidden;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.25s, box-shadow 0.25s;
+    box-shadow: 0 1px 4px var(--shadow);
   }
 
-  .card.has-comment { border-color: rgba(240,165,0,0.35); }
+  .card.has-comment { border-color: rgba(240,165,0,0.4); }
   .card.expanded { border-color: var(--accent); }
 
   .card-header {
@@ -204,6 +247,7 @@
     display: flex;
     gap: 12px;
     align-items: flex-start;
+    transition: background 0.15s;
   }
 
   .card-header:active { background: var(--surface2); }
@@ -219,12 +263,10 @@
     white-space: nowrap;
     flex-shrink: 0;
     margin-top: 1px;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
   }
 
-  .card-main {
-    flex: 1;
-    min-width: 0;
-  }
+  .card-main { flex: 1; min-width: 0; }
 
   .vehicle-name {
     font-size: 13px;
@@ -232,18 +274,12 @@
     color: var(--text);
     line-height: 1.3;
     margin-bottom: 5px;
+    transition: color 0.25s;
   }
 
-  .vehicle-year {
-    color: var(--accent);
-    margin-right: 4px;
-  }
+  .vehicle-year { color: var(--accent); margin-right: 4px; transition: color 0.25s; }
 
-  .card-tags {
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
+  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
 
   .tag {
     font-family: var(--font-mono);
@@ -254,39 +290,32 @@
     letter-spacing: 0.5px;
   }
 
-  .tag-zone { background: rgba(74,158,255,0.1); color: var(--blue); }
-  .tag-status { background: rgba(240,165,0,0.1); color: var(--accent); }
-  .tag-days { background: rgba(224,92,42,0.12); color: var(--accent2); }
-  .tag-days-ok { background: rgba(46,207,122,0.1); color: var(--green); }
+  .tag-zone { background: rgba(74,158,255,0.12); color: var(--blue); }
+  .tag-status { background: rgba(240,165,0,0.12); color: var(--accent); }
+  .tag-days { background: rgba(224,92,42,0.14); color: var(--accent2); }
+  .tag-days-ok { background: rgba(46,207,122,0.12); color: var(--green); }
 
   .card-chevron {
     color: var(--text-muted);
     font-size: 12px;
     flex-shrink: 0;
     margin-top: 3px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, color 0.25s;
   }
 
   .card.expanded .card-chevron { transform: rotate(180deg); }
 
-  /* ── Card Detail (expanded) ── */
   .card-detail {
     display: none;
     border-top: 1px solid var(--border);
     padding: 12px 14px;
     background: var(--bg);
+    transition: background 0.25s, border-color 0.25s;
   }
 
   .card.expanded .card-detail { display: block; }
 
-  .detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .detail-item {}
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 
   .detail-label {
     font-family: var(--font-mono);
@@ -295,6 +324,7 @@
     text-transform: uppercase;
     letter-spacing: 0.8px;
     margin-bottom: 2px;
+    transition: color 0.25s;
   }
 
   .detail-value {
@@ -302,25 +332,20 @@
     color: var(--text);
     font-family: var(--font-mono);
     word-break: break-all;
+    transition: color 0.25s;
   }
 
   .detail-item.full { grid-column: 1 / -1; }
 
-  /* ── Comment Section ── */
+  /* ── Comment ── */
   .comment-section {
     border-top: 1px solid var(--border);
     padding: 12px 14px;
     background: var(--surface2);
+    transition: background 0.25s, border-color 0.25s;
   }
 
-  .comment-label {
-    font-family: var(--font-mono);
-    font-size: 9px;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
-  }
+  .comment-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 
   .comment-text {
     font-size: 12px;
@@ -328,6 +353,7 @@
     line-height: 1.5;
     margin-bottom: 8px;
     min-height: 16px;
+    transition: color 0.25s;
   }
 
   .comment-text.empty { color: var(--text-muted); font-style: italic; }
@@ -346,17 +372,12 @@
     min-height: 70px;
     line-height: 1.5;
     display: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
 
   .comment-textarea:focus { border-color: var(--accent); }
 
-  .comment-actions {
-    display: flex;
-    gap: 7px;
-    margin-top: 7px;
-    display: none;
-  }
+  .comment-actions { display: flex; gap: 7px; margin-top: 7px; display: none; }
 
   .btn {
     font-family: var(--font-sans);
@@ -368,24 +389,12 @@
     border: none;
     transition: all 0.15s;
     -webkit-tap-highlight-color: transparent;
-    letter-spacing: 0.3px;
   }
 
   .btn:active { transform: scale(0.97); }
-
-  .btn-save {
-    background: var(--accent);
-    color: #000;
-    flex: 1;
-  }
-
+  .btn-save { background: var(--accent); color: #000; flex: 1; }
   .btn-save:disabled { opacity: 0.5; pointer-events: none; }
-
-  .btn-cancel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-  }
+  .btn-cancel { background: var(--surface); border: 1px solid var(--border); color: var(--text-dim); }
 
   .btn-edit {
     font-size: 11px;
@@ -397,16 +406,11 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     font-family: var(--font-sans);
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.25s;
   }
 
   .btn-edit:active { background: var(--border); }
-
-  .comment-row {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-  }
 
   /* ── Toast ── */
   .toast {
@@ -415,7 +419,7 @@
     left: 50%;
     transform: translateX(-50%) translateY(80px);
     background: var(--green);
-    color: #000;
+    color: #fff;
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
@@ -424,85 +428,24 @@
     z-index: 999;
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
     white-space: nowrap;
-    letter-spacing: 0.5px;
   }
 
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error { background: var(--accent2); color: #fff; }
+  .toast.error { background: var(--accent2); }
 
-  /* ── Setup Screen ── */
-  .setup-screen {
-    display: none;
-    padding: 32px 16px;
-    text-align: center;
-  }
-
-  .setup-screen.visible { display: block; }
-
-  .setup-icon { font-size: 48px; margin-bottom: 16px; }
-
-  .setup-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .setup-desc {
-    color: var(--text-dim);
-    font-size: 13px;
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-
-  .setup-input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    padding: 11px 12px;
-    border-radius: 8px;
-    outline: none;
-    margin-bottom: 10px;
-    transition: border-color 0.15s;
-  }
-
-  .setup-input:focus { border-color: var(--accent); }
-
-  .btn-setup {
-    width: 100%;
-    background: var(--accent);
-    color: #000;
-    font-family: var(--font-sans);
-    font-size: 14px;
-    font-weight: 600;
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-  }
-
-  /* ── Empty / Loading ── */
-  .state-msg {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--text-muted);
-  }
-
+  /* ── States ── */
+  .state-msg { text-align: center; padding: 48px 24px; color: var(--text-muted); }
   .state-msg .icon { font-size: 36px; margin-bottom: 12px; }
   .state-msg p { font-size: 13px; line-height: 1.6; }
 
-  /* ── Config Modal ── */
+  /* ── Modal ── */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.6);
     z-index: 200;
     align-items: flex-end;
-    padding: 0;
   }
 
   .modal-overlay.open { display: flex; }
@@ -514,27 +457,13 @@
     padding: 20px 16px 32px;
     width: 100%;
     animation: slideUp 0.25s ease-out;
+    transition: background 0.25s, border-color 0.25s;
   }
 
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-  .modal-handle {
-    width: 36px;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 16px;
-  }
-
-  .modal-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    text-align: center;
-  }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+  .modal-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; text-align: center; }
 
   .modal-label {
     font-family: var(--font-mono);
@@ -557,7 +486,7 @@
     border-radius: 8px;
     outline: none;
     margin-bottom: 14px;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.25s, color 0.25s;
   }
 
   .modal-input:focus { border-color: var(--accent); }
@@ -588,15 +517,12 @@
     cursor: pointer;
   }
 
-  /* ── Spinning loader ── */
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  /* ── Spinner ── */
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .spinner {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     border: 2px solid var(--border);
     border-top-color: var(--accent);
     border-radius: 50%;
@@ -604,23 +530,9 @@
     vertical-align: middle;
   }
 
-  .loading-state {
-    text-align: center;
-    padding: 48px 16px;
-  }
-
-  .loading-state .spinner {
-    width: 28px;
-    height: 28px;
-    border-width: 3px;
-    margin-bottom: 12px;
-  }
-
-  .loading-state p {
-    color: var(--text-muted);
-    font-size: 13px;
-    font-family: var(--font-mono);
-  }
+  .loading-state { text-align: center; padding: 48px 16px; }
+  .loading-state .spinner { width: 28px; height: 28px; border-width: 3px; margin-bottom: 12px; display: block; margin-left: auto; margin-right: auto; }
+  .loading-state p { color: var(--text-muted); font-size: 13px; font-family: var(--font-mono); }
 </style>
 </head>
 <body>
@@ -648,6 +560,13 @@
       </div>
     </div>
     <div class="header-actions">
+      <div class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark">
+        <span class="toggle-emoji">🌙</span>
+        <div class="toggle-track">
+          <div class="toggle-knob"></div>
+        </div>
+        <span class="toggle-emoji">☀️</span>
+      </div>
       <button class="btn-icon" id="refreshBtn" onclick="loadData()" title="Refresh">↻</button>
       <button class="btn-icon" onclick="openModal()" title="Settings">⚙</button>
     </div>
@@ -669,7 +588,7 @@
 
 <!-- Main -->
 <div class="main" id="main">
-  <div class="loading-state" id="loadingState">
+  <div class="loading-state">
     <div class="spinner"></div>
     <p>Loading vehicles...</p>
   </div>
@@ -680,29 +599,36 @@
 
 <script>
 const STORAGE_KEY = "nlr_script_url";
+const THEME_KEY = "nlr_theme";
 let allData = [];
 let expandedStock = null;
 let editingStock = null;
 
+// ── Theme ─────────────────────────────────────────────
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  applyTheme(current === "dark" ? "light" : "dark");
+}
+
 // ── Init ──────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", () => {
+  applyTheme(localStorage.getItem(THEME_KEY) || "dark");
   const url = localStorage.getItem(STORAGE_KEY);
-  if (!url) {
-    showSetup();
-  } else {
-    loadData();
-  }
+  if (!url) { showSetup(); } else { loadData(); }
 });
 
 function showSetup() {
-  document.getElementById("loadingState").innerHTML =
-    '<div class="state-msg">' +
-    '<div class="icon">⚙️</div>' +
-    '<p>Tap the <strong>⚙</strong> button above to enter your<br>Apps Script Web App URL to get started.</p>' +
-    '</div>';
+  document.getElementById("main").innerHTML =
+    '<div class="state-msg"><div class="icon">⚙️</div>' +
+    '<p>Tap the <strong>⚙</strong> button above to enter your<br>Apps Script Web App URL to get started.</p></div>';
 }
 
-// ── Data Loading ──────────────────────────────────────
+// ── Data ──────────────────────────────────────────────
 async function loadData() {
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { showSetup(); return; }
@@ -715,9 +641,7 @@ async function loadData() {
   try {
     const res = await fetch(url + "?action=read");
     const json = await res.json();
-
     if (json.status !== "ok") throw new Error(json.message || "Error");
-
     allData = json.data;
     renderCards(allData);
     updateMeta(allData);
@@ -733,17 +657,15 @@ async function loadData() {
 // ── Render ────────────────────────────────────────────
 function renderCards(data) {
   const main = document.getElementById("main");
-
   if (!data.length) {
     main.innerHTML = '<div class="state-msg"><div class="icon">✓</div><p>No vehicles to display.</p></div>';
     return;
   }
-
   main.innerHTML = data.map(row => buildCard(row)).join("");
 }
 
 function buildCard(row) {
-  const stockNum = row["Stock Num"] || "";
+  const sn = row["Stock Num"] || "";
   const year = row["Year"] || "";
   const desc = row["Vehicle Description"] || "";
   const scanDate = row["Last Scan Date"] || "";
@@ -755,29 +677,22 @@ function buildCard(row) {
   const daysStatus = row["Days In Status"] || "";
   const comment = row["Comments"] || "";
 
-  const isExpanded = expandedStock === stockNum;
+  const isExpanded = expandedStock === sn;
   const hasComment = comment.trim() !== "";
   const daysNum = parseInt(daysColor) || 0;
-  const daysTagClass = daysNum >= 3 ? "tag-days" : "tag-days-ok";
+  const dayClass = daysNum >= 3 ? "tag-days" : "tag-days-ok";
 
-  return (
-    '<div class="card' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="card-' + stockNum + '">' +
-
-    // Header (clickable)
-    '<div class="card-header" onclick="toggleCard(\'' + stockNum + '\')">' +
-    '<div class="stock-pill">#' + stockNum + '</div>' +
+  return '<div class="card' + (hasComment ? ' has-comment' : '') + (isExpanded ? ' expanded' : '') + '" id="card-' + sn + '">' +
+    '<div class="card-header" onclick="toggleCard(\'' + sn + '\')">' +
+    '<div class="stock-pill">#' + sn + '</div>' +
     '<div class="card-main">' +
     '<div class="vehicle-name"><span class="vehicle-year">' + year + '</span>' + desc + '</div>' +
     '<div class="card-tags">' +
     '<span class="tag tag-zone">' + (zone || scanLoc) + '</span>' +
     '<span class="tag tag-status">' + status + '</span>' +
-    '<span class="tag ' + daysTagClass + '">' + daysColor + ' day' + (daysNum !== 1 ? 's' : '') + '</span>' +
-    '</div>' +
-    '</div>' +
-    '<span class="card-chevron">▾</span>' +
-    '</div>' +
-
-    // Detail
+    '<span class="tag ' + dayClass + '">' + daysColor + ' day' + (daysNum !== 1 ? 's' : '') + '</span>' +
+    '</div></div>' +
+    '<span class="card-chevron">▾</span></div>' +
     '<div class="card-detail">' +
     '<div class="detail-grid">' +
     '<div class="detail-item"><div class="detail-label">Last Scan Date</div><div class="detail-value">' + scanDate + '</div></div>' +
@@ -785,144 +700,102 @@ function buildCard(row) {
     '<div class="detail-item"><div class="detail-label">Days In Status</div><div class="detail-value">' + daysStatus + '</div></div>' +
     '<div class="detail-item"><div class="detail-label">Color Zone Days</div><div class="detail-value">' + daysColor + '</div></div>' +
     '<div class="detail-item full"><div class="detail-label">VIN</div><div class="detail-value">' + vin + '</div></div>' +
-    '</div>' +
-    '</div>' +
-
-    // Comment
+    '</div></div>' +
     '<div class="comment-section">' +
     '<div class="detail-label">Comments</div>' +
     '<div class="comment-row">' +
-    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="comment-text-' + stockNum + '">' +
-    (hasComment ? comment : 'No comment yet') +
+    '<div class="comment-text' + (!hasComment ? ' empty' : '') + '" id="ctext-' + sn + '">' + (hasComment ? comment : 'No comment yet') + '</div>' +
+    '<button class="btn-edit" onclick="startEdit(\'' + sn + '\')">' + (hasComment ? 'Edit' : '+ Add') + '</button>' +
     '</div>' +
-    '<button class="btn-edit" onclick="startEdit(\'' + stockNum + '\')">' + (hasComment ? 'Edit' : '+ Add') + '</button>' +
-    '</div>' +
-    '<textarea class="comment-textarea" id="comment-input-' + stockNum + '" placeholder="Add notes about this vehicle...">' + comment + '</textarea>' +
-    '<div class="comment-actions" id="comment-actions-' + stockNum + '">' +
-    '<button class="btn btn-cancel" onclick="cancelEdit(\'' + stockNum + '\')">Cancel</button>' +
-    '<button class="btn btn-save" id="save-btn-' + stockNum + '" onclick="saveComment(\'' + stockNum + '\')">Save</button>' +
-    '</div>' +
-    '</div>' +
-
-    '</div>'
-  );
+    '<textarea class="comment-textarea" id="cinput-' + sn + '" placeholder="Add notes about this vehicle...">' + comment + '</textarea>' +
+    '<div class="comment-actions" id="cactions-' + sn + '">' +
+    '<button class="btn btn-cancel" onclick="cancelEdit(\'' + sn + '\')">Cancel</button>' +
+    '<button class="btn btn-save" id="csave-' + sn + '" onclick="saveComment(\'' + sn + '\')">Save</button>' +
+    '</div></div></div>';
 }
 
-// ── Card Interactions ─────────────────────────────────
-function toggleCard(stockNum) {
-  if (expandedStock === stockNum) {
-    expandedStock = null;
-  } else {
-    expandedStock = stockNum;
-  }
-  // Rebuild to reflect state
+// ── Interactions ──────────────────────────────────────
+function toggleCard(sn) {
+  expandedStock = (expandedStock === sn) ? null : sn;
   filterCards();
 }
 
-function startEdit(stockNum) {
+function startEdit(sn) {
   event.stopPropagation();
-
-  // Make sure card is expanded
-  expandedStock = stockNum;
+  expandedStock = sn;
   filterCards();
-
-  const textarea = document.getElementById("comment-input-" + stockNum);
-  const actions = document.getElementById("comment-actions-" + stockNum);
-
-  if (textarea) {
-    textarea.style.display = "block";
-    actions.style.display = "flex";
-    textarea.focus();
-    editingStock = stockNum;
-  }
+  const ta = document.getElementById("cinput-" + sn);
+  const ac = document.getElementById("cactions-" + sn);
+  if (ta) { ta.style.display = "block"; ac.style.display = "flex"; ta.focus(); editingStock = sn; }
 }
 
-function cancelEdit(stockNum) {
+function cancelEdit(sn) {
   event.stopPropagation();
-  const textarea = document.getElementById("comment-input-" + stockNum);
-  const actions = document.getElementById("comment-actions-" + stockNum);
-
-  // Restore original value
-  const row = allData.find(r => String(r["Stock Num"]) === String(stockNum));
-  if (textarea && row) textarea.value = row["Comments"] || "";
-  if (textarea) textarea.style.display = "none";
-  if (actions) actions.style.display = "none";
+  const ta = document.getElementById("cinput-" + sn);
+  const ac = document.getElementById("cactions-" + sn);
+  const row = allData.find(r => String(r["Stock Num"]) === String(sn));
+  if (ta && row) ta.value = row["Comments"] || "";
+  if (ta) ta.style.display = "none";
+  if (ac) ac.style.display = "none";
   editingStock = null;
 }
 
-async function saveComment(stockNum) {
+async function saveComment(sn) {
   event.stopPropagation();
   const url = localStorage.getItem(STORAGE_KEY);
   if (!url) { toast("No URL configured", true); return; }
 
-  const textarea = document.getElementById("comment-input-" + stockNum);
-  const saveBtn = document.getElementById("save-btn-" + stockNum);
-  const comment = textarea ? textarea.value.trim() : "";
+  const ta = document.getElementById("cinput-" + sn);
+  const btn = document.getElementById("csave-" + sn);
+  const comment = ta ? ta.value.trim() : "";
 
-  saveBtn.disabled = true;
-  saveBtn.innerHTML = '<span class="spinner"></span>';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
 
   try {
-    await fetch(url + "?action=updateComment&stockNum=" + encodeURIComponent(stockNum) + "&comment=" + encodeURIComponent(comment), { mode: "no-cors" });
-
-    // Update local data
-    const row = allData.find(r => String(r["Stock Num"]) === String(stockNum));
+    await fetch(url + "?action=updateComment&stockNum=" + encodeURIComponent(sn) + "&comment=" + encodeURIComponent(comment), { mode: "no-cors" });
+    const row = allData.find(r => String(r["Stock Num"]) === String(sn));
     if (row) row["Comments"] = comment;
-
     toast(comment ? "Comment saved ✓" : "Comment cleared");
     editingStock = null;
-
-    // Re-render
     filterCards();
-    expandedStock = stockNum;
+    expandedStock = sn;
     filterCards();
-
   } catch (err) {
     toast("Save failed: " + err.message, true);
-    saveBtn.disabled = false;
-    saveBtn.innerHTML = "Save";
+    btn.disabled = false;
+    btn.innerHTML = "Save";
   }
 }
 
-// ── Search / Filter ───────────────────────────────────
+// ── Filter ────────────────────────────────────────────
 function filterCards() {
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
   const filtered = q
     ? allData.filter(r =>
-        String(r["Stock Num"]).toLowerCase().includes(q) ||
-        String(r["Vehicle Description"]).toLowerCase().includes(q) ||
-        String(r["VIN"]).toLowerCase().includes(q) ||
-        String(r["Zone Description"]).toLowerCase().includes(q) ||
-        String(r["Product Status"]).toLowerCase().includes(q)
+        ["Stock Num","Vehicle Description","VIN","Zone Description","Product Status"]
+          .some(k => String(r[k] || "").toLowerCase().includes(q))
       )
     : allData;
-
   renderCards(filtered);
 }
 
-// ── Meta Bar ──────────────────────────────────────────
+// ── Meta ──────────────────────────────────────────────
 function updateMeta(data) {
-  const meta = document.getElementById("reportMeta");
-  meta.style.display = "flex";
-  document.getElementById("reportDate").textContent = getTodayLabel();
-  document.getElementById("vehicleCount").textContent = data.length + " vehicle" + (data.length !== 1 ? "s" : "");
+  document.getElementById("reportMeta").style.display = "flex";
+  document.getElementById("reportDate").textContent =
+    new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" });
+  document.getElementById("vehicleCount").textContent =
+    data.length + " vehicle" + (data.length !== 1 ? "s" : "");
 }
 
-function getTodayLabel() {
-  const d = new Date();
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" });
-}
-
-// ── Config Modal ──────────────────────────────────────
+// ── Modal ─────────────────────────────────────────────
 function openModal() {
-  const url = localStorage.getItem(STORAGE_KEY) || "";
-  document.getElementById("urlInput").value = url;
+  document.getElementById("urlInput").value = localStorage.getItem(STORAGE_KEY) || "";
   document.getElementById("configModal").classList.add("open");
 }
 
-function closeModal() {
-  document.getElementById("configModal").classList.remove("open");
-}
+function closeModal() { document.getElementById("configModal").classList.remove("open"); }
 
 function saveConfig() {
   const url = document.getElementById("urlInput").value.trim();
@@ -941,8 +814,8 @@ function toast(msg, isError) {
   const el = document.getElementById("toast");
   el.textContent = msg;
   el.className = "toast show" + (isError ? " error" : "");
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => { el.className = "toast"; }, 2500);
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => { el.className = "toast"; }, 2500);
 }
 </script>
 </body>
