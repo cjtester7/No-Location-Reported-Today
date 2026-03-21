@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>No Location Reported</title>
+<title>No Location Reported · v18</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
@@ -60,6 +60,24 @@ body{background:var(--bg);color:var(--text);font-family:var(--fs);
      box-shadow:0 2px 8px var(--shadow);}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .brand{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* Desktop: single row - rows render as flat flex children */
+@media(min-width:640px){
+  .hdr-row1{display:contents;}
+  .hdr-row2{display:contents;}
+  .btn-grid{display:contents;}
+}
+/* Mobile: brand+username top row, 2x2 button grid below */
+@media(max-width:639px){
+  .hdr-top{flex-direction:column;gap:8px;align-items:stretch;}
+  .hdr-row1{display:flex;align-items:center;justify-content:space-between;width:100%;}
+  .hdr-row2{display:flex;justify-content:flex-end;width:100%;}
+  .btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+  .btn-grid .bi{width:100%;height:40px;font-size:17px;}
+  .btn-grid .tt{width:100%;height:40px;background:var(--surface2);
+                border:1px solid var(--border);border-radius:8px;
+                justify-content:center;padding:0;}
+}
 .b-ico{width:34px;height:34px;background:var(--accent);border-radius:8px;
        display:flex;align-items:center;justify-content:center;
        font-family:var(--fm);font-weight:600;font-size:13px;color:#000;flex-shrink:0;}
@@ -400,24 +418,30 @@ td.ac{font-family:var(--fm);font-size:11px;font-weight:600;color:var(--accent);}
   <!-- Header -->
   <div class="hdr">
     <div class="hdr-top">
-      <div class="brand">
-        <div class="b-ico">NLR</div>
-        <div class="b-txt">
-          <div class="b-ttl">No Location Reported</div>
-          <div class="b-sub">CarMax &middot; Location 4070</div>
+      <!-- Row 1: Brand + username -->
+      <div class="hdr-row1">
+        <div class="brand">
+          <div class="b-ico">NLR</div>
+          <div class="b-txt">
+            <div class="b-ttl">No Location Reported</div>
+            <div class="b-sub">CarMax &middot; Location 4070</div>
+          </div>
         </div>
-      </div>
-      <div class="hdr-act">
         <span class="u-lbl" id="userLbl" style="display:none;"></span>
-        <div class="tt" onclick="toggleTheme()">
-          <span class="tt-ic">&#127769;</span>
-          <div class="tt-tr"><div class="tt-kn"></div></div>
-          <span class="tt-ic">&#9728;&#65039;</span>
+      </div>
+      <!-- Row 2: 2x2 button grid -->
+      <div class="hdr-row2">
+        <div class="btn-grid">
+          <div class="tt" onclick="toggleTheme()" title="Toggle theme">
+            <span class="tt-ic">&#127769;</span>
+            <div class="tt-tr"><div class="tt-kn"></div></div>
+            <span class="tt-ic">&#9728;&#65039;</span>
+          </div>
+          <button class="bi" id="viewBtn" onclick="toggleView()" title="Switch view">&#9776;</button>
+          <button class="bi loading" id="refreshBtn" onclick="loadData()" title="Refresh">&#8635;</button>
+          <button class="bi" onclick="doLogout()" title="Sign out" style="font-size:17px;">&#9167;</button>
         </div>
-        <button class="bi" id="viewBtn" onclick="toggleView()" title="Switch view">&#9776;</button>
-        <button class="bi loading" id="refreshBtn" onclick="loadData()" title="Refresh">&#8635;</button>
-        <button class="bi" id="adminBtn" onclick="openModal()" title="Admin" style="display:none;">&#9881;</button>
-        <button class="bi" onclick="doLogout()" title="Sign out" style="font-size:13px;">&#9167;</button>
+        <button class="bi" id="adminBtn" onclick="openModal()" title="Admin" style="display:none;margin-left:6px;">&#9881;</button>
       </div>
     </div>
     <div class="rmt" id="rptMeta" style="display:none;">
